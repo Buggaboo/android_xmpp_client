@@ -22,15 +22,14 @@
     <string name="conn_username">Username</string>
     <string name="conn_password">Password</string>
     <string name="conn_domain">Domain</string>
-    <string name="conn_jid">JID</string>
     <string name="conn_resource">Resource</string>
-    <string name="conn_test">Test</string>
-    <string name="conn_save">Save</string>
+    <string name="conn_save">Test and Save</string>
     <string name="conn_sasl_authenticate_off">No sasl authentication</string>
     <string name="conn_sasl_authenticate_on">Use sasl authentication</string>
     <string name="conn_compress_off">No compression</string>
     <string name="conn_compress_on">Use compression</string>
     <string name="conn_encrypt_off">No encryption</string>
     <string name="conn_encrypt_on">Use encryption</string>
+    <string name="conn_bad_conn_conf">Are you sure you want to keep this faulty configuration?</string>
 
 </resources>
