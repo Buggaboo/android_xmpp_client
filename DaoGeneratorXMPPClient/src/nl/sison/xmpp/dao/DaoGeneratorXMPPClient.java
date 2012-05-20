@@ -14,7 +14,7 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(8, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(9, "nl.sison.xmpp.dao");
 
 		addMessage(schema);
 		addBuddy(schema);
@@ -60,9 +60,9 @@ public class DaoGeneratorXMPPClient {
 		settings.addStringProperty("password").notNull();
 //		settings.addStringProperty("jid").notNull();
 		settings.addStringProperty("resource").notNull();
-		settings.addBooleanProperty("encrypted").notNull();
-		settings.addBooleanProperty("compressed").notNull();
-		settings.addBooleanProperty("saslauthenticated").notNull();
+		settings.addBooleanProperty("encrypted").notNull(); // encryption is broken
+		settings.addBooleanProperty("compressed").notNull(); 
+		settings.addBooleanProperty("saslauthenticated").notNull(); // sasl authentication is broken
 		settings.addIntProperty("connection_success").notNull();
 	}
 }

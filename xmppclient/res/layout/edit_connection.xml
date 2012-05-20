@@ -152,26 +152,6 @@
             </EditText>
         </LinearLayout>
 
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/conn_jid" >
-            </TextView>
-
-            <EditText
-                android:id="@+id/conn_jid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text" >
-            </EditText>
-        </LinearLayout>-->
-
         <ToggleButton
             android:id="@+id/conn_encrypted"
             android:layout_width="match_parent"
@@ -197,14 +177,7 @@
         </ToggleButton>
 
         <Button
-            android:id="@+id/conn_test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/conn_test" >
-        </Button>
-
-        <Button
-            android:id="@+id/conn_save"
+            android:id="@+id/conn_test_and_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/conn_save" >

@@ -37,8 +37,9 @@ public class ConnectionListActivity extends ListActivity {
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		makeToast("onCreate");
 		startService(new Intent(ConnectionListActivity.this, XMPPService.class));
+		makeToast("onCreate");
+
 	}
 
 	@Override
@@ -47,15 +48,14 @@ public class ConnectionListActivity extends ListActivity {
 		makeToast("onResume");
 		refreshList();
 	}
-	
-	private void refreshList()
-	{
+
+	private void refreshList() {
 		// register context menu for the dialog
 		registerForContextMenu(getListView());
 
 		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
 		if (all_conns.size() > 0) {
-			
+
 			mAdapter = new ConnectionAdapter(all_conns,
 					ConnectionListActivity.this);
 
@@ -67,8 +67,6 @@ public class ConnectionListActivity extends ListActivity {
 
 		DatabaseUtil.close();
 	}
-		
-	
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
 		// TODO get connections from database, produce array list
@@ -174,7 +172,7 @@ public class ConnectionListActivity extends ListActivity {
 							public void onClick(DialogInterface dialog, int id) {
 								makeToast("yes, delete connection");
 								deleteConnection(message);
-								refreshList();								
+								refreshList();
 							}
 						})
 				.setNegativeButton(android.R.string.no,
@@ -194,7 +192,8 @@ public class ConnectionListActivity extends ListActivity {
 							public void onClick(DialogInterface dialog, int id) {
 								makeToast("create connection");
 								createNewConnection();
-								// TODO - send Intent to service for reconnect, (easiest way: restart service)
+								// TODO - send Intent to service for reconnect,
+								// (easiest way: restart service)
 							}
 						})
 				.setNegativeButton(R.string.remove_connection,
@@ -202,7 +201,8 @@ public class ConnectionListActivity extends ListActivity {
 							public void onClick(DialogInterface dialog, int id) {
 								makeToast("delete connection");
 								createDialogDeleteConnection(message);
-								// TODO - send Intent to service for reconnect, (easiest way: restart service)								
+								// TODO - send Intent to service for reconnect,
+								// (easiest way: restart service)
 							}
 
 						})
@@ -211,7 +211,8 @@ public class ConnectionListActivity extends ListActivity {
 							public void onClick(DialogInterface dialog, int id) {
 								makeToast("update connection");
 								modifyConnection(message);
-								// TODO - send Intent to service for reconnect, (easiest way: restart service)								
+								// TODO - send Intent to service for reconnect,
+								// (easiest way: restart service)
 							}
 						});
 		crudConnectionDialog = builder.create();
@@ -222,7 +223,7 @@ public class ConnectionListActivity extends ListActivity {
 		super.onDestroy();
 		stopService(new Intent(ConnectionListActivity.this, XMPPService.class));
 		makeToast("onDestroy");
-		
+
 		// TODO - review why XMPPService should also be killed
 	};
 }

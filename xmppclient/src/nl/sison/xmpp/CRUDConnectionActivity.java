@@ -16,6 +16,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class CRUDConnectionActivity extends Activity {
+	public static final String RESTART_CONNECTION = "asnehnaoseuthaoseuthaoseuth2234";
+
 	private final String TAG = "CRUDConnectionActivity";
 	
 	private Long conn_config_id = (long) 0;
@@ -106,24 +108,20 @@ public class CRUDConnectionActivity extends Activity {
 				ToggleButton tb = (ToggleButton) v;
 				if (tb.isChecked()) {
 					makeToast("connection will be encrypted");
+					makeToast("Warning: encryption on this version of smack lib is most likely broken.");
 				} else {
 					makeToast("connection will NOT be encrypted");
 				}
 			}
 		});
 		
-		setButtonListener(parent, R.id.conn_test, new View.OnClickListener() {
-			public void onClick(View v) {
-				makeToast("testing connection");
-			}
-		}); // TODO - merge test and save
-		
-		setButtonListener(parent, R.id.conn_save, new View.OnClickListener() {
+		setButtonListener(parent, R.id.conn_test_and_save, new View.OnClickListener() {
 			public void onClick(View v) {
 				storeConnectionConfiguration(parent);
 				// TODO try catch and do some error checking here, e.g. unique
-				// labels
-				// setResult(); // TODO determine which results (putExtra?)
+				Intent restartConnectionOnService = new Intent(CRUDConnectionActivity.this, XMPPService.class);
+				restartConnectionOnService.putExtra(RESTART_CONNECTION, conn_config_id);
+				startService(restartConnectionOnService);
 				finish();
 			}
 

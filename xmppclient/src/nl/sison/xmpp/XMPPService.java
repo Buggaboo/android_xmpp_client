@@ -4,11 +4,17 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
+import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
+import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.Packet;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -66,87 +72,71 @@ public class XMPPService extends Service {
 		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
 		conn_hash_map = new ConcurrentHashMap<Long, XMPPConnection>();
 		weakenNetworkOnMainThreadPolicy(); // TODO - remove and implement this
-											// as asynctask when debugging is
+											// as asynctask or runnable when
+											// debugging is
 											// done
 		for (final ConnectionConfigurationEntity cc : all_conns) {
-			// new Runnable() {
-			// TODO use AsyncTask to fire up connections
-			// public void run() {
-			// ConnectionConfiguration xmpp_conn_config = new
-			// ConnectionConfiguration(
-			// cc.getServer(), Integer.valueOf(cc.getPort()));
-			// TODO - change port to integer type
-			// xmpp_conn_config.setReconnectionAllowed(true);
+			final String label = cc.getLabel();
+			XMPPConnection connection = connectToServer(cc);
+			if (connection != null) {
+				conn_hash_map.put(cc.getId(), connection);
+				connection.addConnectionListener(new ConnectionListener() {
 
-			// ConnectionConfiguration xmpp_conn_config = new
-			// ConnectionConfiguration(
-			// "talk.google.com", 5222, "gmail.com"); // TODO add domain (jid
-			// part)
-			//
-			// xmpp_conn_config.setCompressionEnabled(true);
-			// xmpp_conn_config.setSASLAuthenticationEnabled(true);
-			// XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
-			// conn_hash_map.put(cc.getId(), connection);
-			// try {
-			// connection.connect();
-			// makeToast("isConnected: " + connection.isConnected());
-			// // connection.login(cc.getUsername(), cc.getPassword(),
-			// cc.getResource());
-			// // connection.login("testiculartestee", "crossbodyleadtester",
-			// "android");
-			// } catch (XMPPException e) {
-			// connection = null;
-			// e.printStackTrace();
-			// Log.e(TAG, e.toString());
-			// }
+					public void reconnectionSuccessful() {
+						makeToast(label + ": Reconnection successful");
+					}
 
-			ConnectionConfiguration xmpp_conn_config = new ConnectionConfiguration(
-					cc.getServer(), Integer.valueOf(cc.getPort()),
-					cc.getDomain());
-			xmpp_conn_config.setCompressionEnabled(cc.getCompressed());
-			xmpp_conn_config.setSASLAuthenticationEnabled(cc
-					.getSaslauthenticated());
-			// xmpp_conn_config.setReconnectionAllowed(true); // TODO
-			XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
+					public void reconnectionFailed(Exception arg0) {
+						makeToast(label + ": Reconnection failed");
+					}
 
-			try {
-				connection.connect();
-				makeToast(cc.getLabel() + ":" + connection.isConnected());
-				connection.login(cc.getUsername(), cc.getPassword(),
-						cc.getResource());
-			} catch (XMPPException e) {
-				connection = null;
-				e.printStackTrace();
-				Log.e(TAG, e.toString());
+					public void reconnectingIn(int countdown) {
+						makeToast(label + ": Reconnecting in " + countdown);
+					}
+
+					public void connectionClosedOnError(Exception arg0) {
+						makeToast(label + ": Connection closed on error");
+					}
+
+					public void connectionClosed() {
+						makeToast(label + ": Connection closed");
+					}
+				});
 			}
-
-			conn_hash_map.put(cc.getId(), connection);
-
 		}
 		// };
 		// }
 		// testConnection(all); // TODO remove test
 	}
 
+	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc) {
+		ConnectionConfiguration xmpp_conn_config = new ConnectionConfiguration(
+				cc.getServer(), Integer.valueOf(cc.getPort()), cc.getDomain());
+		xmpp_conn_config.setCompressionEnabled(cc.getCompressed());
+		xmpp_conn_config
+				.setSASLAuthenticationEnabled(cc.getSaslauthenticated());
+		// xmpp_conn_config.setReconnectionAllowed(true); // TODO
+		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
+		try {
+			connection.connect();
+			makeToast(cc.getLabel() + "is connected:"
+					+ connection.isConnected());
+			connection.login(cc.getUsername(), cc.getPassword(),
+					cc.getResource());
+			makeToast(cc.getLabel() + "is authenticated:"
+					+ connection.isAuthenticated());
+		} catch (XMPPException e) {
+			connection = null;
+			e.printStackTrace();
+			Log.e(TAG, e.toString());
+		}
+		return connection;
+	}
+
 	private void weakenNetworkOnMainThreadPolicy() {
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-	}
-
-	private void testConnection(List<ConnectionConfigurationEntity> all) {
-		// TODO remove test
-		for (final ConnectionConfigurationEntity cc : all) {
-			XMPPConnection conn = conn_hash_map.get(cc.getId());
-			if (conn != null)
-
-				makeToast(cc.getLabel()
-						+ "is connected and authenticated: "
-						+ String.valueOf(conn.isAuthenticated()
-								&& conn.isConnected()));
-			else
-				makeToast("Connection failed.");
-		}
 	}
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
@@ -156,11 +146,23 @@ public class XMPPService extends Service {
 		DatabaseUtil.close();
 		return all;
 	}
+	
+	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
+		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		ConnectionConfigurationEntity cc = daoSession.getConnectionConfigurationEntityDao().queryBuilder().where(Properties.Id.eq(cc_id)).list().get(0);
+		DatabaseUtil.close();
+		return cc;
+	}	
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
+		if (intent.hasExtra(CRUDConnectionActivity.RESTART_CONNECTION))
+		{
+			long cc_id = intent.getExtras().getLong(CRUDConnectionActivity.RESTART_CONNECTION);
+			connectToServer(getConnectionConfiguration(cc_id));
+		}
 		return START_STICKY;
 	}
 
