@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, XMPPClientActivity!</string>
+    <string name="app_name">XMPPClient</string>
+    <string name="local_service_started">The xmpp service to manage connections has started</string>
+    <string name="local_service_stopped">The xmpp service to manage connections has stopped</string>
+    <string name="my_ticker">my ticker</string>
+    <string name="my_notification_title">my notification title</string>
+    <string name="my_notification_text">my notification text</string>
+    <string name="dummy">dummy</string>
+    <string name="modify_connection">Modify</string>
+    <string name="remove_connection">Remove</string>
+    <string name="create_connection">Create</string>
+    <string name="request_create_conn">There are no connections configured yet.</string>
+    <string name="sure_remove_conn">Are you sure you want to remove - </string>
+
+    <!-- connection related stuff -->
+    <string name="conn_label">Label</string>
+    <string name="conn_port">Port</string>
+    <string name="conn_server">Server</string>
+    <string name="conn_username">Username</string>
+    <string name="conn_password">Password</string>
+    <string name="conn_domain">Domain</string>
+    <string name="conn_jid">JID</string>
+    <string name="conn_resource">Resource</string>
+    <string name="conn_test">Test</string>
+    <string name="conn_save">Save</string>
+    <string name="conn_sasl_authenticate_off">No sasl authentication</string>
+    <string name="conn_sasl_authenticate_on">Use sasl authentication</string>
+    <string name="conn_compress_off">No compression</string>
+    <string name="conn_compress_on">Use compression</string>
+    <string name="conn_encrypt_off">No encryption</string>
+    <string name="conn_encrypt_on">Use encryption</string>
+
+</resources>

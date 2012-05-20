@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/empty_connection_item"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/empty_connection_name"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:text="@string/create_connection"
+        android:textSize="16sp" />
+
+</LinearLayout>
