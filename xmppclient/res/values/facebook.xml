@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="facebook_hint_label">talk.facebook.com</string>
-    <string name="facebook_hint_server">talk.facebook.com</string>
-    <string name="facebook_hint_domain">gmail.com</string>
+    <string name="facebook_hint_label">chat.facebook.com</string>
+    <string name="facebook_hint_server">chat.facebook.com</string>
+    <string name="facebook_hint_domain">chat.facebook.com</string>
     <string name="facebook_hint_port">5222</string>
     <string name="facebook_hint_username">jane.doe</string>
     <string name="facebook_hint_resource">android</string>

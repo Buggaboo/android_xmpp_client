@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="microsoft_hint_label">talk.microsoft.com</string>
-    <string name="microsoft_hint_server">talk.microsoft.com</string>
-    <string name="microsoft_hint_domain">gmail.com</string>
+    <string name="microsoft_hint_label">xmpp.messenger.live.com</string>
+    <string name="microsoft_hint_server">xmpp.messenger.live.com</string>
+    <string name="microsoft_hint_domain">messenger.live.com</string>
     <string name="microsoft_hint_port">5222</string>
     <string name="microsoft_hint_username">jane.doe</string>
     <string name="microsoft_hint_resource">android</string>

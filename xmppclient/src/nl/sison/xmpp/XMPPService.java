@@ -52,7 +52,7 @@ public class XMPPService extends Service {
 			return XMPPService.this;
 		}
 	}
-
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -142,21 +142,23 @@ public class XMPPService extends Service {
 		DatabaseUtil.close();
 		return all;
 	}
-	
+
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-		ConnectionConfigurationEntity cc = daoSession.getConnectionConfigurationEntityDao().queryBuilder().where(Properties.Id.eq(cc_id)).list().get(0);
+		ConnectionConfigurationEntity cc = daoSession
+				.getConnectionConfigurationEntityDao().queryBuilder()
+				.where(Properties.Id.eq(cc_id)).list().get(0);
 		DatabaseUtil.close();
 		return cc;
-	}	
+	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
-		if (intent.hasExtra(CRUDConnectionActivity.RESTART_CONNECTION))
-		{
-			long cc_id = intent.getExtras().getLong(CRUDConnectionActivity.RESTART_CONNECTION);
+		if (intent.hasExtra(CRUDConnectionActivity.RESTART_CONNECTION)) {
+			long cc_id = intent.getExtras().getLong(
+					CRUDConnectionActivity.RESTART_CONNECTION);
 			connectToServer(getConnectionConfiguration(cc_id));
 		}
 		return START_STICKY;
@@ -169,7 +171,9 @@ public class XMPPService extends Service {
 		mNM.cancel(NOTIFICATION);
 		for (long key : conn_hash_map.keySet()) {
 			XMPPConnection conn = conn_hash_map.get(key);
-			conn.disconnect();
+			if (conn != null && conn.isConnected()) {
+				conn.disconnect();
+			}
 		}
 		makeToast("onDestroy");
 	}
