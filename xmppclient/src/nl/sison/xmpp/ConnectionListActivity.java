@@ -30,7 +30,7 @@ public class ConnectionListActivity extends ListActivity {
 	public final static int RQ_MODIFY_CONN = 1;
 	public final static int RQ_DELETE_CONN = 2;
 
-	public final static String KEY_CONNECTION_INDEX = "USTHUASNOEHUAONETUH";
+	public final static String KEY_CONNECTION_INDEX = "USTHUASNOEH#@$$**&*UAONETUH";
 
 	// source:
 	// http://united-coders.com/phillip-steffensen/android-dealing-with-listactivities-customized-listadapters-and-custom-designed-0
@@ -38,8 +38,6 @@ public class ConnectionListActivity extends ListActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		startService(new Intent(ConnectionListActivity.this, XMPPService.class));
-		makeToast("onCreate");
-
 	}
 
 	@Override

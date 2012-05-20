@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,14 +32,65 @@ public class CRUDConnectionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		View list_view = LayoutInflater.from(this).inflate(
+		final View list_view = LayoutInflater.from(this).inflate(
 				R.layout.edit_connection, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
+		}else
+		{
+			createHintPrefixDialog(list_view).show();
 		}
 		setButtons(list_view);
 		setContentView(list_view);
 	}
+
+	private AlertDialog createHintPrefixDialog(final View list_view) {
+		final String[] prefix_items = getResources().getStringArray(R.array.hint_prefixes);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getString(R.string.conn_pick_a_provider));
+		builder.setItems(prefix_items, new DialogInterface.OnClickListener() {
+		    public void onClick(DialogInterface dialog, int prefix_index) {
+		        setHints(list_view, prefix_items[prefix_index]);
+		    }
+		});
+		return builder.create();
+	}
+	
+	private void setHints(View parent, String hint_prefix)
+	{
+		if (!hint_prefix.endsWith("_")) hint_prefix += "_"; // TODO move this one level higher
+		setTextViewHint(parent, R.id.conn_label, getResourceIdentifierByPrefix(hint_prefix, "hint_label"));
+		setTextViewHint(parent, R.id.conn_server, getResourceIdentifierByPrefix(hint_prefix, "hint_server"));
+		setTextViewHint(parent, R.id.conn_domain, getResourceIdentifierByPrefix(hint_prefix, "hint_domain"));
+		setTextViewHint(parent, R.id.conn_port, getResourceIdentifierByPrefix(hint_prefix, "hint_port"));
+		setTextViewHint(parent, R.id.conn_username, getResourceIdentifierByPrefix(hint_prefix, "hint_username"));
+		setTextViewHint(parent, R.id.conn_resource, getResourceIdentifierByPrefix(hint_prefix, "hint_resource"));
+		
+		setToggleButtonDefault(parent, R.id.conn_compressed, Boolean.valueOf(getString(getResourceIdentifierByPrefix(hint_prefix, "default_compressed"))));
+		setToggleButtonDefault(parent, R.id.conn_encrypted, Boolean.valueOf(getString(getResourceIdentifierByPrefix(hint_prefix, "default_encrypted"))));
+		setToggleButtonDefault(parent, R.id.conn_sasl_authenticated, Boolean.valueOf(getString(getResourceIdentifierByPrefix(hint_prefix, "default_sasl_authenticated"))));
+	}
+	
+	private void setTextViewHint(View parent, int view_id, int res_id)
+	{
+		TextView tv = (TextView) parent.findViewById(view_id);
+		tv.setHint(res_id);
+	}
+	
+	private void setToggleButtonDefault(View parent, int view_id, boolean state)
+	{
+		ToggleButton tb = (ToggleButton) parent.findViewById(view_id);
+		tb.setActivated(state);
+	}
+	
+	
+	
+	private int getResourceIdentifierByPrefix(String prefix, String value)
+	{
+		return Resources.getSystem().getIdentifier(prefix + value, "string", "nl.sison.xmpp");
+	}
+	
+	
 
 	private void showValuesFromDatabase(View list_view) {
 		long ccid = getIntent().getExtras().getLong(

@@ -31,5 +31,16 @@
     <string name="conn_encrypt_off">No encryption</string>
     <string name="conn_encrypt_on">Use encryption</string>
     <string name="conn_bad_conn_conf">Are you sure you want to keep this faulty configuration?</string>
+    <string name="conn_pick_a_provider">Pick a provider</string>
+
+    
+    <string-array name="hint_prefixes">
+        <item >google</item>
+        <item >facebook</item>
+        <item >microsoft</item>
+        <item >meebo</item>        
+    </string-array>
+    
+    
 
 </resources>

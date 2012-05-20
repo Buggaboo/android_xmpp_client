@@ -4,17 +4,13 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
 
 import android.app.Notification;
 import android.app.NotificationManager;
