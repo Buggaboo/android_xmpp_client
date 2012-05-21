@@ -50,6 +50,7 @@ public class XMPPService extends Service {
 	 */
 	public class LocalBinder extends Binder {
 		XMPPService getService() {
+			makeToast("binding");
 			return XMPPService.this;
 		}
 	}
@@ -116,7 +117,9 @@ public class XMPPService extends Service {
 		xmpp_conn_config.setCompressionEnabled(cc.getCompressed());
 		xmpp_conn_config
 				.setSASLAuthenticationEnabled(cc.getSaslauthenticated());
-		// xmpp_conn_config.setReconnectionAllowed(true); // TODO
+		// xmpp_conn_config.setReconnectionAllowed(true); // TODO - turn off if
+		// conflict (e.g.same jid) or hopelessly bad settings
+
 		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
 		try {
 			connection.connect();
@@ -148,6 +151,8 @@ public class XMPPService extends Service {
 		return all;
 	}
 
+	// TODO refactor this away to the the DatabaseUtil, this is the same as
+	// onListItemClick code in ConnectionListActivity
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntity cc = daoSession
@@ -186,6 +191,12 @@ public class XMPPService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
+	}
+	
+	@Override
+	public boolean onUnbind(Intent intent) {
+		makeToast("onUnbind");
+		return super.onUnbind(intent);
 	}
 
 	// This is the object that receives interactions from clients. See

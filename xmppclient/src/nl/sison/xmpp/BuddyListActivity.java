@@ -25,14 +25,15 @@ public class BuddyListActivity extends ListActivity {
 	private long conn_id;
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
-
 		public void onServiceConnected(ComponentName className, IBinder binder) {
 			service = ((XMPPService.LocalBinder) binder).getService();
+			makeToast("service is bound: " + (service != null));
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
 			service = null;
 			roster = null;
+			makeToast("service is disconnected");
 		}
 	};
 
@@ -42,13 +43,21 @@ public class BuddyListActivity extends ListActivity {
 		conn_id = getIntent().getExtras().getLong(
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 		makeToast("connection index:" + conn_id);
+	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		serviceConnection = null; // TODO determine this prevents a leak? // known leaky bug: since the
+									// anonymous non static type has a leaky
+									// weak reference to the spawning class
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		refreshList();
+		makeToast("onResume");
 	}
 
 	private void refreshList() {
@@ -56,24 +65,25 @@ public class BuddyListActivity extends ListActivity {
 		registerForContextMenu(getListView());
 		doBindService();
 		getServiceData();
-		if (buddies != null && !buddies.isEmpty())
-		{
+		if (buddies != null && !buddies.isEmpty() && roster != null) {
 			adapter = new BuddyAdapter(this, buddies, roster);
+			makeToast("BuddyAdapter is refreshed");
 		}
 		unbindService(serviceConnection);
 		setListAdapter(adapter);
 	}
 
 	void doBindService() {
-		bindService(new Intent(BuddyListActivity.this, XMPPService.class),
-				serviceConnection, Context.BIND_AUTO_CREATE);
+		boolean b = bindService(new Intent(BuddyListActivity.this,
+				XMPPService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		makeToast("bind to service (XMPPService): " + b);
 	}
 
 	public void getServiceData() {
 		if (service != null) {
 			buddies.clear();
-			buddies.addAll(service.getRoster(conn_id).getEntries());
 			roster = service.getRoster(conn_id);
+			buddies.addAll(roster.getEntries());
 		}
 	}
 
