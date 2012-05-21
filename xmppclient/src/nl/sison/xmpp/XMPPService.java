@@ -9,7 +9,6 @@ import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -77,12 +76,10 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		makeToast("onCreate");
 		makeConnectionsFromDatabase();
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
-		showNotification();
 	}
 
 	private void makeConnectionsFromDatabase() {
@@ -156,7 +153,7 @@ public class XMPPService extends Service {
 		return connection;
 	}
 
-	private void weakenNetworkOnMainThreadPolicy() {
+	private void weakenNetworkOnMainThreadPolicy() { // TODO recode with AsyncTask
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
@@ -207,25 +204,9 @@ public class XMPPService extends Service {
 		makeToast("onDestroy");
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		makeToast("onBind");
-		return binder;
-	}
-
-	@Override
-	public boolean onUnbind(Intent intent) {
-		makeToast("onUnbind");
-		return super.onUnbind(intent);
-	}
-
-	// This is the object that receives interactions from clients. See
-	// RemoteService for a more complete example.
-	// private final IBinder binder = new LocalBinder();
-	private final IBinder binder = new XMPPServiceBinder(this);
-
 	/**
 	 * Show a notification while this service is running.
+	 * TODO - use this to notify if anyone is chatting with you, last message stuff
 	 */
 	private void createNotificationAndNotify(CharSequence text) {
 		Context context = (Context) this;
@@ -254,12 +235,6 @@ public class XMPPService extends Service {
 		nm.notify(XMPP_CONNECTED, n);
 	}
 
-	private void showNotification() {
-		// In this sample, we'll use the same text for the ticker and the
-		// expanded notification
-		createNotificationAndNotify(getText(R.string.local_service_started));
-	}
-
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
@@ -268,22 +243,9 @@ public class XMPPService extends Service {
 		toast.show();
 	}
 
-	/**
-	 * 
-	 * This is called by BuddyListActivity to get the Roster and Buddy list
-	 * 
-	 * @param conn_id
-	 *            Row index which also maps to Sqlite database row, it serves to
-	 *            fetch the connection from the connection HashMap.
-	 * @return
-	 */
-	public Roster getRoster(long conn_id) {
-		XMPPConnection connection = connection_hashmap.get(conn_id);
-		if (connection == null)
-			return null;
-		if (connection.isConnected() && connection.isAuthenticated()) {
-			return connection.getRoster();
-		}
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
