@@ -1,6 +1,5 @@
 package nl.sison.xmpp;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,7 +10,6 @@ import nl.sison.xmpp.dao.DaoSession;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -36,7 +34,7 @@ public class XMPPService extends Service {
 	private static final int PI_REQUEST_CODE = 0; // Pending Intent request code
 													// for filter?
 	// // TODO figure out
-	private NotificationManager mNM;
+	private NotificationManager notificationManager;
 
 	// Unique Identification Number for the Notification.
 	// We use it on Notification start, and to cancel it.
@@ -61,7 +59,7 @@ public class XMPPService extends Service {
 		super.onCreate();
 		makeToast("onCreate");
 		makeConnectionsFromDatabase();
-		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
 		showNotification();
@@ -76,7 +74,13 @@ public class XMPPService extends Service {
 											// done
 		for (final ConnectionConfigurationEntity cc : all_conns) {
 			final String label = cc.getLabel();
-			XMPPConnection connection = connectToServer(cc);
+			XMPPConnection connection;
+			try {
+				connection = connectToServer(cc);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				connection = null;
+			}
 			if (connection != null) {
 				connection_hashmap.put(cc.getId(), connection);
 				connection.addConnectionListener(new ConnectionListener() {
@@ -105,7 +109,8 @@ public class XMPPService extends Service {
 		}
 	}
 
-	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc) {
+	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc)
+			throws NumberFormatException {
 		ConnectionConfiguration xmpp_conn_config = new ConnectionConfiguration(
 				cc.getServer(), Integer.valueOf(cc.getPort()), cc.getDomain());
 		xmpp_conn_config.setCompressionEnabled(cc.getCompressed());
@@ -168,7 +173,7 @@ public class XMPPService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		// Cancel the persistent notification.
-		mNM.cancel(NOTIFICATION);
+		notificationManager.cancel(NOTIFICATION);
 		for (long key : connection_hashmap.keySet()) {
 			XMPPConnection conn = connection_hashmap.get(key);
 			if (conn != null && conn.isConnected()) {
@@ -191,17 +196,17 @@ public class XMPPService extends Service {
 	 * Show a notification while this service is running.
 	 */
 	private void createNotificationAndNotify(CharSequence text) {
-		Context ctx = (Context) this;
-		Intent notificationIntent = new Intent(ctx, XMPPService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(ctx,
+		Context context = (Context) this;
+		Intent notificationIntent = new Intent(context, XMPPService.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(context,
 				PI_REQUEST_CODE, notificationIntent,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 
-		NotificationManager nm = (NotificationManager) ctx
+		NotificationManager nm = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		Resources res = ctx.getResources();
-		Notification.Builder builder = new Notification.Builder(ctx);
+		Resources res = context.getResources();
+		Notification.Builder builder = new Notification.Builder(context);
 
 		builder.setContentIntent(contentIntent)
 				.setSmallIcon(R.drawable.ic_launcher)

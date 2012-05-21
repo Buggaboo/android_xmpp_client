@@ -41,6 +41,7 @@ public class BuddyListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		conn_id = getIntent().getExtras().getLong(
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
+		makeToast("connection index:" + conn_id);
 
 	}
 

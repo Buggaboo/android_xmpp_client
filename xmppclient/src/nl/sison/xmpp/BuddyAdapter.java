@@ -46,7 +46,6 @@ public class BuddyAdapter extends ArrayAdapter<RosterEntry> {
 		setPresenceView(parent, buddy);
 
 		return itemLayout;
-
 	}
 
 	private void setBuddyIdentifierText(ViewGroup parent, RosterEntry buddy) {
@@ -56,7 +55,6 @@ public class BuddyAdapter extends ArrayAdapter<RosterEntry> {
 	}
 
 	private void setPresenceView(ViewGroup parent, RosterEntry buddy) {
-
 		TextView buddy_presence_view = (TextView) parent
 				.findViewById(R.id.buddy_presence);
 		if (isBuddyAvailable(buddy)) {

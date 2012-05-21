@@ -90,15 +90,17 @@ public class ConnectionListActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		Intent intent = new Intent(ConnectionListActivity.this,
 				BuddyListActivity.class);
-		makeToast("onListItemClick (position, id):" + position + "," + id);
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-		TextView tv = (TextView) v;
-		long connection_index = daoSession
-				.getConnectionConfigurationEntityDao().queryBuilder()
-				.where(Properties.Label.eq(tv.getText())).list().get(0).getId();
+		intent.putExtra(CONNECTION_ROW_INDEX, getCCRowIdxFromPosition(id, daoSession));
 		DatabaseUtil.close();
-		intent.putExtra(CONNECTION_ROW_INDEX, connection_index);
 		startActivity(intent);
+	}
+
+	private long getCCRowIdxFromPosition(long id, DaoSession daoSession) {
+		ConnectionConfigurationEntity conn_conf = (ConnectionConfigurationEntity) daoSession
+		.getConnectionConfigurationEntityDao().loadAll().toArray()[(int) id];
+		long connection_index = conn_conf.getId();
+		return connection_index;
 	}
 
 	@Override

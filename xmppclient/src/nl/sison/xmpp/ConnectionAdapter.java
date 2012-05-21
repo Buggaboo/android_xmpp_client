@@ -32,11 +32,6 @@ public class ConnectionAdapter extends ArrayAdapter
 		return (Object) connections.get(position);
 	}
 
-	public long getItemId(int position)
-	{
-		return 0;
-	}
-
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(getContext())
