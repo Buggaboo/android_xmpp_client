@@ -24,18 +24,7 @@ public class BuddyListActivity extends ListActivity {
 	private Roster roster;
 	private long conn_id;
 
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder binder) {
-			service = ((XMPPService.LocalBinder) binder).getService();
-			makeToast("service is bound: " + (service != null));
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			service = null;
-			roster = null;
-			makeToast("service is disconnected");
-		}
-	};
+	private ServiceConnection serviceConnection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +32,28 @@ public class BuddyListActivity extends ListActivity {
 		conn_id = getIntent().getExtras().getLong(
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 		makeToast("connection index:" + conn_id);
+		serviceConnection = new ServiceConnection() {
+			public void onServiceConnected(ComponentName className,
+					IBinder binder) {
+				service = ((XMPPServiceBinder) binder).getService();
+				makeToast("service is bound: " + (service != null));
+				Log.i(TAG, "fuuuuuuuuuuuuuuuuuuuuuuuuuuuuckxxx!");
+			}
+
+			public void onServiceDisconnected(ComponentName className) {
+				service = null;
+				roster = null;
+				makeToast("service is disconnected");
+				Log.i(TAG, "fuuuuuuuuuuuuuuuuuuuuuuuuuuuuckyyy!");
+			}
+		};
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		serviceConnection = null; // TODO determine this prevents a leak? // known leaky bug: since the
+		serviceConnection = null; // TODO determine this prevents a leak? //
+									// known leaky bug: since the
 									// anonymous non static type has a leaky
 									// weak reference to the spawning class
 	}

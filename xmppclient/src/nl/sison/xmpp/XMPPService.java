@@ -21,13 +21,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.os.Binder;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
 public class XMPPService extends Service {
+
+	/**
+	 * ISSUES
+	 */
+	/**
+	 * - roster subscription request, packet listener, filter presence type
+	 * Presence.Type.subscribe -> popup dialog (yes, later, never) here:
+	 * http://www.igniterealtime.org/builds/smack/docs/
+	 * latest/documentation/roster.html
+	 */
+
+	/**
+	 * ROADMAP
+	 */
+	/**
+	 * TODO - location aware advertising - voice messages?
+	 */
+	/**
+	 * TODO - qr code triggered offers (in a shop?) buy shit together etc.
+	 */
 
 	private static final String TAG = "XMPPService";
 	private static final int XMPP_CONNECTED = 0;
@@ -48,12 +67,12 @@ public class XMPPService extends Service {
 	 * Class for clients to access. Because we know this service always runs in
 	 * the same process as its clients, we don't need to deal with IPC.
 	 */
-	public class LocalBinder extends Binder {
-		XMPPService getService() {
-			makeToast("binding");
-			return XMPPService.this;
-		}
-	}
+	// public class LocalBinder extends Binder {
+	// XMPPService getService() {
+	// makeToast("binding");
+	// return XMPPService.this;
+	// }
+	// }
 
 	@Override
 	public void onCreate() {
@@ -190,9 +209,10 @@ public class XMPPService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return mBinder;
+		makeToast("onBind");
+		return binder;
 	}
-	
+
 	@Override
 	public boolean onUnbind(Intent intent) {
 		makeToast("onUnbind");
@@ -201,7 +221,8 @@ public class XMPPService extends Service {
 
 	// This is the object that receives interactions from clients. See
 	// RemoteService for a more complete example.
-	private final IBinder mBinder = new LocalBinder();
+	// private final IBinder binder = new LocalBinder();
+	private final IBinder binder = new XMPPServiceBinder(this);
 
 	/**
 	 * Show a notification while this service is running.
