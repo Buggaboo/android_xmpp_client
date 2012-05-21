@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- TODO implement vibrate function on notification -->
 
     <application
@@ -21,6 +22,12 @@
             android:name=".XMPPService"
             android:icon="@drawable/ic_launcher" >
         </service>
+
+        <receiver android:name=".StartXMPPServiceReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".ConnectionListActivity"
