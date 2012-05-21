@@ -16,9 +16,9 @@ public class ConnectionAdapter extends ArrayAdapter
 	private final static String TAG = "ConnectionAdapter";
 	private List<ConnectionConfigurationEntity> connections;
 
-	public ConnectionAdapter(List<ConnectionConfigurationEntity> all_conns, Context ctx)
+	public ConnectionAdapter(List<ConnectionConfigurationEntity> all_conns, Context context)
 	{
-		super(ctx, 0);
+		super(context, 0);
 		this.connections = all_conns;
 	}
 

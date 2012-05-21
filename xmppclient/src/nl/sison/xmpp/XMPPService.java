@@ -100,9 +100,6 @@ public class XMPPService extends Service {
 				});
 			}
 		}
-		// };
-		// }
-		// testConnection(all); // TODO remove test
 	}
 
 	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc) {

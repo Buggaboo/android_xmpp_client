@@ -24,7 +24,7 @@ import de.greenrobot.dao.QueryBuilder;
 public class ConnectionListActivity extends ListActivity {
 	private final static String TAG = "BuddyListActivity";
 	private AlertDialog crudConnectionDialog;
-	private ArrayAdapter mAdapter;
+	private ArrayAdapter<?> adapter;
 
 	public final static int RQ_NEW_CONN = 0; // intent request code
 	public final static int RQ_MODIFY_CONN = 1;
@@ -54,14 +54,14 @@ public class ConnectionListActivity extends ListActivity {
 		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
 		if (all_conns.size() > 0) {
 
-			mAdapter = new ConnectionAdapter(all_conns,
+			adapter = new ConnectionAdapter(all_conns,
 					ConnectionListActivity.this);
 
 		} else {
 			createCRConnectionDialog(getString(R.string.request_create_conn));
 		}
 
-		setListAdapter(mAdapter);
+		setListAdapter(adapter);
 
 		DatabaseUtil.close();
 	}
@@ -219,6 +219,7 @@ public class ConnectionListActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		 // TODO - remove stopService, connection has to persist?
 		stopService(new Intent(ConnectionListActivity.this, XMPPService.class));
 		makeToast("onDestroy");
 
