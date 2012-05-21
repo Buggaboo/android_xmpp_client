@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
@@ -30,7 +31,7 @@ public class ConnectionListActivity extends ListActivity {
 	public final static int RQ_MODIFY_CONN = 1;
 	public final static int RQ_DELETE_CONN = 2;
 
-	public final static String KEY_CONNECTION_INDEX = "USTHUASNOEH#@$$**&*UAONETUH";
+	public final static String CONNECTION_ROW_INDEX = "USTHUASNOEH#@$$**&*UAONETUH";
 
 	// source:
 	// http://united-coders.com/phillip-steffensen/android-dealing-with-listactivities-customized-listadapters-and-custom-designed-0
@@ -89,7 +90,14 @@ public class ConnectionListActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		Intent intent = new Intent(ConnectionListActivity.this,
 				BuddyListActivity.class);
-		intent.putExtra(KEY_CONNECTION_INDEX, position);
+		makeToast("onListItemClick (position, id):" + position + "," + id);
+		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		TextView tv = (TextView) v;
+		long connection_index = daoSession
+				.getConnectionConfigurationEntityDao().queryBuilder()
+				.where(Properties.Label.eq(tv.getText())).list().get(0).getId();
+		DatabaseUtil.close();
+		intent.putExtra(CONNECTION_ROW_INDEX, connection_index);
 		startActivity(intent);
 	}
 
@@ -139,7 +147,7 @@ public class ConnectionListActivity extends ListActivity {
 		Long ccid = qb.where(Properties.Label.eq(message)).build().list()
 				.get(0).getId();
 		makeToast("intent extra " + ccid);
-		intent.putExtra(KEY_CONNECTION_INDEX, ccid);
+		intent.putExtra(CONNECTION_ROW_INDEX, ccid);
 		DatabaseUtil.close();
 		startActivityForResult(intent, RQ_MODIFY_CONN);
 	}
@@ -219,7 +227,7 @@ public class ConnectionListActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		 // TODO - remove stopService, connection has to persist?
+		// TODO - remove stopService, connection has to persist?
 		stopService(new Intent(ConnectionListActivity.this, XMPPService.class));
 		makeToast("onDestroy");
 

@@ -1,5 +1,6 @@
 package nl.sison.xmpp;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,6 +10,8 @@ import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -41,7 +44,7 @@ public class XMPPService extends Service {
 
 	public final static String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
 
-	private ConcurrentHashMap<Long, XMPPConnection> conn_hash_map;
+	private ConcurrentHashMap<Long, XMPPConnection> connection_hashmap;
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in
@@ -52,7 +55,7 @@ public class XMPPService extends Service {
 			return XMPPService.this;
 		}
 	}
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -66,7 +69,7 @@ public class XMPPService extends Service {
 
 	private void makeConnectionsFromDatabase() {
 		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
-		conn_hash_map = new ConcurrentHashMap<Long, XMPPConnection>();
+		connection_hashmap = new ConcurrentHashMap<Long, XMPPConnection>();
 		weakenNetworkOnMainThreadPolicy(); // TODO - remove and implement this
 											// as asynctask or runnable when
 											// debugging is
@@ -75,7 +78,7 @@ public class XMPPService extends Service {
 			final String label = cc.getLabel();
 			XMPPConnection connection = connectToServer(cc);
 			if (connection != null) {
-				conn_hash_map.put(cc.getId(), connection);
+				connection_hashmap.put(cc.getId(), connection);
 				connection.addConnectionListener(new ConnectionListener() {
 
 					public void reconnectionSuccessful() {
@@ -166,8 +169,8 @@ public class XMPPService extends Service {
 		super.onDestroy();
 		// Cancel the persistent notification.
 		mNM.cancel(NOTIFICATION);
-		for (long key : conn_hash_map.keySet()) {
-			XMPPConnection conn = conn_hash_map.get(key);
+		for (long key : connection_hashmap.keySet()) {
+			XMPPConnection conn = connection_hashmap.get(key);
 			if (conn != null && conn.isConnected()) {
 				conn.disconnect();
 			}
@@ -226,5 +229,24 @@ public class XMPPService extends Service {
 		Log.i(TAG, message);
 		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 		toast.show();
+	}
+
+	/**
+	 * 
+	 * This is called by BuddyListActivity to get the Roster and Buddy list
+	 * 
+	 * @param conn_id
+	 *            Row index which also maps to Sqlite database row, it serves to
+	 *            fetch the connection from the connection HashMap.
+	 * @return
+	 */
+	public Roster getRoster(long conn_id) {
+		XMPPConnection connection = connection_hashmap.get(conn_id);
+		if (connection == null)
+			return null;
+		if (connection.isConnected() && connection.isAuthenticated()) {
+			return connection.getRoster();
+		}
+		return null;
 	}
 }

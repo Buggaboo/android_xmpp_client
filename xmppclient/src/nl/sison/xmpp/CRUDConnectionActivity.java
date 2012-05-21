@@ -114,7 +114,7 @@ public class CRUDConnectionActivity extends Activity {
 
 	private void showValuesFromDatabase(View list_view) {
 		long ccid = getIntent().getExtras().getLong(
-				ConnectionListActivity.KEY_CONNECTION_INDEX);
+				ConnectionListActivity.CONNECTION_ROW_INDEX);
 
 		makeToast("intent extra " + ccid);
 
@@ -326,7 +326,7 @@ public class CRUDConnectionActivity extends Activity {
 	}
 
 	private boolean isExtantConnection() {
-		String key_connection_index = ConnectionListActivity.KEY_CONNECTION_INDEX;
+		String key_connection_index = ConnectionListActivity.CONNECTION_ROW_INDEX;
 		return getIntent().hasExtra(key_connection_index);
 	}
 
