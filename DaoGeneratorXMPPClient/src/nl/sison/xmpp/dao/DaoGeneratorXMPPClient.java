@@ -30,8 +30,8 @@ public class DaoGeneratorXMPPClient {
 		message.addStringProperty("receiver_jid").notNull();
 		message.addStringProperty("content").notNull();
 		message.addDateProperty("received_date");
+		message.addDateProperty("seen_date");
 		message.addBooleanProperty("delivered");
-		message.addBooleanProperty("processed");
 	}
 
 	/**
@@ -42,11 +42,12 @@ public class DaoGeneratorXMPPClient {
 		Entity buddy = schema.addEntity("BuddyEntity");
 		buddy.addIdProperty();
 		buddy.addStringProperty("partial_jid").notNull();
-		buddy.addStringProperty("resource").notNull();
+		buddy.addStringProperty("last_seen_resource").notNull();
 		buddy.addStringProperty("nickname").notNull();
-		buddy.addStringProperty("presence").notNull();
-		buddy.addStringProperty("custom_away_string").notNull();
-		buddy.addDateProperty("last_seen_date");
+		buddy.addStringProperty("presence_status"); // gone to lunch
+		buddy.addStringProperty("presence_mode");
+		buddy.addStringProperty("presence_type");
+		buddy.addDateProperty("last_chat_date");
 	}
 
 	public static void addConnectionConfiguration(Schema schema) {
@@ -58,11 +59,22 @@ public class DaoGeneratorXMPPClient {
 		settings.addStringProperty("domain"); // xmpp jid domain
 		settings.addStringProperty("username").notNull();
 		settings.addStringProperty("password").notNull();
-//		settings.addStringProperty("jid").notNull();
 		settings.addStringProperty("resource").notNull();
-		settings.addBooleanProperty("encrypted").notNull(); // encryption is broken
-		settings.addBooleanProperty("compressed").notNull(); 
-		settings.addBooleanProperty("saslauthenticated").notNull(); // sasl authentication is broken
+		settings.addBooleanProperty("encrypted").notNull(); // TLS/SSL encryption is
+															// broken
+		settings.addBooleanProperty("compressed").notNull();
+		settings.addBooleanProperty("saslauthenticated").notNull(); // sasl
+																	// authentication
+																	// is broken
 		settings.addIntProperty("connection_success").notNull();
+		settings.addStringProperty("provider_reflection_injection"); // TODO use
+																		// reflection
+																		// to
+																		// inject
+																		// behaviour
+																		// in
+																		// the
+																		// connection
+																		// process
 	}
 }

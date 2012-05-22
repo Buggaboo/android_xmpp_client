@@ -1,5 +1,7 @@
 package nl.sison.xmpp;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,13 +11,23 @@ import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.RosterPacket;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -26,7 +38,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class XMPPService extends Service {
-
 	/**
 	 * ISSUES
 	 */
@@ -46,21 +57,38 @@ public class XMPPService extends Service {
 	/**
 	 * TODO - qr code triggered offers (in a shop?) buy shit together etc.
 	 */
+	/**
+	 * TODO - usage tracker (gps?)
+	 */
 
 	private static final String TAG = "XMPPService";
-	private static final int XMPP_CONNECTED = 0;
-	private static final int PI_REQUEST_CODE = 0; // Pending Intent request code
-													// for filter?
+
 	// // TODO figure out
 	private NotificationManager notificationManager;
 
-	// Unique Identification Number for the Notification.
-	// We use it on Notification start, and to cancel it.
-	private int NOTIFICATION = R.string.local_service_started;
-
-	public final static String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
-
 	private ConcurrentHashMap<Long, XMPPConnection> connection_hashmap;
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			makeToast("Received:" + intent.getAction());
+		}
+	};
+
+	// // Unique Identification Number for the Notification.
+	// // We use it on Notification start, and to cancel it.
+	private int NOTIFICATION = 976833;
+	public final static String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
+	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "2<>p>>34UEOEOUOUO";
+	public static final String ACTION_BUDDY_NEW_MESSAGE = "89776868tthfHGTHM";
+	public static final String ACTION_CONNECTION_LOST = "fg&*thou<oo";
+	public static final String JID = "239eunheun34808";
+	public static final String MANY_JID = "239443342eunheun34808";
+	public static final String MESSAGE = "239e#$%unheun34808";
+	public static final String FROM_JID = "23heun348$%$#&08";
+	public static final int PENDING_INTENT_REQUEST_CODE = 1244324;
+
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in
@@ -88,7 +116,8 @@ public class XMPPService extends Service {
 		weakenNetworkOnMainThreadPolicy(); // TODO - remove and implement this
 											// as asynctask or runnable when
 											// debugging is
-											// done
+											// done, makeToast must run on main
+											// thread or is invisible
 		for (final ConnectionConfigurationEntity cc : all_conns) {
 			final String label = cc.getLabel();
 			XMPPConnection connection;
@@ -100,30 +129,135 @@ public class XMPPService extends Service {
 			}
 			if (connection != null) {
 				connection_hashmap.put(cc.getId(), connection);
-				connection.addConnectionListener(new ConnectionListener() {
-
-					public void reconnectionSuccessful() {
-						makeToast(label + ": Reconnection successful");
-					}
-
-					public void reconnectionFailed(Exception arg0) {
-						makeToast(label + ": Reconnection failed");
-					}
-
-					public void reconnectingIn(int countdown) {
-						makeToast(label + ": Reconnecting in " + countdown);
-					}
-
-					public void connectionClosedOnError(Exception arg0) {
-						makeToast(label + ": Connection closed on error");
-					}
-
-					public void connectionClosed() {
-						makeToast(label + ": Connection closed");
-					}
-				});
+				setListeners(connection, cc.getId(), label);
 			}
 		}
+	}
+
+	private void setListeners(XMPPConnection connection, final long cc_id,
+			final String label) {
+		setConnectionListeners(connection, cc_id, label);
+		setRosterListeners(connection, label);
+		setIncomingMessageListeners(connection, label);
+	}
+
+	/**
+	 * TODO - figure out what to do with this, general listener
+	 * 
+	 * @param label
+	 * @param connection
+	 */
+	private void setIncomingMessageListeners(XMPPConnection connection,
+			final String label) {
+		connection.addPacketListener(new PacketListener() {
+			public void processPacket(Packet p) {
+				Message m = (Message) p;
+				Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
+				intent.putExtra(MESSAGE, m.getBody());
+				intent.putExtra(FROM_JID, p.getFrom());
+				m.getFrom();
+			}
+		}, new PacketFilter() {
+			public boolean accept(Packet p) {
+				return p instanceof Message;
+			}
+		});
+	}
+
+	private void broadcastPresenceUpdate(Presence p) {
+		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
+		intent.putExtra(JID, p.getFrom()); // TODO justify
+											// StringUtils.parseBareAddress(p.getFrom()));
+		sendBroadcast(intent);
+	}
+
+	private void broadcastRosterUpdate(Collection<String> usernames) {
+		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
+		ArrayList<String> arrayList = new ArrayList<String>();
+		arrayList.addAll(usernames);
+		intent.putExtra(MANY_JID, arrayList);
+		sendBroadcast(intent);
+	}
+
+	/**
+	 * TODO - figure out what to do with this
+	 * 
+	 * @param label
+	 * @param connection
+	 */
+	private void setRosterListeners(XMPPConnection connection,
+			final String label) {
+		Roster roster = connection.getRoster();
+		roster.addRosterListener(new RosterListener() {
+
+			public void presenceChanged(Presence p) {
+				makeToast(label + ": presence changed:" + p.getFrom()); // TODO
+																		// -
+																		// determine
+																		// if
+																		// getFrom
+																		// returns
+																		// partial
+																		// jid
+				broadcastPresenceUpdate(p);
+			}
+
+			public void entriesUpdated(Collection<String> usernames) {
+				for (String username : usernames)
+					// TODO remove
+					makeToast(label + ": buddy list item updated: " + username);
+				broadcastRosterUpdate(usernames);
+			}
+
+			public void entriesDeleted(Collection<String> usernames) {
+				for (String username : usernames)
+					// TODO remove
+					makeToast(label + ": buddy list item deleted: " + username);
+				broadcastRosterUpdate(usernames);
+			}
+
+			public void entriesAdded(Collection<String> usernames) {
+				for (String username : usernames)
+					// TODO remove
+					makeToast(label + ": buddy list items added: " + username);
+				broadcastRosterUpdate(usernames);
+			}
+		});
+	}
+
+	private void broadcastConnectionUpdate(final long cc_id) {
+		Intent intent = new Intent(ACTION_CONNECTION_LOST);
+		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
+		sendBroadcast(intent);
+	}
+
+	private void setConnectionListeners(XMPPConnection connection,
+			final long cc_id, final String label) {
+		connection.addConnectionListener(new ConnectionListener() {
+
+			public void reconnectionSuccessful() {
+				makeToast(label + ": Reconnection successful");
+				broadcastConnectionUpdate(cc_id);
+			}
+
+			public void reconnectionFailed(Exception ex) {
+				makeToast(label + ": Reconnection failed");
+			}
+
+			public void reconnectingIn(int countdown) {
+				makeToast(label + ": Reconnecting in " + countdown);
+			}
+
+			public void connectionClosedOnError(Exception ex) {
+				makeToast(label + ": Connection closed on error");
+				broadcastConnectionUpdate(cc_id);
+			}
+
+			public void connectionClosed() {
+				makeToast(label + ": Connection closed");
+				broadcastConnectionUpdate(cc_id);
+			}
+		});
 	}
 
 	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc)
@@ -145,6 +279,7 @@ public class XMPPService extends Service {
 					cc.getResource());
 			makeToast(cc.getLabel() + "is authenticated:"
 					+ connection.isAuthenticated());
+			cc.setConnection_success(cc.getConnection_success() + 1);
 		} catch (XMPPException e) {
 			connection = null;
 			e.printStackTrace();
@@ -153,7 +288,8 @@ public class XMPPService extends Service {
 		return connection;
 	}
 
-	private void weakenNetworkOnMainThreadPolicy() { // TODO recode with AsyncTask
+	private void weakenNetworkOnMainThreadPolicy() { // TODO recode with
+														// AsyncTask
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
@@ -205,14 +341,14 @@ public class XMPPService extends Service {
 	}
 
 	/**
-	 * Show a notification while this service is running.
-	 * TODO - use this to notify if anyone is chatting with you, last message stuff
+	 * Show a notification while this service is running. TODO - use this to
+	 * notify if anyone is chatting with you, last message stuff
 	 */
 	private void createNotificationAndNotify(CharSequence text) {
 		Context context = (Context) this;
 		Intent notificationIntent = new Intent(context, XMPPService.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(context,
-				PI_REQUEST_CODE, notificationIntent,
+				PENDING_INTENT_REQUEST_CODE, notificationIntent,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 
 		NotificationManager nm = (NotificationManager) context
@@ -230,9 +366,7 @@ public class XMPPService extends Service {
 				.setWhen(System.currentTimeMillis()).setAutoCancel(true)
 				.setContentTitle(res.getString(R.string.my_notification_title))
 				.setContentText(text);
-		Notification n = builder.getNotification();
-
-		nm.notify(XMPP_CONNECTED, n);
+		nm.notify(NOTIFICATION, builder.getNotification());
 	}
 
 	private void makeToast(String message) {
