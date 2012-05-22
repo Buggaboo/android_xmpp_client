@@ -13,9 +13,9 @@ public class MessageEntity {
     private String receiver_jid;
     /** Not-null value. */
     private String content;
+    /** Not-null value. */
     private java.util.Date received_date;
     private Boolean delivered;
-    private Boolean processed;
 
     public MessageEntity() {
     }
@@ -24,14 +24,13 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered, Boolean processed) {
+    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered) {
         this.id = id;
         this.sender_jid = sender_jid;
         this.receiver_jid = receiver_jid;
         this.content = content;
         this.received_date = received_date;
         this.delivered = delivered;
-        this.processed = processed;
     }
 
     public Long getId() {
@@ -72,10 +71,12 @@ public class MessageEntity {
         this.content = content;
     }
 
+    /** Not-null value. */
     public java.util.Date getReceived_date() {
         return received_date;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setReceived_date(java.util.Date received_date) {
         this.received_date = received_date;
     }
@@ -86,14 +87,6 @@ public class MessageEntity {
 
     public void setDelivered(Boolean delivered) {
         this.delivered = delivered;
-    }
-
-    public Boolean getProcessed() {
-        return processed;
-    }
-
-    public void setProcessed(Boolean processed) {
-        this.processed = processed;
     }
 
 }

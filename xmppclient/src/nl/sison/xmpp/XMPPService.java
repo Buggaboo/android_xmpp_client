@@ -2,16 +2,18 @@ package nl.sison.xmpp;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
+import nl.sison.xmpp.dao.MessageEntity;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.PacketInterceptor;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterListener;
@@ -21,17 +23,12 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smack.util.StringUtils;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
@@ -46,6 +43,9 @@ public class XMPPService extends Service {
 	 * Presence.Type.subscribe -> popup dialog (yes, later, never) here:
 	 * http://www.igniterealtime.org/builds/smack/docs/
 	 * latest/documentation/roster.html
+	 */
+	/**
+	 * TODO - intercept packet to enable connection to providers
 	 */
 
 	/**
@@ -63,23 +63,20 @@ public class XMPPService extends Service {
 
 	private static final String TAG = "XMPPService";
 
-	// // TODO figure out
-	private NotificationManager notificationManager;
-
 	private ConcurrentHashMap<Long, XMPPConnection> connection_hashmap;
 
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
-
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			makeToast("Received:" + intent.getAction());
+			makeToast("Intent received:" + intent.getAction());
+			// TODO - status = away unavailable etc.
+			// TODO - start chat / send message
 		}
 	};
 
 	// // Unique Identification Number for the Notification.
 	// // We use it on Notification start, and to cancel it.
-	private int NOTIFICATION = 976833;
-	public final static String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
+	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
 	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "2<>p>>34UEOEOUOUO";
 	public static final String ACTION_BUDDY_NEW_MESSAGE = "89776868tthfHGTHM";
 	public static final String ACTION_CONNECTION_LOST = "fg&*thou<oo";
@@ -89,25 +86,10 @@ public class XMPPService extends Service {
 	public static final String FROM_JID = "23heun348$%$#&08";
 	public static final int PENDING_INTENT_REQUEST_CODE = 1244324;
 
-
-	/**
-	 * Class for clients to access. Because we know this service always runs in
-	 * the same process as its clients, we don't need to deal with IPC.
-	 */
-	// public class LocalBinder extends Binder {
-	// XMPPService getService() {
-	// makeToast("binding");
-	// return XMPPService.this;
-	// }
-	// }
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		makeConnectionsFromDatabase();
-		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		// Display a notification about us starting. We put an icon in the
-		// status bar.
 	}
 
 	private void makeConnectionsFromDatabase() {
@@ -138,7 +120,21 @@ public class XMPPService extends Service {
 			final String label) {
 		setConnectionListeners(connection, cc_id, label);
 		setRosterListeners(connection, label);
-		setIncomingMessageListeners(connection, label);
+		setIncomingMessageListener(connection, label);
+		setOutgoingMessageListener(connection, label);
+	}
+
+	private void setOutgoingMessageListener(XMPPConnection connection,
+			final String label) {
+		connection.addPacketInterceptor(new PacketInterceptor() {
+			public void interceptPacket(Packet p) {
+				storeMessage((Message) p);
+			}
+		}, new PacketFilter() {
+			public boolean accept(Packet p) {
+				return p instanceof Message;
+			}
+		});
 	}
 
 	/**
@@ -147,21 +143,37 @@ public class XMPPService extends Service {
 	 * @param label
 	 * @param connection
 	 */
-	private void setIncomingMessageListeners(XMPPConnection connection,
+	private void setIncomingMessageListener(XMPPConnection connection,
 			final String label) {
 		connection.addPacketListener(new PacketListener() {
 			public void processPacket(Packet p) {
 				Message m = (Message) p;
-				Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
-				intent.putExtra(MESSAGE, m.getBody());
-				intent.putExtra(FROM_JID, p.getFrom());
-				m.getFrom();
+				broadcastMessage(m);
+				storeMessage(m);
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
 				return p instanceof Message;
 			}
 		});
+	}
+
+	private void broadcastMessage(Message m) {
+		Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
+		intent.putExtra(FROM_JID, m.getFrom());
+		intent.putExtra(MESSAGE, m.getBody());
+		sendBroadcast(intent);
+	}
+
+	private void storeMessage(Message m) {
+		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		MessageEntity message = new MessageEntity();
+		message.setContent(m.getBody());
+		message.setReceived_date(new Date());
+		message.setSender_jid(StringUtils.parseBareAddress(m.getFrom()));
+		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
+		daoSession.getMessageEntityDao().insert(message);
+		DatabaseUtil.close();
 	}
 
 	private void broadcastPresenceUpdate(Presence p) {
@@ -179,12 +191,6 @@ public class XMPPService extends Service {
 		sendBroadcast(intent);
 	}
 
-	/**
-	 * TODO - figure out what to do with this
-	 * 
-	 * @param label
-	 * @param connection
-	 */
 	private void setRosterListeners(XMPPConnection connection,
 			final String label) {
 		Roster roster = connection.getRoster();
@@ -289,7 +295,8 @@ public class XMPPService extends Service {
 	}
 
 	private void weakenNetworkOnMainThreadPolicy() { // TODO recode with
-														// AsyncTask
+														// AsyncTask, maybe even
+														// all listeners
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
@@ -330,7 +337,6 @@ public class XMPPService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		// Cancel the persistent notification.
-		notificationManager.cancel(NOTIFICATION);
 		for (long key : connection_hashmap.keySet()) {
 			XMPPConnection conn = connection_hashmap.get(key);
 			if (conn != null && conn.isConnected()) {
@@ -344,30 +350,10 @@ public class XMPPService extends Service {
 	 * Show a notification while this service is running. TODO - use this to
 	 * notify if anyone is chatting with you, last message stuff
 	 */
-	private void createNotificationAndNotify(CharSequence text) {
-		Context context = (Context) this;
-		Intent notificationIntent = new Intent(context, XMPPService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(context,
-				PENDING_INTENT_REQUEST_CODE, notificationIntent,
-				PendingIntent.FLAG_CANCEL_CURRENT);
-
-		NotificationManager nm = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		Resources res = context.getResources();
-		Notification.Builder builder = new Notification.Builder(context);
-
-		builder.setContentIntent(contentIntent)
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setLargeIcon(
-						BitmapFactory.decodeResource(res,
-								R.drawable.ic_launcher))
-				.setTicker(res.getString(R.string.my_ticker))
-				.setWhen(System.currentTimeMillis()).setAutoCancel(true)
-				.setContentTitle(res.getString(R.string.my_notification_title))
-				.setContentText(text);
-		nm.notify(NOTIFICATION, builder.getNotification());
-	}
+	/**
+	 * TODO refactor notification to some other service with a broadcast
+	 * receiver
+	 */
 
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)

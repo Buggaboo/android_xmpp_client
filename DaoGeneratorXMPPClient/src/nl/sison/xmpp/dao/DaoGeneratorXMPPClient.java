@@ -14,7 +14,7 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(10, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(11, "nl.sison.xmpp.dao");
 
 		addMessage(schema);
 		addBuddy(schema);
@@ -26,11 +26,10 @@ public class DaoGeneratorXMPPClient {
 	private static void addMessage(Schema schema) {
 		Entity message = schema.addEntity("MessageEntity");
 		message.addIdProperty();
-		message.addStringProperty("sender_jid").notNull();
-		message.addStringProperty("receiver_jid").notNull();
-		message.addStringProperty("content").notNull();
-		message.addDateProperty("received_date");
-		message.addDateProperty("seen_date");
+		message.addStringProperty("sender_jid").notNull(); // !
+		message.addStringProperty("receiver_jid").notNull(); // !
+		message.addStringProperty("content").notNull(); // !
+		message.addDateProperty("received_date").notNull(); // !
 		message.addBooleanProperty("delivered");
 	}
 

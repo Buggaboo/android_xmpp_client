@@ -31,6 +31,7 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
         public final static Property Compressed = new Property(9, boolean.class, "compressed", false, "COMPRESSED");
         public final static Property Saslauthenticated = new Property(10, boolean.class, "saslauthenticated", false, "SASLAUTHENTICATED");
         public final static Property Connection_success = new Property(11, int.class, "connection_success", false, "CONNECTION_SUCCESS");
+        public final static Property Provider_reflection_injection = new Property(12, String.class, "provider_reflection_injection", false, "PROVIDER_REFLECTION_INJECTION");
     };
 
 
@@ -56,7 +57,8 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
                 "'ENCRYPTED' INTEGER NOT NULL ," + // 8: encrypted
                 "'COMPRESSED' INTEGER NOT NULL ," + // 9: compressed
                 "'SASLAUTHENTICATED' INTEGER NOT NULL ," + // 10: saslauthenticated
-                "'CONNECTION_SUCCESS' INTEGER NOT NULL );"; // 11: connection_success
+                "'CONNECTION_SUCCESS' INTEGER NOT NULL ," + // 11: connection_success
+                "'PROVIDER_REFLECTION_INJECTION' TEXT);"; // 12: provider_reflection_injection
         db.execSQL(sql);
     }
 
@@ -90,6 +92,11 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
         stmt.bindLong(10, entity.getCompressed() ? 1l: 0l);
         stmt.bindLong(11, entity.getSaslauthenticated() ? 1l: 0l);
         stmt.bindLong(12, entity.getConnection_success());
+ 
+        String provider_reflection_injection = entity.getProvider_reflection_injection();
+        if (provider_reflection_injection != null) {
+            stmt.bindString(13, provider_reflection_injection);
+        }
     }
 
     /** @inheritdoc */
@@ -113,7 +120,8 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
             cursor.getShort(offset + 8) != 0, // encrypted
             cursor.getShort(offset + 9) != 0, // compressed
             cursor.getShort(offset + 10) != 0, // saslauthenticated
-            cursor.getInt(offset + 11) // connection_success
+            cursor.getInt(offset + 11), // connection_success
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // provider_reflection_injection
         );
         return entity;
     }
@@ -133,6 +141,7 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
         entity.setCompressed(cursor.getShort(offset + 9) != 0);
         entity.setSaslauthenticated(cursor.getShort(offset + 10) != 0);
         entity.setConnection_success(cursor.getInt(offset + 11));
+        entity.setProvider_reflection_injection(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
      }
     
     @Override

@@ -59,26 +59,27 @@ public class CRUDConnectionActivity extends Activity {
 	private void setHints(View parent, String hint_prefix) {
 		if (!hint_prefix.endsWith("_"))
 			hint_prefix += "_"; // TODO move this one level higher
-		
+
 		int id_hint_label = getResourceIdentifierByPrefix(hint_prefix,
 				"hint_label");
 		setTextViewHint(parent, R.id.conn_label, id_hint_label).setText(
 				id_hint_label);
-		
+
 		int id_hint_server = getResourceIdentifierByPrefix(hint_prefix,
 				"hint_server");
 		setTextViewHint(parent, R.id.conn_server, id_hint_server).setText(
 				id_hint_server);
-		
-		int id_hint_domain = getResourceIdentifierByPrefix(hint_prefix, "hint_domain"); 
-		setTextViewHint(parent, R.id.conn_domain,
-				id_hint_domain).setText(id_hint_domain);
-		
-		int id_hint_port = getResourceIdentifierByPrefix(hint_prefix, "hint_port");
-		setTextViewHint(parent, R.id.conn_port,
-				id_hint_port).setText(id_hint_port);
-		
-		
+
+		int id_hint_domain = getResourceIdentifierByPrefix(hint_prefix,
+				"hint_domain");
+		setTextViewHint(parent, R.id.conn_domain, id_hint_domain).setText(
+				id_hint_domain);
+
+		int id_hint_port = getResourceIdentifierByPrefix(hint_prefix,
+				"hint_port");
+		setTextViewHint(parent, R.id.conn_port, id_hint_port).setText(
+				id_hint_port);
+
 		setTextViewHint(parent, R.id.conn_username,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_username"));
 		setTextViewHint(parent, R.id.conn_resource,
@@ -209,14 +210,14 @@ public class CRUDConnectionActivity extends Activity {
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
+							 // the following two equal a restart
+							stopService(restartConnectionOnService);
 							startService(restartConnectionOnService);
 							finish();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
 						}
-
 					}
-
 				});
 	}
 

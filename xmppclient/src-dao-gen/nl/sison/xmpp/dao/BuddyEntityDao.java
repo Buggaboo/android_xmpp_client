@@ -21,11 +21,12 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Partial_jid = new Property(1, String.class, "partial_jid", false, "PARTIAL_JID");
-        public final static Property Resource = new Property(2, String.class, "resource", false, "RESOURCE");
+        public final static Property Last_seen_resource = new Property(2, String.class, "last_seen_resource", false, "LAST_SEEN_RESOURCE");
         public final static Property Nickname = new Property(3, String.class, "nickname", false, "NICKNAME");
-        public final static Property Presence = new Property(4, String.class, "presence", false, "PRESENCE");
-        public final static Property Custom_away_string = new Property(5, String.class, "custom_away_string", false, "CUSTOM_AWAY_STRING");
-        public final static Property Last_seen_date = new Property(6, java.util.Date.class, "last_seen_date", false, "LAST_SEEN_DATE");
+        public final static Property Presence_status = new Property(4, String.class, "presence_status", false, "PRESENCE_STATUS");
+        public final static Property Presence_mode = new Property(5, String.class, "presence_mode", false, "PRESENCE_MODE");
+        public final static Property Presence_type = new Property(6, String.class, "presence_type", false, "PRESENCE_TYPE");
+        public final static Property Last_chat_date = new Property(7, java.util.Date.class, "last_chat_date", false, "LAST_CHAT_DATE");
     };
 
 
@@ -42,11 +43,12 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'BUDDY_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'PARTIAL_JID' TEXT NOT NULL ," + // 1: partial_jid
-                "'RESOURCE' TEXT NOT NULL ," + // 2: resource
+                "'LAST_SEEN_RESOURCE' TEXT NOT NULL ," + // 2: last_seen_resource
                 "'NICKNAME' TEXT NOT NULL ," + // 3: nickname
-                "'PRESENCE' TEXT NOT NULL ," + // 4: presence
-                "'CUSTOM_AWAY_STRING' TEXT NOT NULL ," + // 5: custom_away_string
-                "'LAST_SEEN_DATE' INTEGER);"; // 6: last_seen_date
+                "'PRESENCE_STATUS' TEXT," + // 4: presence_status
+                "'PRESENCE_MODE' TEXT," + // 5: presence_mode
+                "'PRESENCE_TYPE' TEXT," + // 6: presence_type
+                "'LAST_CHAT_DATE' INTEGER);"; // 7: last_chat_date
         db.execSQL(sql);
     }
 
@@ -66,14 +68,27 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getPartial_jid());
-        stmt.bindString(3, entity.getResource());
+        stmt.bindString(3, entity.getLast_seen_resource());
         stmt.bindString(4, entity.getNickname());
-        stmt.bindString(5, entity.getPresence());
-        stmt.bindString(6, entity.getCustom_away_string());
  
-        java.util.Date last_seen_date = entity.getLast_seen_date();
-        if (last_seen_date != null) {
-            stmt.bindLong(7, last_seen_date.getTime());
+        String presence_status = entity.getPresence_status();
+        if (presence_status != null) {
+            stmt.bindString(5, presence_status);
+        }
+ 
+        String presence_mode = entity.getPresence_mode();
+        if (presence_mode != null) {
+            stmt.bindString(6, presence_mode);
+        }
+ 
+        String presence_type = entity.getPresence_type();
+        if (presence_type != null) {
+            stmt.bindString(7, presence_type);
+        }
+ 
+        java.util.Date last_chat_date = entity.getLast_chat_date();
+        if (last_chat_date != null) {
+            stmt.bindLong(8, last_chat_date.getTime());
         }
     }
 
@@ -89,11 +104,12 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         BuddyEntity entity = new BuddyEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // partial_jid
-            cursor.getString(offset + 2), // resource
+            cursor.getString(offset + 2), // last_seen_resource
             cursor.getString(offset + 3), // nickname
-            cursor.getString(offset + 4), // presence
-            cursor.getString(offset + 5), // custom_away_string
-            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)) // last_seen_date
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // presence_status
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // presence_mode
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // presence_type
+            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)) // last_chat_date
         );
         return entity;
     }
@@ -103,11 +119,12 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
     public void readEntity(Cursor cursor, BuddyEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setPartial_jid(cursor.getString(offset + 1));
-        entity.setResource(cursor.getString(offset + 2));
+        entity.setLast_seen_resource(cursor.getString(offset + 2));
         entity.setNickname(cursor.getString(offset + 3));
-        entity.setPresence(cursor.getString(offset + 4));
-        entity.setCustom_away_string(cursor.getString(offset + 5));
-        entity.setLast_seen_date(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
+        entity.setPresence_status(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setPresence_mode(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setPresence_type(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLast_chat_date(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
      }
     
     @Override
