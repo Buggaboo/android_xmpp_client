@@ -5,10 +5,6 @@
     <string name="app_name">XMPPClient</string>
     <string name="local_service_started">The xmpp service to manage connections has started</string>
     <string name="local_service_stopped">The xmpp service to manage connections has stopped</string>
-    <string name="my_ticker">my ticker</string>
-    <string name="my_notification_title">my notification title</string>
-    <string name="my_notification_text">my notification text</string>
-    <string name="dummy">dummy</string>
     <string name="modify_connection">Modify</string>
     <string name="remove_connection">Remove</string>
     <string name="create_connection">Create</string>
