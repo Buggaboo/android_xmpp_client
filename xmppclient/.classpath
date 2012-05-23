@@ -5,10 +5,10 @@
 	<classpathentry kind="src" path="src-dao-gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="/android_xmpp_client/libs/greenDAO/greenDAO.jar"/>
-	<classpathentry kind="lib" path="/android_xmpp_client/libs/smack.jar"/>
-	<classpathentry kind="lib" path="/android_xmpp_client/libs/smackx-debug.jar"/>
-	<classpathentry kind="lib" path="/android_xmpp_client/libs/smackx-jingle.jar"/>
-	<classpathentry kind="lib" path="/android_xmpp_client/libs/smackx.jar"/>
+	<classpathentry kind="lib" path="libs/greenDAO.jar"/>
+	<classpathentry kind="lib" path="libs/smack.jar"/>
+	<classpathentry kind="lib" path="libs/smackx-debug.jar"/>
+	<classpathentry kind="lib" path="libs/smackx-jingle.jar"/>
+	<classpathentry kind="lib" path="libs/smackx.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
