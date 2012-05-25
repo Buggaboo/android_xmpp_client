@@ -27,6 +27,9 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         public final static Property Presence_mode = new Property(5, String.class, "presence_mode", false, "PRESENCE_MODE");
         public final static Property Presence_type = new Property(6, String.class, "presence_type", false, "PRESENCE_TYPE");
         public final static Property Last_chat_date = new Property(7, java.util.Date.class, "last_chat_date", false, "LAST_CHAT_DATE");
+        public final static Property Last_seen_online_date = new Property(8, java.util.Date.class, "last_seen_online_date", false, "LAST_SEEN_ONLINE_DATE");
+        public final static Property IsAvailable = new Property(9, Boolean.class, "isAvailable", false, "IS_AVAILABLE");
+        public final static Property IsAway = new Property(10, Boolean.class, "isAway", false, "IS_AWAY");
     };
 
 
@@ -43,12 +46,15 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'BUDDY_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'PARTIAL_JID' TEXT NOT NULL ," + // 1: partial_jid
-                "'LAST_SEEN_RESOURCE' TEXT NOT NULL ," + // 2: last_seen_resource
-                "'NICKNAME' TEXT NOT NULL ," + // 3: nickname
+                "'LAST_SEEN_RESOURCE' TEXT," + // 2: last_seen_resource
+                "'NICKNAME' TEXT," + // 3: nickname
                 "'PRESENCE_STATUS' TEXT," + // 4: presence_status
                 "'PRESENCE_MODE' TEXT," + // 5: presence_mode
                 "'PRESENCE_TYPE' TEXT," + // 6: presence_type
-                "'LAST_CHAT_DATE' INTEGER);"; // 7: last_chat_date
+                "'LAST_CHAT_DATE' INTEGER," + // 7: last_chat_date
+                "'LAST_SEEN_ONLINE_DATE' INTEGER," + // 8: last_seen_online_date
+                "'IS_AVAILABLE' INTEGER," + // 9: isAvailable
+                "'IS_AWAY' INTEGER);"; // 10: isAway
         db.execSQL(sql);
     }
 
@@ -68,8 +74,16 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getPartial_jid());
-        stmt.bindString(3, entity.getLast_seen_resource());
-        stmt.bindString(4, entity.getNickname());
+ 
+        String last_seen_resource = entity.getLast_seen_resource();
+        if (last_seen_resource != null) {
+            stmt.bindString(3, last_seen_resource);
+        }
+ 
+        String nickname = entity.getNickname();
+        if (nickname != null) {
+            stmt.bindString(4, nickname);
+        }
  
         String presence_status = entity.getPresence_status();
         if (presence_status != null) {
@@ -90,6 +104,21 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         if (last_chat_date != null) {
             stmt.bindLong(8, last_chat_date.getTime());
         }
+ 
+        java.util.Date last_seen_online_date = entity.getLast_seen_online_date();
+        if (last_seen_online_date != null) {
+            stmt.bindLong(9, last_seen_online_date.getTime());
+        }
+ 
+        Boolean isAvailable = entity.getIsAvailable();
+        if (isAvailable != null) {
+            stmt.bindLong(10, isAvailable ? 1l: 0l);
+        }
+ 
+        Boolean isAway = entity.getIsAway();
+        if (isAway != null) {
+            stmt.bindLong(11, isAway ? 1l: 0l);
+        }
     }
 
     /** @inheritdoc */
@@ -104,12 +133,15 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         BuddyEntity entity = new BuddyEntity( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // partial_jid
-            cursor.getString(offset + 2), // last_seen_resource
-            cursor.getString(offset + 3), // nickname
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // last_seen_resource
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // nickname
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // presence_status
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // presence_mode
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // presence_type
-            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)) // last_chat_date
+            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // last_chat_date
+            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // last_seen_online_date
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // isAvailable
+            cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0 // isAway
         );
         return entity;
     }
@@ -119,12 +151,15 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
     public void readEntity(Cursor cursor, BuddyEntity entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setPartial_jid(cursor.getString(offset + 1));
-        entity.setLast_seen_resource(cursor.getString(offset + 2));
-        entity.setNickname(cursor.getString(offset + 3));
+        entity.setLast_seen_resource(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setNickname(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setPresence_status(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setPresence_mode(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setPresence_type(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
         entity.setLast_chat_date(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
+        entity.setLast_seen_online_date(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
+        entity.setIsAvailable(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setIsAway(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
      }
     
     @Override

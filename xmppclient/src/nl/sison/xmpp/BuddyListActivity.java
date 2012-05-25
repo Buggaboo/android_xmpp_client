@@ -1,10 +1,10 @@
 package nl.sison.xmpp;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-
+import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.DaoSession;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,8 +14,6 @@ import android.widget.Toast;
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
 	private ArrayAdapter<?> adapter;
-	private ArrayList<RosterEntry> buddies;
-	private Roster roster;
 	private long conn_id;
 
 	@Override
@@ -39,12 +37,21 @@ public class BuddyListActivity extends ListActivity {
 	}
 
 	private void refreshList() {
-		// register context menu for the dialog
+		// TODO finish context menu for the dialog
 		registerForContextMenu(getListView());
-		if (buddies != null && !buddies.isEmpty() && roster != null) {
-			adapter = new BuddyAdapter(this, buddies, roster);
-			makeToast("BuddyAdapter is refreshed");
+		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
+
+		makeToast("buddies.size(): " + buddies.size());
+		
+		if (buddies == null || buddies.size() == 0) // TODO determine if necessary
+		{
+			DatabaseUtil.close();
+			return;
 		}
+		
+		adapter = new BuddyAdapter(this, new ArrayList<BuddyEntity>(buddies));
+		DatabaseUtil.close();
 		setListAdapter(adapter);
 	}
 

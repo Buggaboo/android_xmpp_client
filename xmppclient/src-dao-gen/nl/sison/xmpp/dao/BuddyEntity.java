@@ -9,14 +9,15 @@ public class BuddyEntity {
     private Long id;
     /** Not-null value. */
     private String partial_jid;
-    /** Not-null value. */
     private String last_seen_resource;
-    /** Not-null value. */
     private String nickname;
     private String presence_status;
     private String presence_mode;
     private String presence_type;
     private java.util.Date last_chat_date;
+    private java.util.Date last_seen_online_date;
+    private Boolean isAvailable;
+    private Boolean isAway;
 
     public BuddyEntity() {
     }
@@ -25,7 +26,7 @@ public class BuddyEntity {
         this.id = id;
     }
 
-    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date) {
+    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway) {
         this.id = id;
         this.partial_jid = partial_jid;
         this.last_seen_resource = last_seen_resource;
@@ -34,6 +35,9 @@ public class BuddyEntity {
         this.presence_mode = presence_mode;
         this.presence_type = presence_type;
         this.last_chat_date = last_chat_date;
+        this.last_seen_online_date = last_seen_online_date;
+        this.isAvailable = isAvailable;
+        this.isAway = isAway;
     }
 
     public Long getId() {
@@ -54,22 +58,18 @@ public class BuddyEntity {
         this.partial_jid = partial_jid;
     }
 
-    /** Not-null value. */
     public String getLast_seen_resource() {
         return last_seen_resource;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setLast_seen_resource(String last_seen_resource) {
         this.last_seen_resource = last_seen_resource;
     }
 
-    /** Not-null value. */
     public String getNickname() {
         return nickname;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -104,6 +104,30 @@ public class BuddyEntity {
 
     public void setLast_chat_date(java.util.Date last_chat_date) {
         this.last_chat_date = last_chat_date;
+    }
+
+    public java.util.Date getLast_seen_online_date() {
+        return last_seen_online_date;
+    }
+
+    public void setLast_seen_online_date(java.util.Date last_seen_online_date) {
+        this.last_seen_online_date = last_seen_online_date;
+    }
+
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public Boolean getIsAway() {
+        return isAway;
+    }
+
+    public void setIsAway(Boolean isAway) {
+        this.isAway = isAway;
     }
 
 }
