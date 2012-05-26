@@ -18,7 +18,6 @@ import android.widget.Toast;
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
 	private ArrayAdapter<?> adapter;
-	private long conn_id;
 	private BroadcastReceiver receiver;
 
 	public class BuddyListReceiver extends BroadcastReceiver {
@@ -33,16 +32,14 @@ public class BuddyListActivity extends ListActivity {
 			}
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
-				// if (intent.hasExtra(XMPPService.JID)) {
-				//
-				// }
-				// if(intent.hasExtra(XMPPService.KEY_BUDDY_INDEX))
-				// {
-				//
-				// }
+				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
+					makeToast("buddy row index: "
+							+ intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
+									0));
+				}
 				makeToast("Refreshing adapter");
-				refreshList();
-
+//				refreshList();
+				adapter.notifyDataSetChanged();
 			}
 			if (intent.getAction().equals(XMPPService.ACTION_CONNECTION_LOST)) {
 
@@ -54,7 +51,7 @@ public class BuddyListActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		conn_id = getIntent().getExtras().getLong(
+		getIntent().getExtras().getLong(
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
@@ -79,6 +76,10 @@ public class BuddyListActivity extends ListActivity {
 		makeToast("onResume");
 	}
 
+	/**
+	 * TODO reimplement using notifyDataSetChanged
+	 * http://stackoverflow.com/questions/3669325/notifydatasetchanged-example/5092426#5092426
+	 */
 	private void refreshList() {
 		// TODO finish context menu for the dialog
 		adapter = null;

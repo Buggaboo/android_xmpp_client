@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 
@@ -180,13 +179,12 @@ public class XMPPService extends Service {
 	private void setListeners(XMPPConnection connection, final long cc_id,
 			final String label) {
 		setConnectionListeners(connection, cc_id, label);
-		setRosterListeners(connection, label);
-		setIncomingMessageListener(connection, label);
-		setOutgoingMessageListener(connection, label);
+		setRosterListeners(connection);
+		setIncomingMessageListener(connection);
+		setOutgoingMessageListener(connection);
 	}
 
-	private void setOutgoingMessageListener(XMPPConnection connection,
-			final String label) {
+	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
 				storeMessage((Message) p);
@@ -204,8 +202,7 @@ public class XMPPService extends Service {
 	 * @param label
 	 * @param connection
 	 */
-	private void setIncomingMessageListener(XMPPConnection connection,
-			final String label) {
+	private void setIncomingMessageListener(XMPPConnection connection) {
 		connection.addPacketListener(new PacketListener() {
 			public void processPacket(Packet p) {
 				Message m = (Message) p;
@@ -264,7 +261,7 @@ public class XMPPService extends Service {
 		if (p.isAvailable()) {
 			b.setLast_seen_online_date(new Date());
 		}
-		
+
 		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
 		sendBroadcast(intent);
 	}
@@ -277,35 +274,25 @@ public class XMPPService extends Service {
 		sendBroadcast(intent);
 	}
 
-	private void setRosterListeners(XMPPConnection connection,
-			final String label) {
+	private void setRosterListeners(XMPPConnection connection) {
 		Roster roster = connection.getRoster();
 		roster.addRosterListener(new RosterListener() {
 
 			public void presenceChanged(Presence p) {
-//				makeToast(label + ": presence changed xxx:" + p.getFrom());
+				// NOTE: makeToast broke the listener and prevented the
+				// broadcast
 				broadcastPresenceUpdate(p);
-//				makeToast(label + ": presence changed yyy:" + p.getFrom());
 			}
 
 			public void entriesUpdated(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list item updated: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 
 			public void entriesDeleted(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list item deleted: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 
 			public void entriesAdded(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list items added: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 		});
