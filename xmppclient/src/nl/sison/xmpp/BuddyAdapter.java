@@ -57,8 +57,8 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 				.findViewById(R.id.buddy_presence);
 		if (buddy.getIsAvailable()) {
 			buddy_presence_view.setBackgroundColor(Color.GREEN);
-			if (buddy.getIsAway())
-				buddy_presence_view.setBackgroundColor(Color.MAGENTA);
+		}else if (buddy.getIsAway()) {
+			buddy_presence_view.setBackgroundColor(Color.MAGENTA);
 		} else {
 			buddy_presence_view.setBackgroundColor(Color.RED);
 		}

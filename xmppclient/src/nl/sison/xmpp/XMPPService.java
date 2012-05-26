@@ -83,9 +83,9 @@ public class XMPPService extends Service {
 	// // We use it on Notification start, and to cancel it.
 	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
 	public static final String KEY_BUDDY_INDEX = "UST32323HUAS34027334H";
-	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "2<>p>>34UEOEOUOUO";
-	public static final String ACTION_BUDDY_NEW_MESSAGE = "89776868tthfHGTHM";
-	public static final String ACTION_CONNECTION_LOST = "fg&*thou<oo";
+	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "nl.sison.xmpp.ACTION_BUDDY_PRESENCE_UPDATE";
+	public static final String ACTION_BUDDY_NEW_MESSAGE = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
+	public static final String ACTION_CONNECTION_LOST = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String JID = "239eunheun34808";
 	public static final String MANY_JID = "239443342eunheun34808";
 	public static final String MESSAGE = "239e#$%unheun34808";
@@ -264,9 +264,10 @@ public class XMPPService extends Service {
 		if (p.isAvailable()) {
 			b.setLast_seen_online_date(new Date());
 		}
-
+		
 		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
-
+		makeToast("Intent sent");
+		Log.i(TAG, "counter test");
 		sendBroadcast(intent);
 	}
 
@@ -292,7 +293,6 @@ public class XMPPService extends Service {
 																		// returns
 																		// partial
 																		// jid
-
 				broadcastPresenceUpdate(p);
 			}
 
