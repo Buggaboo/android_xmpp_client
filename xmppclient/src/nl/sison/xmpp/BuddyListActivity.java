@@ -25,7 +25,6 @@ public class BuddyListActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context ctx, Intent intent) {
-			Log.i(TAG, "counter test");
 			makeToast("Enter onReceive");
 			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
 				if (intent.hasExtra(XMPPService.FROM_JID)) {
@@ -49,7 +48,6 @@ public class BuddyListActivity extends ListActivity {
 
 			}
 			makeToast("Exit onReceive");
-			Log.i(TAG, "counter test");
 		}
 	};
 

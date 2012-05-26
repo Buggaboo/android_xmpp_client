@@ -266,8 +266,6 @@ public class XMPPService extends Service {
 		}
 		
 		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
-		makeToast("Intent sent");
-		Log.i(TAG, "counter test");
 		sendBroadcast(intent);
 	}
 
@@ -285,15 +283,9 @@ public class XMPPService extends Service {
 		roster.addRosterListener(new RosterListener() {
 
 			public void presenceChanged(Presence p) {
-				makeToast(label + ": presence changed:" + p.getFrom()); // TODO
-																		// -
-																		// determine
-																		// if
-																		// getFrom
-																		// returns
-																		// partial
-																		// jid
+//				makeToast(label + ": presence changed xxx:" + p.getFrom());
 				broadcastPresenceUpdate(p);
+//				makeToast(label + ": presence changed yyy:" + p.getFrom());
 			}
 
 			public void entriesUpdated(Collection<String> usernames) {
