@@ -80,17 +80,24 @@ public class XMPPService extends Service {
 
 	// // Unique Identification Number for the Notification.
 	// // We use it on Notification start, and to cancel it.
-	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
-	public static final String KEY_BUDDY_INDEX = "UST32323HUAS34027334H";
+	/**
+	 * Intent actions (for Broadcasting)
+	 */
 	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "nl.sison.xmpp.ACTION_BUDDY_PRESENCE_UPDATE";
 	public static final String ACTION_BUDDY_NEW_MESSAGE = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
 	public static final String ACTION_CONNECTION_LOST = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String ACTION_CONNECTION_RESUMED = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
-	public static final String JID = "239eunheun34808";
-	public static final String MANY_JID = "239443342eunheun34808";
-	public static final String MESSAGE = "239e#$%unheun34808";
-	public static final String FROM_JID = "23heun348$%$#&08";
-	public static final int PENDING_INTENT_REQUEST_CODE = 1244324;
+	public static final String ACTION_REQUEST_CHAT_GRANTED = "nl.sison.xmpp.ACTION_REQUEST_CHAT_GRANTED";
+
+	/**
+	 * Intent extras
+	 */
+	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H"; // long
+	public static final String KEY_BUDDY_INDEX = "UST32323HUAS34027334H"; // long
+	public static final String JID = "239eunheun34808"; // String
+	public static final String MANY_JID = "239443342eunheun34808"; // Arraylist<String>
+	public static final String MESSAGE = "239e#$%unheun34808"; // String
+	public static final String FROM_JID = "23heun348$%$#&08"; // String
 
 	@Override
 	public void onCreate() {
