@@ -43,7 +43,7 @@ public class ConnectionListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		makeToast("onResume");
+//		makeToast("onResume");
 		refreshList();
 	}
 
@@ -126,7 +126,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("create connection");
+//								makeToast("create connection");
 								createNewConnection();
 							}
 						});
@@ -147,7 +147,7 @@ public class ConnectionListActivity extends ListActivity {
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
 		Long ccid = qb.where(Properties.Label.eq(message)).build().list()
 				.get(0).getId();
-		makeToast("intent extra " + ccid);
+//		makeToast("intent extra " + ccid);
 		intent.putExtra(CONNECTION_ROW_INDEX, ccid);
 		DatabaseUtil.close();
 		startActivityForResult(intent, RQ_MODIFY_CONN);
@@ -160,7 +160,7 @@ public class ConnectionListActivity extends ListActivity {
 	}
 
 	private void deleteConnection(String message) {
-		makeToast("Deleting " + message);
+//		makeToast("Deleting " + message);
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
@@ -177,7 +177,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("yes, delete connection");
+//								makeToast("yes, delete connection");
 								deleteConnection(message);
 								refreshList();
 							}
@@ -185,7 +185,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNegativeButton(android.R.string.no,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("no, preserve connection");
+//								makeToast("no, preserve connection");
 							}
 						}).create().show();
 	}
@@ -198,7 +198,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("create connection");
+//								makeToast("create connection");
 								createNewConnection();
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -207,7 +207,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNegativeButton(R.string.remove_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("delete connection");
+//								makeToast("delete connection");
 								createDialogDeleteConnection(message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -217,7 +217,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNeutralButton(R.string.modify_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								makeToast("update connection");
+//								makeToast("update connection");
 								modifyConnection(message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -231,8 +231,8 @@ public class ConnectionListActivity extends ListActivity {
 		super.onDestroy();
 		// TODO - remove stopService, connection has to persist?
 		stopService(new Intent(ConnectionListActivity.this, XMPPService.class));
-		makeToast("onDestroy");
+//		makeToast("onDestroy");
 
-		// TODO - review why XMPPService should also be killed
+		// TODO - reconsider why XMPPService should not or also be killed
 	};
 }
