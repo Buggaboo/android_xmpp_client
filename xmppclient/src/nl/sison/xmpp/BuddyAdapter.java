@@ -14,21 +14,10 @@ import android.widget.TextView;
 
 public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
-	private ArrayList<BuddyEntity> buddies;
-
 	public BuddyAdapter(Context context, ArrayList<BuddyEntity> buddies) {
 		super(context, 0);
 		this.setNotifyOnChange(true);
-		this.buddies = buddies;
-		this.addAll(this.buddies);
-	}
-
-	public int getCount() {
-		return buddies.size();
-	}
-
-	public BuddyEntity getItem(int position) {
-		return (BuddyEntity) buddies.get(position);
+		this.addAll(buddies);
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
