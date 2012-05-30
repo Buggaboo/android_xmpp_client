@@ -85,6 +85,7 @@ public class XMPPService extends Service {
 	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "nl.sison.xmpp.ACTION_BUDDY_PRESENCE_UPDATE";
 	public static final String ACTION_BUDDY_NEW_MESSAGE = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
 	public static final String ACTION_CONNECTION_LOST = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
+	public static final String ACTION_CONNECTION_RESUMED = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String JID = "239eunheun34808";
 	public static final String MANY_JID = "239443342eunheun34808";
 	public static final String MESSAGE = "239e#$%unheun34808";
@@ -116,7 +117,7 @@ public class XMPPService extends Service {
 			}
 			if (connection != null) {
 				connection_hashmap.put(cc.getId(), connection);
-				setListeners(connection, cc.getId(), label);
+				setListeners(connection, cc.getId());
 				connection.getRoster().setSubscriptionMode(
 						SubscriptionMode.accept_all);
 				populateBuddyLists(connection, label);
@@ -176,9 +177,8 @@ public class XMPPService extends Service {
 		}
 	}
 
-	private void setListeners(XMPPConnection connection, final long cc_id,
-			final String label) {
-		setConnectionListeners(connection, cc_id, label);
+	private void setListeners(XMPPConnection connection, final long cc_id) {
+		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection);
 		setIncomingMessageListener(connection);
 		setOutgoingMessageListener(connection);
@@ -299,35 +299,36 @@ public class XMPPService extends Service {
 	}
 
 	private void broadcastConnectionUpdate(final long cc_id) {
-		Intent intent = new Intent(ACTION_CONNECTION_LOST);
+		Intent intent;
+		if (connection_hashmap.get(cc_id).isConnected()) {
+			intent = new Intent(ACTION_CONNECTION_RESUMED);
+		} else {
+			intent = new Intent(ACTION_CONNECTION_LOST);
+		}
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		sendBroadcast(intent);
 	}
 
 	private void setConnectionListeners(XMPPConnection connection,
-			final long cc_id, final String label) {
+			final long cc_id) {
 		connection.addConnectionListener(new ConnectionListener() {
 
 			public void reconnectionSuccessful() {
-				makeToast(label + ": Reconnection successful");
 				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void reconnectionFailed(Exception ex) {
-				makeToast(label + ": Reconnection failed");
+				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void reconnectingIn(int countdown) {
-				makeToast(label + ": Reconnecting in " + countdown);
 			}
 
 			public void connectionClosedOnError(Exception ex) {
-				makeToast(label + ": Connection closed on error");
 				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void connectionClosed() {
-				makeToast(label + ": Connection closed");
 				broadcastConnectionUpdate(cc_id);
 			}
 		});
