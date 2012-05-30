@@ -2,6 +2,7 @@ package nl.sison.xmpp.dao;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
 
 /**
@@ -14,16 +15,20 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(19, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(20, "nl.sison.xmpp.dao");
 
 		addMessage(schema);
-		addBuddy(schema);
-		addConnectionConfiguration(schema);
-
+		Entity buddy = addBuddy(schema);
+		Entity connection = addConnectionConfiguration(schema);
+		
+		// many buddies to one connection
+		Property connectionIdProperty = buddy.addLongProperty("connectionId").getProperty();
+		buddy.addToOne(connection, connectionIdProperty);
+	
 		new DaoGenerator().generateAll(schema, "../xmppclient/src-dao-gen");
 	}
 
-	private static void addMessage(Schema schema) {
+	private static Entity addMessage(Schema schema) {
 		Entity message = schema.addEntity("MessageEntity");
 		message.addIdProperty();
 		message.addStringProperty("sender_jid").notNull(); // !
@@ -32,13 +37,15 @@ public class DaoGeneratorXMPPClient {
 		message.addDateProperty("received_date").notNull(); // !
 		message.addBooleanProperty("delivered");
 		message.addStringProperty("thread");
+		
+		return message;
 	}
 
 	/**
 	 * IDEA - afdeling code en bijbehorende alias - sorteren op...
 	 */
 
-	public static void addBuddy(Schema schema) {
+	public static Entity addBuddy(Schema schema) {
 		Entity buddy = schema.addEntity("BuddyEntity");
 		buddy.addIdProperty();
 		buddy.addStringProperty("partial_jid").notNull(); // !
@@ -51,25 +58,27 @@ public class DaoGeneratorXMPPClient {
 		buddy.addDateProperty("last_seen_online_date");
 		buddy.addBooleanProperty("isAvailable");
 		buddy.addBooleanProperty("isAway");
+
+		return buddy;
 	}
 
-	public static void addConnectionConfiguration(Schema schema) {
-		Entity settings = schema.addEntity("ConnectionConfigurationEntity");
-		settings.addIdProperty();
-		settings.addStringProperty("label").notNull().unique();
-		settings.addStringProperty("port").notNull();
-		settings.addStringProperty("server").notNull(); // where to connect
-		settings.addStringProperty("domain"); // xmpp jid domain
-		settings.addStringProperty("username").notNull();
-		settings.addStringProperty("password").notNull();
-		settings.addStringProperty("resource").notNull();
-		settings.addBooleanProperty("encrypted").notNull(); // TLS/SSL encryption is
+	public static Entity addConnectionConfiguration(Schema schema) {
+		Entity connection = schema.addEntity("ConnectionConfigurationEntity");
+		connection.addIdProperty();
+		connection.addStringProperty("label").notNull().unique();
+		connection.addStringProperty("port").notNull();
+		connection.addStringProperty("server").notNull(); // where to connect
+		connection.addStringProperty("domain"); // xmpp jid domain
+		connection.addStringProperty("username").notNull();
+		connection.addStringProperty("password").notNull();
+		connection.addStringProperty("resource").notNull();
+		connection.addBooleanProperty("encrypted").notNull(); // TLS/SSL encryption is
 															// broken
-		settings.addBooleanProperty("compressed").notNull();
-		settings.addBooleanProperty("saslauthenticated").notNull(); // sasl
+		connection.addBooleanProperty("compressed").notNull();
+		connection.addBooleanProperty("saslauthenticated").notNull(); // sasl
 																	// authentication
 																	// is broken
-		settings.addIntProperty("connection_success").notNull();
+		connection.addIntProperty("connection_success").notNull();
 //		settings.addStringProperty("provider_reflection_injection"); // TODO use
 																		// reflection
 																		// to
@@ -79,5 +88,6 @@ public class DaoGeneratorXMPPClient {
 																		// the
 																		// connection
 																		// process
+		return connection;
 	}
 }
