@@ -2,6 +2,7 @@ package nl.sison.xmpp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.DaoSession;
@@ -18,19 +19,43 @@ import android.widget.Toast;
 
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
+
+	/**
+	 * Intent request code
+	 */
 	public static final int RC_CREATE_NEW_THREAD_FROM_JID = 1111;
 	public static final int RC_CONTINUE_OLD_THREAD = 1112;
+
+	/**
+	 * Intent actions
+	 */
+	public static final String ACTION_REQUEST_CHAT = "Oent.p8p39392"; // TODO
+
+	/**
+	 * Intent extras
+	 */
+	public static final String KEY_BUDDY_INDEX = "98238ecruuce,rece";
+	public static final String THREAD = "98238ecQruuce,Prece";
+
 	private BuddyAdapter adapter;
 	private BroadcastReceiver receiver;
 
+	// ConcurrentHashMap<long, String> // TODO prevent extra database buddy
+	// queries to get jid from id
+
 	public class BuddyListReceiver extends BroadcastReceiver {
+		/**
+		 * TODO Refactor to different receivers, - one for connections, - one
+		 * for buddies, - one for chats
+		 */
 
 		@Override
 		public void onReceive(Context ctx, Intent intent) {
-			makeToast("Enter onReceive");
 			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
 				if (intent.hasExtra(XMPPService.FROM_JID)) {
-
+					// TODO message from certain jid, give visual feedback
+					// (flashing listitem or something), load the activity again
+					// with the correct connection
 				}
 			}
 			if (intent.getAction().equals(
@@ -40,14 +65,22 @@ public class BuddyListActivity extends ListActivity {
 							+ intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
 									0));
 				}
-//				makeToast("Refreshing adapter");
 				refreshList();
-//				adapter.notifyDataSetChanged();
 			}
 			if (intent.getAction().equals(XMPPService.ACTION_CONNECTION_LOST)) {
-
+				// TODO change the buddy presences to offline
 			}
-			makeToast("Exit onReceive");
+			if (intent.getAction()
+					.equals(XMPPService.ACTION_CONNECTION_RESUMED)) {
+				// TODO make all buddies that are available online, but
+				// ACTION_BUDDY_PRESENCE_UPDATE should already do that (test!)
+			}
+			if (intent.getAction()
+					.equals(XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
+				Intent startActivityIntent = new Intent(BuddyListActivity.this, ChatActivity.class);
+				startActivity(startActivityIntent);
+			}			
+			
 		}
 	};
 
@@ -61,30 +94,42 @@ public class BuddyListActivity extends ListActivity {
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_NEW_MESSAGE);
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
+		actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
+		actionFilter.addAction(XMPPService.ACTION_REQUEST_CHAT_GRANTED);
+		actionFilter.addAction(XMPPService.ACTION_REQUEST_CHAT_ERROR);
 		receiver = new BuddyListReceiver();
 		registerReceiver(receiver, actionFilter);
 
 	}
-	
+
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id)
-	{
-		Intent intent = new Intent(BuddyListActivity.this, ChatActivity.class);
-		
-//		intent.setAction(ACTION_REQUEST_CHAT);
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// Intent intent = new Intent(BuddyListActivity.this,
+		// ChatActivity.class);
+
+		Intent intent = new Intent(ACTION_REQUEST_CHAT);
+		intent.putExtra(KEY_BUDDY_INDEX, id);
+		sendBroadcast(intent);
+
 		// TODO
-		
+
 		// - match jid
-		
+
 		// - get chronological last chat thread
-		
+
 		// - confirm chat recent
 
-//		startActivityForResult(intent, RC_CREATE_NEW_THREAD_FROM_JID);
-//		startActivityForResult(intent, RC_CONTINUE_OLD_THREAD);
+		// startActivityForResult(intent, RC_CREATE_NEW_THREAD_FROM_JID);
+		// startActivityForResult(intent, RC_CONTINUE_OLD_THREAD);
 	}
-	
-	
+
+	/**
+	 * TODO - implement context Menu set presence, using dialogs
+	 */
+
+	/**
+	 * TODO - implement subscribe, unsubscribe buddylist, using dialogs
+	 */
 
 	@Override
 	protected void onDestroy() {
@@ -100,7 +145,8 @@ public class BuddyListActivity extends ListActivity {
 
 	/**
 	 * TODO reimplement using notifyDataSetChanged
-	 * http://stackoverflow.com/questions/3669325/notifydatasetchanged-example/5092426#5092426
+	 * http://stackoverflow.com/questions
+	 * /3669325/notifydatasetchanged-example/5092426#5092426
 	 */
 	private void refreshList() {
 		// TODO finish context menu for the dialog
@@ -120,7 +166,7 @@ public class BuddyListActivity extends ListActivity {
 		DatabaseUtil.close();
 		setListAdapter(adapter);
 	}
-	
+
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;

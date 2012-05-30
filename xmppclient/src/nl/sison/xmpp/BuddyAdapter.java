@@ -19,6 +19,11 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		this.setNotifyOnChange(true);
 		this.addAll(buddies);
 	}
+	
+	@Override
+	public long getItemId(int position) {
+		return super.getItem(position).getId();
+	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
@@ -31,7 +36,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
 		return itemLayout;
 	}
-
+	
 	private void setBuddyIdentifierText(ViewGroup parent, BuddyEntity buddy) {
 		TextView buddy_jid_view = (TextView) parent
 				.findViewById(R.id.buddy_jid);
