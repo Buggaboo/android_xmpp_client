@@ -34,7 +34,7 @@
     <string name="date_literal">date</string>
     <string name="text_literal">text</string>    
 
-    
+    <!-- default settings -->
     <string-array name="hint_prefixes">
         <item >google</item>
         <item >facebook</item>

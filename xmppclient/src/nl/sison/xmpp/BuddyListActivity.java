@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class BuddyListActivity extends ListActivity {
@@ -37,9 +39,9 @@ public class BuddyListActivity extends ListActivity {
 							+ intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
 									0));
 				}
-				makeToast("Refreshing adapter");
-//				refreshList();
-				adapter.notifyDataSetChanged();
+//				makeToast("Refreshing adapter");
+				refreshList();
+//				adapter.notifyDataSetChanged();
 			}
 			if (intent.getAction().equals(XMPPService.ACTION_CONNECTION_LOST)) {
 
@@ -62,6 +64,14 @@ public class BuddyListActivity extends ListActivity {
 		registerReceiver(receiver, actionFilter);
 
 	}
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id)
+	{
+		
+	}
+	
+	
 
 	@Override
 	protected void onDestroy() {
@@ -73,7 +83,6 @@ public class BuddyListActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		refreshList();
-		makeToast("onResume");
 	}
 
 	/**
@@ -87,7 +96,7 @@ public class BuddyListActivity extends ListActivity {
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
 
-		makeToast("buddies.size(): " + buddies.size());
+//		makeToast("buddies.size(): " + buddies.size());
 
 		if (buddies == null || buddies.size() == 0) // TODO determine if
 													// necessary
@@ -100,7 +109,7 @@ public class BuddyListActivity extends ListActivity {
 		DatabaseUtil.close();
 		setListAdapter(adapter);
 	}
-
+	
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
