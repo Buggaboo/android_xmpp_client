@@ -98,6 +98,7 @@ public class XMPPService extends Service {
 	public static final String MANY_JID = "239443342eunheun34808"; // Arraylist<String>
 	public static final String MESSAGE = "239e#$%unheun34808"; // String
 	public static final String FROM_JID = "23heun348$%$#&08"; // String
+	public static final String THREAD = "@$@$4P789"; // String
 
 	@Override
 	public void onCreate() {
@@ -227,6 +228,7 @@ public class XMPPService extends Service {
 		Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
 		intent.putExtra(FROM_JID, m.getFrom());
 		intent.putExtra(MESSAGE, m.getBody());
+		intent.putExtra(THREAD, m.getThread());
 		sendBroadcast(intent);
 	}
 
