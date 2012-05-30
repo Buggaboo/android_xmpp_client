@@ -191,6 +191,7 @@ public class ConnectionListActivity extends ListActivity {
 	}
 
 	private void createCRUDConnectionDialog(final String message) {
+		// TODO set presence with dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message)
 				.setCancelable(true)
