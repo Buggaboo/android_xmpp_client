@@ -16,6 +16,7 @@ public class MessageEntity {
     /** Not-null value. */
     private java.util.Date received_date;
     private Boolean delivered;
+    private String thread;
 
     public MessageEntity() {
     }
@@ -24,13 +25,14 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered) {
+    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered, String thread) {
         this.id = id;
         this.sender_jid = sender_jid;
         this.receiver_jid = receiver_jid;
         this.content = content;
         this.received_date = received_date;
         this.delivered = delivered;
+        this.thread = thread;
     }
 
     public Long getId() {
@@ -87,6 +89,14 @@ public class MessageEntity {
 
     public void setDelivered(Boolean delivered) {
         this.delivered = delivered;
+    }
+
+    public String getThread() {
+        return thread;
+    }
+
+    public void setThread(String thread) {
+        this.thread = thread;
     }
 
 }

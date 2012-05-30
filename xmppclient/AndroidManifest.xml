@@ -23,7 +23,7 @@
             android:icon="@drawable/ic_launcher" >
         </service>
 
-        <receiver android:name=".StartXMPPServiceReceiver" >
+        <receiver android:name=".StartXMPPServiceReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

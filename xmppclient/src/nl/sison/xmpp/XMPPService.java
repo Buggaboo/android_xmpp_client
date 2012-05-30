@@ -1,21 +1,26 @@
 package nl.sison.xmpp;
 
+import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 
+import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketInterceptor;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.Roster.SubscriptionMode;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -29,10 +34,13 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
+import de.greenrobot.dao.QueryBuilder;
 
 public class XMPPService extends Service {
 	/**
@@ -65,31 +73,123 @@ public class XMPPService extends Service {
 
 	private ConcurrentHashMap<Long, XMPPConnection> connection_hashmap;
 
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
+	private BroadcastReceiver receiver;
+
+	class ServiceReceiver extends BroadcastReceiver {
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			makeToast("Intent received:" + intent.getAction());
 			// TODO - status = away unavailable etc.
-			// TODO - start chat / send message
+			// TODO + start chat
+			if (intent.getAction()
+					.equals(BuddyListActivity.ACTION_REQUEST_CHAT)) {
+				BuddyEntity buddy = getBuddyEntityFromId(context, intent
+						.getExtras().getLong(BuddyListActivity.KEY_BUDDY_INDEX));
+				XMPPConnection connection = connection_hashmap.get(buddy
+						.getConnectionId()); // get connection associated with
+												// this buddy
+				Chat chat = connection.getChatManager().createChat(
+						buddy.getPartial_jid(), null); // get jid of this buddy
+														// and create chat
+				intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
+				intent.putExtra(THREAD, chat.getThreadID());
+				context.sendBroadcast(intent);
+				makeToast("chat.getThreadID(): " + chat.getThreadID());
+			}
+
+			// TODO + send message
+			if (intent.getAction()
+					.equals(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
+				Bundle bundle = intent.getExtras();
+				String thread = bundle.getCharSequence(ChatActivity.THREAD).toString();
+				String message = bundle.getCharSequence(ChatActivity.MESSAGE).toString();
+				long buddy_id = bundle.getLong(ChatActivity.KEY_BUDDY_INDEX);
+
+				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
+				XMPPConnection connection = connection_hashmap.get(buddy
+						.getConnectionId()); // get connection associated with
+												// this buddy
+				Chat chat = connection.getChatManager().getThreadChat(thread);
+				try {
+					chat.sendMessage(message);
+					storeMessage(context, thread, message, buddy, connection);
+				} catch (XMPPException e) {
+					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
+					e.printStackTrace();
+				}
+				
+			}
+
+		}
+
+		private void storeMessage(Context context, String thread,
+				String message, BuddyEntity buddy, XMPPConnection connection) {
+			MessageEntity message_entity = new MessageEntity();
+			message_entity.setContent(message);
+			message_entity.setDelivered(true);
+			message_entity.setReceiver_jid(buddy.getPartial_jid());
+			message_entity.setSender_jid(connection.getUser());
+			message_entity.setThread(thread);
+			DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(context);
+			daoSession.getMessageEntityDao().insert(message_entity);
+			DatabaseUtil.close();
+		}
+
+		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
+			long buddy_id = id;
+			DaoSession daoSession = DatabaseUtil
+					.getReadOnlyDatabaseSession(context);
+			BuddyEntity buddy = daoSession.load(BuddyEntity.class, buddy_id);
+			DatabaseUtil.close();
+			return buddy;
 		}
 	};
 
-	// // Unique Identification Number for the Notification.
-	// // We use it on Notification start, and to cancel it.
-	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H";
-	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "2<>p>>34UEOEOUOUO";
-	public static final String ACTION_BUDDY_NEW_MESSAGE = "89776868tthfHGTHM";
-	public static final String ACTION_CONNECTION_LOST = "fg&*thou<oo";
-	public static final String JID = "239eunheun34808";
-	public static final String MANY_JID = "239443342eunheun34808";
-	public static final String MESSAGE = "239e#$%unheun34808";
-	public static final String FROM_JID = "23heun348$%$#&08";
-	public static final int PENDING_INTENT_REQUEST_CODE = 1244324;
+	/**
+	 * Intent actions (for Broadcasting)
+	 */
+	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "nl.sison.xmpp.ACTION_BUDDY_PRESENCE_UPDATE";
+	public static final String ACTION_BUDDY_NEW_MESSAGE = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
+	public static final String ACTION_CONNECTION_LOST = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
+	public static final String ACTION_CONNECTION_RESUMED = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
+	public static final String ACTION_REQUEST_CHAT_GRANTED = "nl.sison.xmpp.ACTION_REQUEST_CHAT_GRANTED";
+	public static final String ACTION_REQUEST_CHAT_ERROR = "nl.sison.xmpp.ACTION_REQUEST_CHAT_ERROR";
+	public static final String ACTION_MESSAGE_SENT = "239e#$%uun348";
+	public static final String ACTION_MESSAGE_ERROR = "239e#$%uun348";
+
+	/**
+	 * Intent extras
+	 */
+	// connection
+	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H"; // long
+
+	// presence
+	public static final String KEY_BUDDY_INDEX = "UST32UAS340273#@H"; // long
+	
+	// message
+	public static final String KEY_MESSAGE_INDEX = "UST32323HU027334H"; // long
+
+	// everybody can use these two
+	public static final String JID = "239eunheun34808"; // String
+	public static final String MANY_JID = "239443342eunheun34808"; // Arraylist<String>
+
+	// incoming message
+	public static final String MESSAGE = "239e#$%unheun34808"; // String
+	public static final String FROM_JID = "23heun348$%$#&08"; // String
+	public static final String THREAD = "@$@$4P789"; // String
+
+
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		makeConnectionsFromDatabase();
+		receiver = new ServiceReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BuddyListActivity.ACTION_REQUEST_CHAT);
+		filter.addAction(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE);
+		registerReceiver(receiver, filter);
 	}
 
 	private void makeConnectionsFromDatabase() {
@@ -102,6 +202,7 @@ public class XMPPService extends Service {
 											// thread or is invisible
 		for (final ConnectionConfigurationEntity cc : all_conns) {
 			final String label = cc.getLabel();
+			final long cc_id = cc.getId();
 			XMPPConnection connection;
 			try {
 				connection = connectToServer(cc);
@@ -110,22 +211,77 @@ public class XMPPService extends Service {
 				connection = null;
 			}
 			if (connection != null) {
-				connection_hashmap.put(cc.getId(), connection);
-				setListeners(connection, cc.getId(), label);
+				connection_hashmap.put(cc_id, connection);
+				setListeners(connection, cc_id);
+				connection.getRoster().setSubscriptionMode(
+						SubscriptionMode.accept_all);
+				populateBuddyLists(connection, cc_id);
 			}
 		}
 	}
 
-	private void setListeners(XMPPConnection connection, final long cc_id,
-			final String label) {
-		setConnectionListeners(connection, cc_id, label);
-		setRosterListeners(connection, label);
-		setIncomingMessageListener(connection, label);
-		setOutgoingMessageListener(connection, label);
+	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
+		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
+				.queryBuilder();
+		Roster roster = connection.getRoster();
+		for (RosterEntry re : roster.getEntries()) {
+			List<BuddyEntity> query_result = qb.where(
+					BuddyEntityDao.Properties.Partial_jid.eq(re.getUser()))
+					.list();
+			BuddyEntity b;
+			if (query_result.isEmpty()) {
+				b = new BuddyEntity();
+			} else {
+				b = query_result.get(0);
+			}
+
+			String partial_jid = re.getUser();
+			makeToast("re.getUser(): " + partial_jid);
+			Presence p = roster.getPresence(partial_jid); // TODO - experiment
+															// with
+															// partial_jid
+
+			setBuddyBasic(b, partial_jid, cc_id);
+			if (p != null) {
+				setBuddyPresence(b, p);
+			}
+
+			daoSession.insertOrReplace(b);
+		}
+		DatabaseUtil.close();
 	}
 
-	private void setOutgoingMessageListener(XMPPConnection connection,
-			final String label) {
+	private void setBuddyPresence(BuddyEntity b, Presence p) {
+		b.setIsAvailable(p.isAvailable());
+		makeToast("p.isAvailable(): " + p.isAvailable());
+
+		b.setIsAway(p.isAway());
+		makeToast("p.isAway(): " + p.isAway());
+
+		b.setPresence_status(p.getStatus());
+		makeToast("p.getStatus(): " + p.getStatus());
+		b.setPresence_type(p.getType().toString());
+		// b.setPresence_mode(p.getMode().toString());
+	}
+
+	private void setBuddyBasic(BuddyEntity b, final String partial_jid,
+			final long cc_id) {
+		b.setPartial_jid(partial_jid);
+		b.setConnectionId(cc_id);
+		if (b.getNickname() == null || b.getNickname().isEmpty()) {
+			b.setNickname(partial_jid);
+		}
+	}
+
+	private void setListeners(XMPPConnection connection, final long cc_id) {
+		setConnectionListeners(connection, cc_id);
+		setRosterListeners(connection, cc_id);
+		setIncomingMessageListener(connection);
+		setOutgoingMessageListener(connection);
+	}
+
+	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
 				storeMessage((Message) p);
@@ -143,8 +299,7 @@ public class XMPPService extends Service {
 	 * @param label
 	 * @param connection
 	 */
-	private void setIncomingMessageListener(XMPPConnection connection,
-			final String label) {
+	private void setIncomingMessageListener(XMPPConnection connection) {
 		connection.addPacketListener(new PacketListener() {
 			public void processPacket(Packet p) {
 				Message m = (Message) p;
@@ -162,6 +317,7 @@ public class XMPPService extends Service {
 		Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
 		intent.putExtra(FROM_JID, m.getFrom());
 		intent.putExtra(MESSAGE, m.getBody());
+		intent.putExtra(THREAD, m.getThread());
 		sendBroadcast(intent);
 	}
 
@@ -176,10 +332,35 @@ public class XMPPService extends Service {
 		DatabaseUtil.close();
 	}
 
-	private void broadcastPresenceUpdate(Presence p) {
+	private void broadcastPresenceUpdate(Presence p, long cc_id) {
+		String from = p.getFrom();
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
-		intent.putExtra(JID, p.getFrom()); // TODO justify
-											// StringUtils.parseBareAddress(p.getFrom()));
+		intent.putExtra(JID, p.getFrom());
+
+		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
+				.queryBuilder();
+		List<BuddyEntity> query_result = qb.where(
+				BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
+						.parseBareAddress(p.getFrom()))).list();
+
+		// create entity if it doesn't exist yet
+		// otherwise the broadcast will be pointless
+		BuddyEntity b;
+		if (query_result.isEmpty()) {
+			b = new BuddyEntity();
+			setBuddyBasic(b, StringUtils.parseBareAddress(from), cc_id);
+			setBuddyPresence(b, p);
+		} else {
+			b = query_result.get(0);
+		}
+		b.setLast_seen_resource(StringUtils.parseResource(from));
+
+		if (p.isAvailable()) {
+			b.setLast_seen_online_date(new Date());
+		}
+
+		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
 		sendBroadcast(intent);
 	}
 
@@ -191,76 +372,61 @@ public class XMPPService extends Service {
 		sendBroadcast(intent);
 	}
 
-	private void setRosterListeners(XMPPConnection connection,
-			final String label) {
+	private void setRosterListeners(XMPPConnection connection, final long cc_id) {
 		Roster roster = connection.getRoster();
 		roster.addRosterListener(new RosterListener() {
 
 			public void presenceChanged(Presence p) {
-				makeToast(label + ": presence changed:" + p.getFrom()); // TODO
-																		// -
-																		// determine
-																		// if
-																		// getFrom
-																		// returns
-																		// partial
-																		// jid
-				broadcastPresenceUpdate(p);
+				// NOTE: makeToast broke the listener and prevented the
+				// broadcast
+				broadcastPresenceUpdate(p, cc_id);
 			}
 
 			public void entriesUpdated(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list item updated: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 
 			public void entriesDeleted(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list item deleted: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 
 			public void entriesAdded(Collection<String> usernames) {
-				for (String username : usernames)
-					// TODO remove
-					makeToast(label + ": buddy list items added: " + username);
 				broadcastRosterUpdate(usernames);
 			}
 		});
 	}
 
 	private void broadcastConnectionUpdate(final long cc_id) {
-		Intent intent = new Intent(ACTION_CONNECTION_LOST);
+		Intent intent;
+		if (connection_hashmap.get(cc_id).isConnected()) {
+			intent = new Intent(ACTION_CONNECTION_RESUMED);
+		} else {
+			intent = new Intent(ACTION_CONNECTION_LOST);
+		}
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		sendBroadcast(intent);
 	}
 
 	private void setConnectionListeners(XMPPConnection connection,
-			final long cc_id, final String label) {
+			final long cc_id) {
 		connection.addConnectionListener(new ConnectionListener() {
 
 			public void reconnectionSuccessful() {
-				makeToast(label + ": Reconnection successful");
 				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void reconnectionFailed(Exception ex) {
-				makeToast(label + ": Reconnection failed");
+				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void reconnectingIn(int countdown) {
-				makeToast(label + ": Reconnecting in " + countdown);
 			}
 
 			public void connectionClosedOnError(Exception ex) {
-				makeToast(label + ": Connection closed on error");
 				broadcastConnectionUpdate(cc_id);
 			}
 
 			public void connectionClosed() {
-				makeToast(label + ": Connection closed");
 				broadcastConnectionUpdate(cc_id);
 			}
 		});
@@ -315,8 +481,9 @@ public class XMPPService extends Service {
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntity cc = daoSession
-				.getConnectionConfigurationEntityDao().queryBuilder()
-				.where(Properties.Id.eq(cc_id)).list().get(0);
+				.getConnectionConfigurationEntityDao().load(cc_id);
+		// TODO there's a lag before the database is written to, so the table
+		// appears to be empty right before it's read
 		DatabaseUtil.close();
 		return cc;
 	}
