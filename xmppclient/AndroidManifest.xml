@@ -42,6 +42,8 @@
         </activity>
         <activity android:name=".BuddyListActivity" >
         </activity>
+        <activity android:name=".ChatActivity" >
+        </activity>        
     </application>
 
 </manifest>
