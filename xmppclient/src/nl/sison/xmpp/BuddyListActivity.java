@@ -20,7 +20,7 @@ import android.widget.Toast;
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
 	public static final int RC_CREATE_NEW_THREAD_FROM_JID = 1;
-	public static final int RC_CONTINUE_OLD_THREAD = 1;
+	public static final int RC_CONTINUE_OLD_THREAD = 2;
 	private ArrayAdapter<?> adapter;
 	private BroadcastReceiver receiver;
 
