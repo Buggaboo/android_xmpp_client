@@ -1,15 +1,10 @@
 package nl.sison.xmpp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import de.greenrobot.dao.QueryBuilder;
-
+import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
-import nl.sison.xmpp.dao.DaoSession;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,10 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import de.greenrobot.dao.QueryBuilder;
 
 public class ChatActivity extends Activity {
 	ListView chat_list;
-	private boolean top_orientation; // TODO create dialog
+	private boolean top_orientation = false; // TODO create dialog
 	private Button submit;
 	private EditText input;
 	

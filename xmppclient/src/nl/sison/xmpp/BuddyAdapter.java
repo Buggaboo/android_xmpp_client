@@ -20,6 +20,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		super(context, 0);
 		this.setNotifyOnChange(true);
 		this.buddies = buddies;
+		this.addAll(this.buddies);
 	}
 
 	public int getCount() {

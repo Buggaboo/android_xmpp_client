@@ -24,7 +24,6 @@ public class ConnectionConfigurationEntity {
     private boolean compressed;
     private boolean saslauthenticated;
     private int connection_success;
-    private String provider_reflection_injection;
 
     public ConnectionConfigurationEntity() {
     }
@@ -33,7 +32,7 @@ public class ConnectionConfigurationEntity {
         this.id = id;
     }
 
-    public ConnectionConfigurationEntity(Long id, String label, String port, String server, String domain, String username, String password, String resource, boolean encrypted, boolean compressed, boolean saslauthenticated, int connection_success, String provider_reflection_injection) {
+    public ConnectionConfigurationEntity(Long id, String label, String port, String server, String domain, String username, String password, String resource, boolean encrypted, boolean compressed, boolean saslauthenticated, int connection_success) {
         this.id = id;
         this.label = label;
         this.port = port;
@@ -46,7 +45,6 @@ public class ConnectionConfigurationEntity {
         this.compressed = compressed;
         this.saslauthenticated = saslauthenticated;
         this.connection_success = connection_success;
-        this.provider_reflection_injection = provider_reflection_injection;
     }
 
     public Long getId() {
@@ -155,14 +153,6 @@ public class ConnectionConfigurationEntity {
 
     public void setConnection_success(int connection_success) {
         this.connection_success = connection_success;
-    }
-
-    public String getProvider_reflection_injection() {
-        return provider_reflection_injection;
-    }
-
-    public void setProvider_reflection_injection(String provider_reflection_injection) {
-        this.provider_reflection_injection = provider_reflection_injection;
     }
 
 }

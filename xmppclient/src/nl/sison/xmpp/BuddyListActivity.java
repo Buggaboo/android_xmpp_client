@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
+	public static final int RC_CREATE_NEW_THREAD_FROM_JID = 1;
+	public static final int RC_CONTINUE_OLD_THREAD = 1;
 	private ArrayAdapter<?> adapter;
 	private BroadcastReceiver receiver;
 
@@ -68,7 +70,19 @@ public class BuddyListActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
+		Intent intent = new Intent(BuddyListActivity.this, ChatActivity.class);
 		
+//		intent.setAction(ACTION_REQUEST_CHAT);
+		// TODO
+		
+		// - match jid
+		
+		// - get chronological last chat thread
+		
+		// - confirm chat recent
+
+//		startActivityForResult(intent, RC_CREATE_NEW_THREAD_FROM_JID);
+//		startActivityForResult(intent, RC_CONTINUE_OLD_THREAD);
 	}
 	
 	
@@ -95,8 +109,6 @@ public class BuddyListActivity extends ListActivity {
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
-
-//		makeToast("buddies.size(): " + buddies.size());
 
 		if (buddies == null || buddies.size() == 0) // TODO determine if
 													// necessary
