@@ -283,7 +283,8 @@ public class XMPPService extends Service {
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
-				storeMessage((Message) p);
+//				storeMessage((Message) p);
+				// NOTE no longer necessary
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
@@ -320,6 +321,7 @@ public class XMPPService extends Service {
 		sendBroadcast(intent);
 	}
 
+	// TODO reconsider storing here in the listener instead of the broadcastreceiver
 	private void storeMessage(Message m) {
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		MessageEntity message = new MessageEntity();
@@ -327,6 +329,7 @@ public class XMPPService extends Service {
 		message.setReceived_date(new Date());
 		message.setSender_jid(StringUtils.parseBareAddress(m.getFrom()));
 		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
+		message.setThread(m.getThread());
 		daoSession.getMessageEntityDao().insert(message);
 		DatabaseUtil.close();
 	}
