@@ -11,9 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -60,6 +58,7 @@ public class ChatActivity extends Activity {
 						.getReadOnlyDatabaseSession(context);
 				MessageEntity message = daoSession.load(MessageEntity.class,
 						message_id);
+				DatabaseUtil.close();
 				adapter.add(message);
 			}
 		}
