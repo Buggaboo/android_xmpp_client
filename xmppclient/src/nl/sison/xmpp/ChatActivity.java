@@ -83,19 +83,19 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-			makeToast("message: " + message.getContent());
-			makeToast("message.getBuddyId(): " + message.getBuddyId());
+//			makeToast("message: " + message.getContent());
+//			makeToast("message.getBuddyId(): " + message.getBuddyId());
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtil.close();
-				makeToast("The message is either null or not set with the buddy id field: " + message);
+//				makeToast("The message is either null or not set with the buddy id field: " + message);
 				return;
 			}
 
 			DatabaseUtil.close();
 
-			makeToast("adapter adding message - start");
+//			makeToast("adapter adding message - start");
 			adapter.add(message);
-			makeToast("adapter adding message - end");
+//			makeToast("adapter adding message - end");
 		}
 	}
 
