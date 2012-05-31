@@ -113,7 +113,8 @@ public class XMPPService extends Service {
 
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
-				Chat chat = connection.getChatManager().getThreadChat(thread); // NOTE: I
+				Chat chat = connection.getChatManager().getThreadChat(thread); // NOTE:
+																				// I
 																				// don't
 																				// know
 																				// why
@@ -122,13 +123,16 @@ public class XMPPService extends Service {
 				try {
 					if (chat != null) {
 						chat.sendMessage(message);
-						makeToast("3a");
 					} else {
 						chat = connection.getChatManager().createChat(
 								buddy.getPartial_jid(), thread, null);
-						makeToast("3b");
 					}
-					context.sendBroadcast(new Intent(ACTION_MESSAGE_SENT));
+
+					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
+					ack_intent.putExtra(KEY_MESSAGE_INDEX,
+							storeMessage(context, message, connection, chat));
+					DatabaseUtil.close();
+					context.sendBroadcast(ack_intent);
 				} catch (XMPPException e) {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
 					e.printStackTrace();
@@ -136,6 +140,20 @@ public class XMPPService extends Service {
 
 			}
 
+		}
+
+		private long storeMessage(Context context, String message,
+				XMPPConnection connection, Chat chat) {
+			DaoSession daoSession = DatabaseUtil
+					.getWriteableDatabaseSession(context);
+			MessageEntity me = new MessageEntity();
+			me.setContent(message);
+			me.setDelivered(true);
+			me.setReceived_date(new Date());
+			me.setReceiver_jid(chat.getParticipant());
+			me.setSender_jid(connection.getUser());
+			me.setThread(chat.getThreadID());
+			return daoSession.getMessageEntityDao().insert(me);
 		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
@@ -281,7 +299,9 @@ public class XMPPService extends Service {
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
-				storeMessage((Message) p);
+				// storeMessage((Message) p);
+				// NOTE: this must be done in the broadcastreceiver, otherwise
+				// the chatactivity's adapter can't be updated, via the intent
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {

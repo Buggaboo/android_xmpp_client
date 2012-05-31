@@ -65,6 +65,8 @@ public class ChatActivity extends Activity {
 						.getReadOnlyDatabaseSession(context);
 				MessageEntity message = daoSession.load(MessageEntity.class,
 						message_id);
+				input.setText("");
+				input.setFocusable(true);
 				DatabaseUtil.close();
 				makeToast("adapter adding message - start");
 				adapter.add(message);
@@ -78,6 +80,19 @@ public class ChatActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		if (top_orientation) {
+			setContentView(R.layout.working_frame_layout_top);
+			chat_list = (ListView) findViewById(R.id.chat_top_input);
+			submit = (Button) findViewById(R.id.submit_top_input);
+			input = (EditText) findViewById(R.id.text_input_top_input);
+
+		} else {
+			setContentView(R.layout.working_frame_layout_bottom);
+			chat_list = (ListView) findViewById(R.id.chat_bottom_input);
+			submit = (Button) findViewById(R.id.submit_bottom_input);
+			input = (EditText) findViewById(R.id.text_input_bottom_input);
+		}		
+		
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_SENT); // DONE!
@@ -93,33 +108,15 @@ public class ChatActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		if (top_orientation) {
-			setContentView(R.layout.working_frame_layout_top);
-			chat_list = (ListView) findViewById(R.id.chat_top_input);
-			submit = (Button) findViewById(R.id.submit_top_input);
-			input = (EditText) findViewById(R.id.text_input_top_input);
-
-		} else {
-			setContentView(R.layout.working_frame_layout_bottom);
-			chat_list = (ListView) findViewById(R.id.chat_bottom_input);
-			submit = (Button) findViewById(R.id.submit_bottom_input);
-			input = (EditText) findViewById(R.id.text_input_bottom_input);
-		}
-
-		makeToast("Enter");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		if (intent.hasExtra(BuddyListActivity.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
-			makeToast("buddy_id: " + buddy_id);
 		}
 
 		if (intent.hasExtra(BuddyListActivity.THREAD)) {
 			thread = bundle.getString(BuddyListActivity.THREAD);
-			makeToast("thread: " + thread);
 		}
-		makeToast("Exit");
-		
 
 		setupListView();
 
