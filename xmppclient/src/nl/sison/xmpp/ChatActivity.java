@@ -2,6 +2,7 @@ package nl.sison.xmpp;
 
 import java.util.List;
 
+import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
@@ -72,7 +73,6 @@ public class ChatActivity extends Activity {
 
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
 				Bundle bundle = intent.getExtras();
-				// TODO block messages from other users not on this thread
 				message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
 			}
 
@@ -80,6 +80,11 @@ public class ChatActivity extends Activity {
 					.getReadOnlyDatabaseSession(context);
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
+
+			if (message.getBuddyId() != buddy_id) {
+				DatabaseUtil.close();
+				return;
+			}
 
 			DatabaseUtil.close();
 
@@ -167,13 +172,22 @@ public class ChatActivity extends Activity {
 
 	private void setupListView() { // TODO broken! fix it!
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
-		qb.where(Properties.Receiver_jid.eq(other_jid));
-		qb.or(Properties.Sender_jid.eq(other_jid), null, null);
+		/*
+		 * NOTE: this breaks because other_jid is not initialized
+		 * qb.where(Properties.Receiver_jid.eq(other_jid)); qb.or(
+		 * Properties.Sender_jid.eq(other_jid), null, null);
+		 */
+		
+		qb.where(Properties.BuddyId.eq(buddy_id));
+		// NOTE: this presents a challenge for group chat
+		// You probably need a groupchat activity for this thing
+		// and a different database
 
 		List<MessageEntity> chat_history = qb.list();
-		
+
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 
 		if (chat_history.size() != 0) {
