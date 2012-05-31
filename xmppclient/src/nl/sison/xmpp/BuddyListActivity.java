@@ -155,6 +155,7 @@ public class BuddyListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		// TODO filter on cc_id, all buddies have a foreign key to cc
 		refreshList();
 	}
 
@@ -171,6 +172,7 @@ public class BuddyListActivity extends ListActivity {
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
+		// NOTE: right now: show all the buddies irrespective
 
 		// This is necessary, in case a new account is made, and there are no
 		// buddies to connect to.
