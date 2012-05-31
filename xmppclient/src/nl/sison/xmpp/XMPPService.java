@@ -83,8 +83,8 @@ public class XMPPService extends Service {
 			// TODO + start chat
 			if (intent.getAction()
 					.equals(BuddyListActivity.ACTION_REQUEST_CHAT)) {
-				long buddy_id = intent
-					.getExtras().getLong(BuddyListActivity.KEY_BUDDY_INDEX);
+				long buddy_id = intent.getExtras().getLong(
+						BuddyListActivity.KEY_BUDDY_INDEX);
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId()); // get connection associated with
@@ -98,8 +98,8 @@ public class XMPPService extends Service {
 				context.sendBroadcast(response_intent);
 			}
 
-			if (intent.getAction()
-					.equals(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
+			if (intent.getAction().equals(
+					ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
 				Bundle bundle = intent.getExtras();
 				String thread = bundle.getString(ChatActivity.THREAD);
 				String message = bundle.getString(ChatActivity.MESSAGE);
@@ -108,12 +108,14 @@ public class XMPPService extends Service {
 				makeToast("thread: " + thread);
 				makeToast("message: " + message);
 				makeToast("buddy_id: " + buddy_id);
-				
+
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
+				
+				makeToast("buddy connection id: " + buddy.getConnectionId());
+				
 				XMPPConnection connection = connection_hashmap.get(buddy
-						.getConnectionId()); // get connection associated with
-												// this buddy
-				Chat chat = connection.getChatManager().getThreadChat(thread);
+						.getConnectionId());
+				Chat chat = connection.getChatManager().getThreadChat(thread); // TODO verify chat is instantiated
 				try {
 					chat.sendMessage(message);
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_SENT));
@@ -121,23 +123,24 @@ public class XMPPService extends Service {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
 					e.printStackTrace();
 				}
-				
+
 			}
 
 		}
 
-//		private void storeMessage(Context context, String thread,
-//				String message, BuddyEntity buddy, XMPPConnection connection) {
-//			MessageEntity message_entity = new MessageEntity();
-//			message_entity.setContent(message);
-//			message_entity.setDelivered(true);
-//			message_entity.setReceiver_jid(buddy.getPartial_jid());
-//			message_entity.setSender_jid(connection.getUser());
-//			message_entity.setThread(thread);
-//			DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(context);
-//			daoSession.getMessageEntityDao().insert(message_entity);
-//			DatabaseUtil.close();
-//		}
+		// private void storeMessage(Context context, String thread,
+		// String message, BuddyEntity buddy, XMPPConnection connection) {
+		// MessageEntity message_entity = new MessageEntity();
+		// message_entity.setContent(message);
+		// message_entity.setDelivered(true);
+		// message_entity.setReceiver_jid(buddy.getPartial_jid());
+		// message_entity.setSender_jid(connection.getUser());
+		// message_entity.setThread(thread);
+		// DaoSession daoSession =
+		// DatabaseUtil.getWriteableDatabaseSession(context);
+		// daoSession.getMessageEntityDao().insert(message_entity);
+		// DatabaseUtil.close();
+		// }
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
 			DaoSession daoSession = DatabaseUtil
@@ -168,7 +171,7 @@ public class XMPPService extends Service {
 
 	// presence
 	public static final String KEY_BUDDY_INDEX = "UST32UAS340273#@H"; // long
-	
+
 	// message
 	public static final String KEY_MESSAGE_INDEX = "UST32323HU027334H"; // long
 
@@ -180,8 +183,6 @@ public class XMPPService extends Service {
 	public static final String MESSAGE = "239e#$%unheun34808"; // String
 	public static final String FROM_JID = "23heun348$%$#&08"; // String
 	public static final String THREAD = "@$@$4P789"; // String
-
-
 
 	@Override
 	public void onCreate() {
@@ -239,7 +240,7 @@ public class XMPPService extends Service {
 			}
 
 			String partial_jid = re.getUser();
-//			makeToast("re.getUser(): " + partial_jid);
+			// makeToast("re.getUser(): " + partial_jid);
 			Presence p = roster.getPresence(partial_jid); // TODO - experiment
 															// with
 															// partial_jid
@@ -323,7 +324,8 @@ public class XMPPService extends Service {
 		sendBroadcast(intent);
 	}
 
-	// TODO reconsider storing here in the listener instead of the broadcastreceiver
+	// TODO reconsider storing here in the listener instead of the
+	// broadcastreceiver
 	private void storeMessage(Message m) {
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		MessageEntity message = new MessageEntity();
