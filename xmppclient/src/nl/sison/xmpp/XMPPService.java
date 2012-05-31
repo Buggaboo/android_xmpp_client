@@ -112,7 +112,7 @@ public class XMPPService extends Service {
 				Chat chat = connection.getChatManager().getThreadChat(thread);
 				try {
 					chat.sendMessage(message);
-					storeMessage(context, thread, message, buddy, connection);
+//					storeMessage(context, thread, message, buddy, connection);
 				} catch (XMPPException e) {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
 					e.printStackTrace();
@@ -122,18 +122,18 @@ public class XMPPService extends Service {
 
 		}
 
-		private void storeMessage(Context context, String thread,
-				String message, BuddyEntity buddy, XMPPConnection connection) {
-			MessageEntity message_entity = new MessageEntity();
-			message_entity.setContent(message);
-			message_entity.setDelivered(true);
-			message_entity.setReceiver_jid(buddy.getPartial_jid());
-			message_entity.setSender_jid(connection.getUser());
-			message_entity.setThread(thread);
-			DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(context);
-			daoSession.getMessageEntityDao().insert(message_entity);
-			DatabaseUtil.close();
-		}
+//		private void storeMessage(Context context, String thread,
+//				String message, BuddyEntity buddy, XMPPConnection connection) {
+//			MessageEntity message_entity = new MessageEntity();
+//			message_entity.setContent(message);
+//			message_entity.setDelivered(true);
+//			message_entity.setReceiver_jid(buddy.getPartial_jid());
+//			message_entity.setSender_jid(connection.getUser());
+//			message_entity.setThread(thread);
+//			DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(context);
+//			daoSession.getMessageEntityDao().insert(message_entity);
+//			DatabaseUtil.close();
+//		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
 			long buddy_id = id;
@@ -236,7 +236,7 @@ public class XMPPService extends Service {
 			}
 
 			String partial_jid = re.getUser();
-			makeToast("re.getUser(): " + partial_jid);
+//			makeToast("re.getUser(): " + partial_jid);
 			Presence p = roster.getPresence(partial_jid); // TODO - experiment
 															// with
 															// partial_jid
@@ -283,8 +283,7 @@ public class XMPPService extends Service {
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
-//				storeMessage((Message) p);
-				// NOTE no longer necessary
+				storeMessage((Message) p);
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {

@@ -77,7 +77,10 @@ public class BuddyListActivity extends ListActivity {
 			}
 			if (intent.getAction()
 					.equals(XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
+				Bundle bundle = intent.getExtras();
 				Intent startActivityIntent = new Intent(BuddyListActivity.this, ChatActivity.class);
+				startActivityIntent.putExtra(KEY_BUDDY_INDEX, bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
+				startActivityIntent.putExtra(THREAD, bundle.getString(XMPPService.THREAD));
 				startActivity(startActivityIntent);
 			}			
 			

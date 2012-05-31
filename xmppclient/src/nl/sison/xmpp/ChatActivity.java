@@ -11,10 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
 public class ChatActivity extends Activity {
@@ -46,6 +48,8 @@ public class ChatActivity extends Activity {
 	private MessageAdapter adapter;
 
 	private long buddy_id;
+
+	private final static String TAG = "ChatActivity";
 
 	class MessageBroadcastReceiver extends BroadcastReceiver {
 
@@ -97,10 +101,20 @@ public class ChatActivity extends Activity {
 			input = (EditText) findViewById(R.id.text_input_bottom_input);
 		}
 
+		makeToast("Enter");
 		Intent intent = getIntent();
-		if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
-			buddy_id = intent.getExtras().getLong(XMPPService.KEY_BUDDY_INDEX);
+		Bundle bundle = intent.getExtras();
+		if (intent.hasExtra(BuddyListActivity.KEY_BUDDY_INDEX)) {
+			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
+			makeToast("buddy_id: " + buddy_id);
 		}
+
+		if (intent.hasExtra(BuddyListActivity.THREAD)) {
+			thread = bundle.getString(BuddyListActivity.THREAD);
+			makeToast("thread: " + thread);
+		}
+		makeToast("Exit");
+		
 
 		setupListView();
 
@@ -145,8 +159,15 @@ public class ChatActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		unregisterReceiver(receiver);
+	}
+	
+	private void makeToast(String message) {
+		if (!BuildConfig.DEBUG)
+			return;
+		Log.i(TAG , message);
+		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 }
