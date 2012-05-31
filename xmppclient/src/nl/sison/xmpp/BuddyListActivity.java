@@ -108,13 +108,13 @@ public class BuddyListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(ListView l, View v, int position, long message_id) {
 		// Intent intent = new Intent(BuddyListActivity.this,
 		// ChatActivity.class);
 
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
-		intent.putExtra(KEY_BUDDY_INDEX, id);
-		makeToast("onListItemClick id: " + id);
+		intent.putExtra(KEY_BUDDY_INDEX, message_id);
+		makeToast("onListItemClick id: " + message_id);
 		sendBroadcast(intent);
 
 		// TODO

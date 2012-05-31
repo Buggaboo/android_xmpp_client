@@ -138,9 +138,8 @@ public class ChatActivity extends Activity {
 		if (intent.hasExtra(BuddyListActivity.THREAD)) {
 			thread = bundle.getString(BuddyListActivity.THREAD);
 		}
-		
-		if (intent.hasExtra(BuddyListActivity.JID))
-		{
+
+		if (intent.hasExtra(BuddyListActivity.JID)) {
 			own_jid = bundle.getString(BuddyListActivity.JID);
 		}
 
@@ -185,7 +184,7 @@ public class ChatActivity extends Activity {
 		 * qb.where(Properties.Receiver_jid.eq(other_jid)); qb.or(
 		 * Properties.Sender_jid.eq(other_jid), null, null);
 		 */
-		
+
 		qb.where(Properties.BuddyId.eq(buddy_id));
 		// NOTE: this presents a challenge for group chat
 		// You probably need a groupchat activity for this thing
@@ -194,10 +193,9 @@ public class ChatActivity extends Activity {
 		List<MessageEntity> chat_history = qb.list();
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
+		makeToast("own_jid: " + own_jid);
 
-		if (chat_history.size() != 0) {
-			chat_list.setAdapter(adapter);
-		}
+		chat_list.setAdapter(adapter);
 	}
 
 	@Override
