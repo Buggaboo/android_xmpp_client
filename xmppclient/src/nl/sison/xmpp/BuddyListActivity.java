@@ -112,6 +112,7 @@ public class BuddyListActivity extends ListActivity {
 
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
 		intent.putExtra(KEY_BUDDY_INDEX, id);
+		makeToast("onListItemClick id: " + id);
 		sendBroadcast(intent);
 
 		// TODO

@@ -28,9 +28,9 @@ public class ChatActivity extends Activity {
 	/**
 	 * Intent extras
 	 */
-	public static final String THREAD = "23yididxb3@#$%444";
-	public static final String MESSAGE = "23yid´´idxb3@#$%444";
-	public static final String KEY_BUDDY_INDEX = "23yid´´idxb3@#$Z44";
+	public static final String THREAD = "23yididxb3@#$%44";
+	public static final String MESSAGE = "23yidxb3@#$%444";
+	public static final String KEY_BUDDY_INDEX = "23yidb3@#$Z44";
 	
 
 	private boolean top_orientation = false; // TODO create dialog

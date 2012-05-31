@@ -83,28 +83,32 @@ public class XMPPService extends Service {
 			// TODO + start chat
 			if (intent.getAction()
 					.equals(BuddyListActivity.ACTION_REQUEST_CHAT)) {
-				BuddyEntity buddy = getBuddyEntityFromId(context, intent
-						.getExtras().getLong(BuddyListActivity.KEY_BUDDY_INDEX));
+				long buddy_id = intent
+					.getExtras().getLong(BuddyListActivity.KEY_BUDDY_INDEX);
+				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId()); // get connection associated with
 												// this buddy
 				Chat chat = connection.getChatManager().createChat(
 						buddy.getPartial_jid(), null); // get jid of this buddy
 														// and create chat
-				intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
-				intent.putExtra(THREAD, chat.getThreadID());
-				context.sendBroadcast(intent);
-				makeToast("chat.getThreadID(): " + chat.getThreadID());
+				Intent response_intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
+				response_intent.putExtra(THREAD, chat.getThreadID());
+				response_intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
+				context.sendBroadcast(response_intent);
 			}
 
-			// TODO + send message
 			if (intent.getAction()
 					.equals(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
 				Bundle bundle = intent.getExtras();
-				String thread = bundle.getCharSequence(ChatActivity.THREAD).toString();
-				String message = bundle.getCharSequence(ChatActivity.MESSAGE).toString();
+				String thread = bundle.getString(ChatActivity.THREAD);
+				String message = bundle.getString(ChatActivity.MESSAGE);
 				long buddy_id = bundle.getLong(ChatActivity.KEY_BUDDY_INDEX);
 
+				makeToast("thread: " + thread);
+				makeToast("message: " + message);
+				makeToast("buddy_id: " + buddy_id);
+				
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId()); // get connection associated with
@@ -112,7 +116,7 @@ public class XMPPService extends Service {
 				Chat chat = connection.getChatManager().getThreadChat(thread);
 				try {
 					chat.sendMessage(message);
-//					storeMessage(context, thread, message, buddy, connection);
+					context.sendBroadcast(new Intent(ACTION_MESSAGE_SENT));
 				} catch (XMPPException e) {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
 					e.printStackTrace();
@@ -136,10 +140,9 @@ public class XMPPService extends Service {
 //		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
-			long buddy_id = id;
 			DaoSession daoSession = DatabaseUtil
 					.getReadOnlyDatabaseSession(context);
-			BuddyEntity buddy = daoSession.load(BuddyEntity.class, buddy_id);
+			BuddyEntity buddy = daoSession.load(BuddyEntity.class, id);
 			DatabaseUtil.close();
 			return buddy;
 		}
