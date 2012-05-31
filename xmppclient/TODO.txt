@@ -7,4 +7,6 @@ TODO 31-05-12
 	It seems stable...
 - fix presence updates, too many false positives
     - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
+- prettify interface
+- create test accounts on other providers 
 - more testing 
