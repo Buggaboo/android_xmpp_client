@@ -1,8 +1,6 @@
 package nl.sison.xmpp;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.DaoSession;
@@ -21,7 +19,7 @@ import android.widget.Toast;
 /**
  * 
  * @author Jasm Sison
- *
+ * 
  */
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
@@ -167,19 +165,29 @@ public class BuddyListActivity extends ListActivity {
 	 */
 	private void refreshList() {
 		// TODO finish context menu for the dialog
+		// TODO consider deleting the buddies, instead of throwing away the
+		// whole adapter
 		adapter = null;
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
 
-		if (buddies == null || buddies.size() == 0) // TODO determine if
-													// necessary
-		{
+		// This is necessary, in case a new account is made, and there are no
+		// buddies to connect to.
+		if (buddies == null || buddies.size() == 0) {
 			DatabaseUtil.close();
 			return;
 		}
+		
+		// testing purposes // TODO remove
+		for (BuddyEntity be : buddies)
+		{
+			Log.i(TAG, "id: " + be.getId());
+			Log.i(TAG, "isAway: " + be.getIsAway());
+			Log.i(TAG, "isAvailable: " + be.getIsAvailable());
+		}
 
-		adapter = new BuddyAdapter(this, new ArrayList<BuddyEntity>(buddies));
+		adapter = new BuddyAdapter(this, buddies);
 		DatabaseUtil.close();
 		setListAdapter(adapter);
 	}
