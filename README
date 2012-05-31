@@ -1,0 +1,16 @@
+=README=
+
+==Description==
+Multi-provider XMPP Client for android.
+
+==Share!==
+Fork this project and please send improvements my way. Thanks!
+
+==Warning==
+This software might not work as expected...
+This is largely untested with different xmpp servers, providers etc.
+
+==Licence==
+GPLv3 http://www.gnu.org/copyleft/gpl.html
+
+
