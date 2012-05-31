@@ -1,5 +1,7 @@
 package nl.sison.xmpp.dao;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -7,6 +9,7 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.DaoConfig;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.SqlUtils;
 
 import nl.sison.xmpp.dao.MessageEntity;
 
@@ -26,7 +29,10 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         public final static Property Received_date = new Property(4, java.util.Date.class, "received_date", false, "RECEIVED_DATE");
         public final static Property Delivered = new Property(5, Boolean.class, "delivered", false, "DELIVERED");
         public final static Property Thread = new Property(6, String.class, "thread", false, "THREAD");
+        public final static Property BuddyId = new Property(7, long.class, "buddyId", false, "BUDDY_ID");
     };
+
+    private DaoSession daoSession;
 
 
     public MessageEntityDao(DaoConfig config) {
@@ -35,6 +41,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
     
     public MessageEntityDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -46,7 +53,8 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
                 "'CONTENT' TEXT NOT NULL ," + // 3: content
                 "'RECEIVED_DATE' INTEGER NOT NULL ," + // 4: received_date
                 "'DELIVERED' INTEGER," + // 5: delivered
-                "'THREAD' TEXT);"; // 6: thread
+                "'THREAD' TEXT," + // 6: thread
+                "'BUDDY_ID' INTEGER NOT NULL );"; // 7: buddyId
         db.execSQL(sql);
     }
 
@@ -79,6 +87,13 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         if (thread != null) {
             stmt.bindString(7, thread);
         }
+        stmt.bindLong(8, entity.getBuddyId());
+    }
+
+    @Override
+    protected void attachEntity(MessageEntity entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -97,7 +112,8 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
             cursor.getString(offset + 3), // content
             new java.util.Date(cursor.getLong(offset + 4)), // received_date
             cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // delivered
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // thread
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // thread
+            cursor.getLong(offset + 7) // buddyId
         );
         return entity;
     }
@@ -112,6 +128,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         entity.setReceived_date(new java.util.Date(cursor.getLong(offset + 4)));
         entity.setDelivered(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
         entity.setThread(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setBuddyId(cursor.getLong(offset + 7));
      }
     
     @Override
@@ -136,4 +153,97 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         return true;
     }
     
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getBuddyEntityDao().getAllColumns());
+            builder.append(" FROM MESSAGE_ENTITY T");
+            builder.append(" LEFT JOIN BUDDY_ENTITY T0 ON T.'BUDDY_ID'=T0.'_id'");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected MessageEntity loadCurrentDeep(Cursor cursor, boolean lock) {
+        MessageEntity entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        BuddyEntity buddyEntity = loadCurrentOther(daoSession.getBuddyEntityDao(), cursor, offset);
+         if(buddyEntity != null) {
+            entity.setBuddyEntity(buddyEntity);
+        }
+
+        return entity;    
+    }
+
+    public MessageEntity loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<MessageEntity> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<MessageEntity> list = new ArrayList<MessageEntity>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<MessageEntity> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<MessageEntity> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

@@ -21,6 +21,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
+/**
+ * 
+ * @author Jasm Sison
+ *
+ */
+// TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 public class ConnectionListActivity extends ListActivity {
 	private final static String TAG = "BuddyListActivity";
 	private AlertDialog crudConnectionDialog;

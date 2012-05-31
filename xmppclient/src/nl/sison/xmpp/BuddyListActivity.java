@@ -17,6 +17,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+// TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
+/**
+ * 
+ * @author Jasm Sison
+ *
+ */
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
 
@@ -34,8 +40,9 @@ public class BuddyListActivity extends ListActivity {
 	/**
 	 * Intent extras
 	 */
-	public static final String KEY_BUDDY_INDEX = "98238ecruuce,rece";
-	public static final String THREAD = "98238ecQruuce,Prece";
+	public static final String KEY_BUDDY_INDEX = "98238.ce";
+	public static final String THREAD = "982ruucece";
+	public static final String JID = "9xx8238e";
 
 	private BuddyAdapter adapter;
 	private BroadcastReceiver receiver;
@@ -51,7 +58,7 @@ public class BuddyListActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context ctx, Intent intent) {
-			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
+			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
 				if (intent.hasExtra(XMPPService.FROM_JID)) {
 					// TODO message from certain jid, give visual feedback
 					// (flashing listitem or something), load the activity again
@@ -75,12 +82,20 @@ public class BuddyListActivity extends ListActivity {
 				// TODO make all buddies that are available online, but
 				// ACTION_BUDDY_PRESENCE_UPDATE should already do that (test!)
 			}
-			if (intent.getAction()
-					.equals(XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
-				Intent startActivityIntent = new Intent(BuddyListActivity.this, ChatActivity.class);
+			if (intent.getAction().equals(
+					XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
+				Bundle bundle = intent.getExtras();
+				Intent startActivityIntent = new Intent(BuddyListActivity.this,
+						ChatActivity.class);
+				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
+						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
+				startActivityIntent.putExtra(THREAD,
+						bundle.getString(XMPPService.THREAD));
+				startActivityIntent.putExtra(JID,
+						bundle.getString(XMPPService.JID));
 				startActivity(startActivityIntent);
-			}			
-			
+			}
+
 		}
 	};
 
@@ -91,7 +106,7 @@ public class BuddyListActivity extends ListActivity {
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
-		actionFilter.addAction(XMPPService.ACTION_BUDDY_NEW_MESSAGE);
+		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
@@ -103,12 +118,14 @@ public class BuddyListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(ListView l, View v, int position,
+			long message_id) {
 		// Intent intent = new Intent(BuddyListActivity.this,
 		// ChatActivity.class);
 
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
-		intent.putExtra(KEY_BUDDY_INDEX, id);
+		intent.putExtra(KEY_BUDDY_INDEX, message_id);
+		makeToast("onListItemClick id: " + message_id);
 		sendBroadcast(intent);
 
 		// TODO

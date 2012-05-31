@@ -22,7 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+/**
+ * 
+ * @author Jasm Sison
+ *
+ */
+
 public class CRUDConnectionActivity extends Activity {
+	/**
+	 * TODO set default value for resource
+	 */
+	
 	public static final String RESTART_CONNECTION = "asnehnaoseuthaoseuthaoseuth2234";
 
 	private final String TAG = "CRUDConnectionActivity";
@@ -79,13 +89,14 @@ public class CRUDConnectionActivity extends Activity {
 				"hint_port");
 		setTextViewHint(parent, R.id.conn_port, id_hint_port).setText(
 				id_hint_port);
-
+		
 		setTextViewHint(parent, R.id.conn_username,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_username"));
+		
 		setTextViewHint(parent, R.id.conn_resource,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_resource"));
 
-		// TODO fix toggle boolean
+		// TODO fix & test toggle boolean
 		setToggleButtonDefault(parent, R.id.conn_compressed,
 				Boolean.valueOf(getString(getResourceIdentifierByPrefix(
 						hint_prefix, "default_compressed"))));
@@ -211,8 +222,8 @@ public class CRUDConnectionActivity extends Activity {
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
 							 // the following two equal a restart
-							stopService(restartConnectionOnService);
-							startService(restartConnectionOnService);
+//							stopService(restartConnectionOnService); // TODO determine if this causes the major crash
+//							startService(restartConnectionOnService);
 							finish();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
