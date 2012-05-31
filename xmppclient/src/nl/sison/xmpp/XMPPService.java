@@ -45,7 +45,7 @@ import de.greenrobot.dao.QueryBuilder;
 /**
  * 
  * @author Jasm Sison
- *
+ * 
  */
 public class XMPPService extends Service {
 	/**
@@ -84,9 +84,17 @@ public class XMPPService extends Service {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-//			makeToast("Intent received:" + intent.getAction());
 			// TODO - status = away unavailable etc.
 			// TODO + start chat
+			if (intent.getAction().equals(
+					CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
+				long cc_id = intent.getExtras().getLong(
+						CRUDConnectionActivity.KEY_CONNECTION_INDEX);
+				DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(context);
+				ConnectionConfigurationEntity cc = daoSession.load(ConnectionConfigurationEntity.class, cc_id);
+				connectAndPopulateBuddyList(cc);
+			}
+
 			if (intent.getAction()
 					.equals(BuddyListActivity.ACTION_REQUEST_CHAT)) {
 				long buddy_id = intent.getExtras().getLong(
@@ -99,7 +107,8 @@ public class XMPPService extends Service {
 				Intent response_intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
 				response_intent.putExtra(THREAD, chat.getThreadID());
 				response_intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
-				response_intent.putExtra(JID, StringUtils.parseBareAddress(connection.getUser()));
+				response_intent.putExtra(JID,
+						StringUtils.parseBareAddress(connection.getUser()));
 				context.sendBroadcast(response_intent);
 			}
 
@@ -128,7 +137,7 @@ public class XMPPService extends Service {
 					} else {
 						chat = connection.getChatManager().createChat(
 								buddy.getPartial_jid(), thread, null);
-						makeToast("newly created chat object");						
+						makeToast("newly created chat object");
 					}
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
@@ -213,34 +222,42 @@ public class XMPPService extends Service {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(BuddyListActivity.ACTION_REQUEST_CHAT);
 		filter.addAction(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE);
+		filter.addAction(CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST);
 		registerReceiver(receiver, filter);
 	}
 
 	private void makeConnectionsFromDatabase() {
 		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
-		connection_hashmap = new ConcurrentHashMap<Long, XMPPConnection>();
+		if (connection_hashmap == null) {
+			connection_hashmap = new ConcurrentHashMap<Long, XMPPConnection>();
+		}
 		weakenNetworkOnMainThreadPolicy(); // TODO - remove and implement this
 											// as asynctask or runnable when
 											// debugging is
 											// done, makeToast must run on main
 											// thread or is invisible
 		for (final ConnectionConfigurationEntity cc : all_conns) {
-			final String label = cc.getLabel();
-			final long cc_id = cc.getId();
-			XMPPConnection connection;
-			try {
-				connection = connectToServer(cc);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-				connection = null;
-			}
-			if (connection != null) {
-				connection_hashmap.put(cc_id, connection);
-				setListeners(connection, cc_id);
-				connection.getRoster().setSubscriptionMode(
-						SubscriptionMode.accept_all);
-				populateBuddyLists(connection, cc_id);
-			}
+			connectAndPopulateBuddyList(cc);
+		}
+	}
+
+	private void connectAndPopulateBuddyList(
+			final ConnectionConfigurationEntity cc) {
+		XMPPConnection connection;
+		try {
+			connection = connectToServer(cc);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			connection = null;
+		}
+		if (connection != null) {
+			long cc_id = cc.getId();
+			connection_hashmap.put(cc_id, connection);
+			setListeners(connection, cc_id);
+			// auto-accept subscribe request 
+			connection.getRoster().setSubscriptionMode(
+					SubscriptionMode.accept_all);
+			populateBuddyLists(connection, cc_id);
 		}
 	}
 
@@ -251,8 +268,8 @@ public class XMPPService extends Service {
 		Roster roster = connection.getRoster();
 		for (RosterEntry re : roster.getEntries()) {
 			List<BuddyEntity> query_result = qb.where(
-					BuddyEntityDao.Properties.Partial_jid.eq(re.getUser()))
-					.list();
+					BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
+							.parseBareAddress(re.getUser()))).list();
 			BuddyEntity b;
 			if (query_result.isEmpty()) {
 				b = new BuddyEntity();
@@ -351,7 +368,7 @@ public class XMPPService extends Service {
 				.queryBuilder()
 				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
 						.getFrom()))).list().get(0);
-		
+
 		message.setBuddyEntity(buddy);
 
 		return daoSession.getMessageEntityDao().insert(message);

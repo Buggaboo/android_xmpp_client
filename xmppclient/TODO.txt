@@ -1,0 +1,9 @@
+TODO 31-05-12
++ improve connection testing
+	@ refactor out test code to just use the service by sending an intent, CRUDConnectionActivity
+	No this design is better. Less complicated easier to manage, tradeoff copy-paste code.
+	Although CRUDConnectionActivity could send a broadcast to the service, populate the buddylist
+	+ implement populate buddy list via onReceive on XMPPService
+	It seems stable...
+	
+- more testing 

@@ -33,7 +33,11 @@ public class CRUDConnectionActivity extends Activity {
 	 * TODO set default value for resource
 	 */
 	
-	public static final String RESTART_CONNECTION = "asnehnaoseuthaoseuthaoseuth2234";
+	public static final String RESTART_CONNECTION = "asnehnaoseu";
+
+	public static final String ACTION_REQUEST_POPULATE_BUDDYLIST = "euthaose1!@##$";
+
+	public static final String KEY_CONNECTION_INDEX = "4433&&*";
 
 	private final String TAG = "CRUDConnectionActivity";
 
@@ -214,16 +218,18 @@ public class CRUDConnectionActivity extends Activity {
 						XMPPConnection connection = connectToServer(conn_conf);
 						if (connection != null && connection.isConnected()
 								&& connection.isAuthenticated()) {
-							storeConnectionConfiguration(conn_conf);
+							long cc_id = storeConnectionConfiguration(conn_conf);
+							DatabaseUtil.close();
 							Intent restartConnectionOnService = new Intent(
 									CRUDConnectionActivity.this,
 									XMPPService.class);
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
-							 // the following two equal a restart
-//							stopService(restartConnectionOnService); // TODO determine if this causes the major crash
-//							startService(restartConnectionOnService);
+							// tell the service to connect with this new connection
+							Intent intent = new Intent(ACTION_REQUEST_POPULATE_BUDDYLIST);
+							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
+							sendBroadcast(intent);
 							finish();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
@@ -287,13 +293,12 @@ public class CRUDConnectionActivity extends Activity {
 		return tv.getText().toString();
 	}
 
-	private void storeConnectionConfiguration(
+	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();
-		conn_config_dao.insertOrReplace(conn_config);
-		DatabaseUtil.close();
+		return conn_config_dao.insertOrReplace(conn_config);
 	}
 
 	private ConnectionConfigurationEntity getConnectionDetails(View parent) {
