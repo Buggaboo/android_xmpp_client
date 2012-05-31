@@ -33,7 +33,6 @@ public class ChatActivity extends Activity {
 	public static final String THREAD = "23yididxb3@#$%44";
 	public static final String MESSAGE = "23yidxb3@#$%444";
 	public static final String KEY_BUDDY_INDEX = "23yidb3@#$Z44";
-	
 
 	private boolean top_orientation = false; // TODO create dialog
 	private ListView chat_list;
@@ -65,15 +64,27 @@ public class ChatActivity extends Activity {
 						.getReadOnlyDatabaseSession(context);
 				MessageEntity message = daoSession.load(MessageEntity.class,
 						message_id);
+				DatabaseUtil.close();				
 				input.setText("");
 				input.setFocusable(true);
-				DatabaseUtil.close();
+
 				makeToast("adapter adding message - start");
 				adapter.add(message);
 				makeToast("adapter adding message - end");
 			}
-		}
 
+			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
+				Bundle bundle = intent.getExtras();
+				// TODO block messages from other users not on this thread
+				makeToast("Message id: " + bundle.getLong(XMPPService.KEY_MESSAGE_INDEX));
+				long message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
+				DaoSession daoSession = DatabaseUtil
+						.getReadOnlyDatabaseSession(context);
+				MessageEntity message = daoSession.load(MessageEntity.class,
+						message_id);
+				adapter.add(message);
+			}
+		}
 	}
 
 	@Override
@@ -91,8 +102,8 @@ public class ChatActivity extends Activity {
 			chat_list = (ListView) findViewById(R.id.chat_bottom_input);
 			submit = (Button) findViewById(R.id.submit_bottom_input);
 			input = (EditText) findViewById(R.id.text_input_bottom_input);
-		}		
-		
+		}
+
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_SENT); // DONE!
@@ -123,9 +134,9 @@ public class ChatActivity extends Activity {
 		/**
 		 * TODO - figure out
 		 * 
-		 * There's a funny thing about pressing enter twice
-		 * on the text input, it triggers some things, but doesn't
-		 * actually cause the service to send the message 
+		 * There's a funny thing about pressing enter twice on the text input,
+		 * it triggers some things, but doesn't actually cause the service to
+		 * send the message
 		 */
 		submit.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
@@ -140,10 +151,10 @@ public class ChatActivity extends Activity {
 				}
 			}
 		});
-		
+
 		submit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
-				
+
 			}
 		});
 
@@ -154,16 +165,19 @@ public class ChatActivity extends Activity {
 		// ArrayList<HashMap<String, String>> chat_history = new
 		// ArrayList<HashMap<String, String>>();
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-//		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
-//				.queryBuilder();
-//		qb.where(Properties.Receiver_jid.eq(other_jid));
-//		qb.or(Properties.Sender_jid.eq(other_jid), null, null); // TODO + or match
-//																// against
-//																// thread
-		QueryBuilder<MessageEntity> qb = daoSession.queryBuilder(MessageEntity.class);
-		List<MessageEntity> chat_history = qb.where(Properties.Thread.eq(thread)).list();
+		// QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
+		// .queryBuilder();
+		// qb.where(Properties.Receiver_jid.eq(other_jid));
+		// qb.or(Properties.Sender_jid.eq(other_jid), null, null); // TODO + or
+		// match
+		// // against
+		// // thread
+		QueryBuilder<MessageEntity> qb = daoSession
+				.queryBuilder(MessageEntity.class);
+		List<MessageEntity> chat_history = qb.where(
+				Properties.Thread.eq(thread)).list();
 		DatabaseUtil.close();
-		
+
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 
 		if (chat_history.size() != 0) {
@@ -177,11 +191,11 @@ public class ChatActivity extends Activity {
 		super.onDestroy();
 		unregisterReceiver(receiver);
 	}
-	
+
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
-		Log.i(TAG , message);
+		Log.i(TAG, message);
 		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 		toast.show();
 	}

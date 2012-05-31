@@ -130,7 +130,7 @@ public class XMPPService extends Service {
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
 					ack_intent.putExtra(KEY_MESSAGE_INDEX,
-							storeMessage(context, message, connection, chat));
+							storeMessageEntityReturnId(context, message, connection, chat));
 					DatabaseUtil.close();
 					context.sendBroadcast(ack_intent);
 				} catch (XMPPException e) {
@@ -142,7 +142,7 @@ public class XMPPService extends Service {
 
 		}
 
-		private long storeMessage(Context context, String message,
+		private long storeMessageEntityReturnId(Context context, String message,
 				XMPPConnection connection, Chat chat) {
 			DaoSession daoSession = DatabaseUtil
 					.getWriteableDatabaseSession(context);
@@ -296,6 +296,7 @@ public class XMPPService extends Service {
 		setOutgoingMessageListener(connection);
 	}
 
+	@Deprecated
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
@@ -310,18 +311,12 @@ public class XMPPService extends Service {
 		});
 	}
 
-	/**
-	 * TODO - figure out what to do with this, general listener
-	 * 
-	 * @param label
-	 * @param connection
-	 */
 	private void setIncomingMessageListener(XMPPConnection connection) {
 		connection.addPacketListener(new PacketListener() {
 			public void processPacket(Packet p) {
 				Message m = (Message) p;
-				broadcastMessage(m);
-				storeMessage(m);
+				broadcastMessage(storeSmackMessageReturnId(m));
+				DatabaseUtil.close();
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
@@ -330,17 +325,13 @@ public class XMPPService extends Service {
 		});
 	}
 
-	private void broadcastMessage(Message m) {
+	private void broadcastMessage(long id) {
 		Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
-		intent.putExtra(FROM_JID, m.getFrom());
-		intent.putExtra(MESSAGE, m.getBody());
-		intent.putExtra(THREAD, m.getThread());
+		intent.putExtra(KEY_MESSAGE_INDEX, id);
 		sendBroadcast(intent);
 	}
 
-	// TODO reconsider storing here in the listener instead of the
-	// broadcastreceiver
-	private void storeMessage(Message m) {
+	private long storeSmackMessageReturnId(Message m) {
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		MessageEntity message = new MessageEntity();
 		message.setContent(m.getBody());
@@ -348,8 +339,7 @@ public class XMPPService extends Service {
 		message.setSender_jid(StringUtils.parseBareAddress(m.getFrom()));
 		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
 		message.setThread(m.getThread());
-		daoSession.getMessageEntityDao().insert(message);
-		DatabaseUtil.close();
+		return daoSession.getMessageEntityDao().insert(message);
 	}
 
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
