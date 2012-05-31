@@ -83,8 +83,11 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-			if (message.getBuddyId() != buddy_id) {
+			makeToast("start ellende: " + message);
+			makeToast("start ellende: " + message.getBuddyId());
+			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtil.close();
+				makeToast("The message is either null or not set with the buddy id field: " + message);
 				return;
 			}
 

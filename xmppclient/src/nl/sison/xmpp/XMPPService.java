@@ -339,11 +339,13 @@ public class XMPPService extends Service {
 		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
 		message.setThread(m.getThread());
 
-		daoSession
+		BuddyEntity buddy = daoSession
 				.getBuddyEntityDao()
 				.queryBuilder()
 				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
-						.getFrom())));
+						.getFrom()))).list().get(0);
+		
+		message.setBuddyEntity(buddy);
 
 		return daoSession.getMessageEntityDao().insert(message);
 	}
