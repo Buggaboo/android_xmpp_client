@@ -40,7 +40,7 @@ public class ChatActivity extends Activity {
 	private Button submit;
 	private EditText input;
 
-	private String own_jid, other_jid;
+	private String own_jid;
 	private String thread;
 	// private ArrayList<String> group_chat_jids; // TODO
 	// private String group_chat_thread; // TODO
@@ -138,6 +138,11 @@ public class ChatActivity extends Activity {
 		if (intent.hasExtra(BuddyListActivity.THREAD)) {
 			thread = bundle.getString(BuddyListActivity.THREAD);
 		}
+		
+		if (intent.hasExtra(BuddyListActivity.JID))
+		{
+			own_jid = bundle.getString(BuddyListActivity.JID);
+		}
 
 		setupListView();
 
@@ -192,7 +197,6 @@ public class ChatActivity extends Activity {
 
 		if (chat_history.size() != 0) {
 			chat_list.setAdapter(adapter);
-
 		}
 	}
 

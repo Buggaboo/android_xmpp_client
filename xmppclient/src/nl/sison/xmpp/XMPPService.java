@@ -94,6 +94,7 @@ public class XMPPService extends Service {
 				Intent response_intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
 				response_intent.putExtra(THREAD, chat.getThreadID());
 				response_intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
+				response_intent.putExtra(JID, StringUtils.parseBareAddress(connection.getUser()));
 				context.sendBroadcast(response_intent);
 			}
 

@@ -34,8 +34,9 @@ public class BuddyListActivity extends ListActivity {
 	/**
 	 * Intent extras
 	 */
-	public static final String KEY_BUDDY_INDEX = "98238ecruuce,rece";
-	public static final String THREAD = "98238ecQruuce,Prece";
+	public static final String KEY_BUDDY_INDEX = "98238.ce";
+	public static final String THREAD = "982ruucece";
+	public static final String JID = "9xx8238e";
 
 	private BuddyAdapter adapter;
 	private BroadcastReceiver receiver;
@@ -81,6 +82,7 @@ public class BuddyListActivity extends ListActivity {
 				Intent startActivityIntent = new Intent(BuddyListActivity.this, ChatActivity.class);
 				startActivityIntent.putExtra(KEY_BUDDY_INDEX, bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
 				startActivityIntent.putExtra(THREAD, bundle.getString(XMPPService.THREAD));
+				startActivityIntent.putExtra(JID, bundle.getString(XMPPService.JID));
 				startActivity(startActivityIntent);
 			}			
 			
