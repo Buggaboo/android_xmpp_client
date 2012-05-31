@@ -44,7 +44,7 @@ import de.greenrobot.dao.QueryBuilder;
 
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 public class XMPPService extends Service {

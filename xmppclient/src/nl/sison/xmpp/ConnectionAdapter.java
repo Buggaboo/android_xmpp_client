@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  * 
  */
 public class ConnectionAdapter extends ArrayAdapter {

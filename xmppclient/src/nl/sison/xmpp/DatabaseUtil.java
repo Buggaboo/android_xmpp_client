@@ -7,7 +7,7 @@ import nl.sison.xmpp.dao.DaoMaster.DevOpenHelper;
 import nl.sison.xmpp.dao.DaoSession;
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 public class DatabaseUtil {

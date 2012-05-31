@@ -24,7 +24,7 @@ import de.greenrobot.dao.QueryBuilder;
 // TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 public class ChatActivity extends Activity {

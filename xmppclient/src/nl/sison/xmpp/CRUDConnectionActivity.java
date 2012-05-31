@@ -24,7 +24,7 @@ import android.widget.ToggleButton;
 
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 public class StartXMPPServiceReceiver extends BroadcastReceiver {

@@ -20,7 +20,7 @@ import android.widget.Toast;
 // TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 /**
  * 
- * @author jasm
+ * @author Jasm Sison
  *
  */
 public class BuddyListActivity extends ListActivity {
