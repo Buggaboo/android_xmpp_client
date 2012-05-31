@@ -294,10 +294,11 @@ public class XMPPService extends Service {
 
 	private void setBuddyPresence(BuddyEntity b, Presence p) {
 		b.setIsAvailable(p.isAvailable());
-		makeToast("p.isAvailable(): " + p.isAvailable());
+//		makeToast("p.isAvailable(): " + p.isAvailable());
+		// these makeToast might have broken the update mechanism
 
 		b.setIsAway(p.isAway());
-		makeToast("p.isAway(): " + p.isAway());
+//		makeToast("p.isAway(): " + p.isAway());
 
 		b.setPresence_status(p.getStatus());
 		b.setPresence_type(p.getType().toString());
@@ -377,7 +378,7 @@ public class XMPPService extends Service {
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
 		String from = p.getFrom();
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
-		intent.putExtra(JID, p.getFrom());
+//		intent.putExtra(JID, p.getFrom()); // NOTE: not very useful
 
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()

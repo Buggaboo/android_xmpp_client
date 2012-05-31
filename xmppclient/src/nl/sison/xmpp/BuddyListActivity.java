@@ -167,6 +167,7 @@ public class BuddyListActivity extends ListActivity {
 	 */
 	private void refreshList() {
 		// TODO finish context menu for the dialog
+		// TODO consider deleting the buddies, instead of throwing away the whole adapter
 		adapter = null;
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
