@@ -1,6 +1,6 @@
 package nl.sison.xmpp;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import nl.sison.xmpp.dao.BuddyEntity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
-	public BuddyAdapter(Context context, ArrayList<BuddyEntity> buddies) {
+	public BuddyAdapter(Context context, List<BuddyEntity> buddies) {
 		super(context, 0);
 		this.setNotifyOnChange(true);
 		this.addAll(buddies);
