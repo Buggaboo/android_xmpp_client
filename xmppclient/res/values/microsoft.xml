@@ -9,4 +9,14 @@
     <string name="microsoft_default_encrypted">false</string>
     <string name="microsoft_default_compressed">true</string>
     <string name="microsoft_default_sasl_authenticated">false</string>
+    
+    <string name="yahoo_hint_label">xmpp.messenger.live.com</string>
+    <string name="yahoo_hint_server">xmpp.messenger.live.com</string>
+    <string name="yahoo_hint_domain">messenger.live.com</string>
+    <string name="yahoo_hint_port">5222</string>
+    <string name="yahoo_hint_username">jane.doe</string>
+    <string name="yahoo_hint_resource">android</string>
+    <string name="yahoo_default_encrypted">false</string>
+    <string name="yahoo_default_compressed">true</string>
+    <string name="yahoo_default_sasl_authenticated">false</string>    
 </resources>

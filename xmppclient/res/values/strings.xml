@@ -39,7 +39,7 @@
         <item >google</item>
         <item >facebook</item>
         <item >microsoft</item>
-        <!--<item >yahoo</item>-->
+        <!-- <item >yahoo</item>  -->
         <item >meebo</item>
         <item>other</item>        
     </string-array>
