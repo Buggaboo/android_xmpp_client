@@ -120,6 +120,13 @@ public class ChatActivity extends Activity {
 
 		setupListView();
 
+		/**
+		 * TODO - figure out
+		 * 
+		 * There's a funny thing about pressing enter twice
+		 * on the text input, it triggers some things, but doesn't
+		 * actually cause the service to send the message 
+		 */
 		submit.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 				Intent messageIntent = new Intent(
@@ -131,6 +138,12 @@ public class ChatActivity extends Activity {
 				if (message.length() != 0) {
 					sendBroadcast(messageIntent);
 				}
+			}
+		});
+		
+		submit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			public void onFocusChange(View v, boolean hasFocus) {
+				
 			}
 		});
 
