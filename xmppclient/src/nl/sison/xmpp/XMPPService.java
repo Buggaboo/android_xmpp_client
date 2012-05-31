@@ -123,13 +123,7 @@ public class XMPPService extends Service {
 
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
-				Chat chat = connection.getChatManager().getThreadChat(thread); // NOTE:
-																				// I
-																				// don't
-																				// know
-																				// why
-																				// this
-																				// fails.
+				Chat chat = connection.getChatManager().getThreadChat(thread);
 				try {
 					if (chat != null) {
 						chat.sendMessage(message);
