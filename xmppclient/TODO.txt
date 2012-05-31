@@ -6,5 +6,5 @@ TODO 31-05-12
 	+ implement populate buddy list via onReceive on XMPPService
 	It seems stable...
 - fix presence updates, too many false positives
-
+    - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
 - more testing 
