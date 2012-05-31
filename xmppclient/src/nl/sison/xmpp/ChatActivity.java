@@ -2,7 +2,6 @@ package nl.sison.xmpp;
 
 import java.util.List;
 
-import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;

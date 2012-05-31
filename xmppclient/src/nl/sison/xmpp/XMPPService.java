@@ -124,9 +124,11 @@ public class XMPPService extends Service {
 				try {
 					if (chat != null) {
 						chat.sendMessage(message);
+						makeToast("recycled chat object");
 					} else {
 						chat = connection.getChatManager().createChat(
 								buddy.getPartial_jid(), thread, null);
+						makeToast("newly created chat object");						
 					}
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
@@ -258,7 +260,7 @@ public class XMPPService extends Service {
 				b = query_result.get(0);
 			}
 
-			String partial_jid = re.getUser();
+			String partial_jid = StringUtils.parseBareAddress(re.getUser());
 			Presence p = roster.getPresence(partial_jid); // TODO - experiment
 															// with
 															// partial_jid

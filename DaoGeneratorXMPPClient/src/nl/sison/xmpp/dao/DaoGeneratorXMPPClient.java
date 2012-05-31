@@ -15,7 +15,7 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(23, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(24, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
