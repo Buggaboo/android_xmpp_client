@@ -87,11 +87,9 @@ public class XMPPService extends Service {
 						BuddyListActivity.KEY_BUDDY_INDEX);
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
-						.getConnectionId()); // get connection associated with
-												// this buddy
+						.getConnectionId());
 				Chat chat = connection.getChatManager().createChat(
-						buddy.getPartial_jid(), null); // get jid of this buddy
-														// and create chat
+						buddy.getPartial_jid(), null);
 				Intent response_intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
 				response_intent.putExtra(THREAD, chat.getThreadID());
 				response_intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
@@ -110,14 +108,26 @@ public class XMPPService extends Service {
 				makeToast("buddy_id: " + buddy_id);
 
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
-				
+
 				makeToast("buddy connection id: " + buddy.getConnectionId());
-				
+
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
-				Chat chat = connection.getChatManager().getThreadChat(thread); // TODO verify chat is instantiated
+				Chat chat = connection.getChatManager().getThreadChat(thread); // NOTE: I
+																				// don't
+																				// know
+																				// why
+																				// this
+																				// fails.
 				try {
-					chat.sendMessage(message);
+					if (chat != null) {
+						chat.sendMessage(message);
+						makeToast("3a");
+					} else {
+						chat = connection.getChatManager().createChat(
+								buddy.getPartial_jid(), thread, null);
+						makeToast("3b");
+					}
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_SENT));
 				} catch (XMPPException e) {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
@@ -127,20 +137,6 @@ public class XMPPService extends Service {
 			}
 
 		}
-
-		// private void storeMessage(Context context, String thread,
-		// String message, BuddyEntity buddy, XMPPConnection connection) {
-		// MessageEntity message_entity = new MessageEntity();
-		// message_entity.setContent(message);
-		// message_entity.setDelivered(true);
-		// message_entity.setReceiver_jid(buddy.getPartial_jid());
-		// message_entity.setSender_jid(connection.getUser());
-		// message_entity.setThread(thread);
-		// DaoSession daoSession =
-		// DatabaseUtil.getWriteableDatabaseSession(context);
-		// daoSession.getMessageEntityDao().insert(message_entity);
-		// DatabaseUtil.close();
-		// }
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
 			DaoSession daoSession = DatabaseUtil
@@ -263,9 +259,7 @@ public class XMPPService extends Service {
 		makeToast("p.isAway(): " + p.isAway());
 
 		b.setPresence_status(p.getStatus());
-		makeToast("p.getStatus(): " + p.getStatus());
 		b.setPresence_type(p.getType().toString());
-		// b.setPresence_mode(p.getMode().toString());
 	}
 
 	private void setBuddyBasic(BuddyEntity b, final String partial_jid,

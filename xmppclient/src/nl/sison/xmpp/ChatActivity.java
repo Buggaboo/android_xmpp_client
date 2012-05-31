@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
+// TODO implement away message
+
 public class ChatActivity extends Activity {
 	/**
 	 * Intent action
@@ -58,12 +60,15 @@ public class ChatActivity extends Activity {
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_SENT)) {
 				long message_id = intent.getExtras().getLong(
 						XMPPService.KEY_MESSAGE_INDEX);
+				makeToast("message_id: " + message_id);
 				DaoSession daoSession = DatabaseUtil
 						.getReadOnlyDatabaseSession(context);
 				MessageEntity message = daoSession.load(MessageEntity.class,
 						message_id);
 				DatabaseUtil.close();
+				makeToast("adapter adding message - start");
 				adapter.add(message);
+				makeToast("adapter adding message - end");
 			}
 		}
 
