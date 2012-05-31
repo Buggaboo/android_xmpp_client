@@ -133,11 +133,11 @@ public class XMPPService extends Service {
 				try {
 					if (chat != null) {
 						chat.sendMessage(message);
-						makeToast("recycled chat object");
+//						makeToast("recycled chat object");
 					} else {
 						chat = connection.getChatManager().createChat(
 								buddy.getPartial_jid(), thread, null);
-						makeToast("newly created chat object");
+//						makeToast("newly created chat object");
 					}
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
