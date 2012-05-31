@@ -277,6 +277,8 @@ public class XMPPService extends Service {
 			Presence p = roster.getPresence(partial_jid); // TODO - experiment
 															// with
 															// partial_jid
+			// TODO - determine whether roster.getPresence(... accepts partial
+			// jids or full jids (i.e. with our without resource)
 
 			setBuddyBasic(b, partial_jid, cc_id);
 			if (p != null) {
@@ -384,6 +386,9 @@ public class XMPPService extends Service {
 		List<BuddyEntity> query_result = qb.where(
 				BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
 						.parseBareAddress(p.getFrom()))).list();
+		
+		// TODO - remove test code
+		Log.i(TAG, "p.getFrom(): " +p.getFrom());
 
 		// create entity if it doesn't exist yet
 		// otherwise the broadcast will be pointless
