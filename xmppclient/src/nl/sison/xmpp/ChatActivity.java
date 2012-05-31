@@ -56,34 +56,36 @@ public class ChatActivity extends Activity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			long message_id = -1;
+
+			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_ERROR)) {
+				makeToast("An error occurred when attempting to deliver this message bla");
+				return;
+			}
+
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_SENT)) {
-				long message_id = intent.getExtras().getLong(
+				message_id = intent.getExtras().getLong(
 						XMPPService.KEY_MESSAGE_INDEX);
-				makeToast("message_id: " + message_id);
-				DaoSession daoSession = DatabaseUtil
-						.getReadOnlyDatabaseSession(context);
-				MessageEntity message = daoSession.load(MessageEntity.class,
-						message_id);
-				DatabaseUtil.close();				
 				input.setText("");
 				input.setFocusable(true);
-
-				makeToast("adapter adding message - start");
-				adapter.add(message);
-				makeToast("adapter adding message - end");
 			}
 
-			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
+			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
 				Bundle bundle = intent.getExtras();
 				// TODO block messages from other users not on this thread
-				makeToast("Message id: " + bundle.getLong(XMPPService.KEY_MESSAGE_INDEX));
-				long message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
-				DaoSession daoSession = DatabaseUtil
-						.getReadOnlyDatabaseSession(context);
-				MessageEntity message = daoSession.load(MessageEntity.class,
-						message_id);
-				adapter.add(message);
+				message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
 			}
+
+			DaoSession daoSession = DatabaseUtil
+					.getReadOnlyDatabaseSession(context);
+			MessageEntity message = daoSession.load(MessageEntity.class,
+					message_id);
+
+			DatabaseUtil.close();
+
+			makeToast("adapter adding message - start");
+			adapter.add(message);
+			makeToast("adapter adding message - end");
 		}
 	}
 
@@ -107,11 +109,14 @@ public class ChatActivity extends Activity {
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_SENT); // DONE!
-		actionFilter.addAction(XMPPService.ACTION_MESSAGE_ERROR);
-		actionFilter.addAction(XMPPService.ACTION_BUDDY_NEW_MESSAGE);
-		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
-		actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
-		actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
+		actionFilter.addAction(XMPPService.ACTION_MESSAGE_ERROR); // DONE!
+		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING); // DONE!
+
+		// TODO place the following in their own receiver
+		// TODO unregister the receivers onDestroy
+		// actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
+		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
+		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
 		registerReceiver(receiver, actionFilter);
 	}
 
@@ -172,11 +177,14 @@ public class ChatActivity extends Activity {
 		// match
 		// // against
 		// // thread
-		QueryBuilder<MessageEntity> qb = daoSession
-				.queryBuilder(MessageEntity.class);
-		List<MessageEntity> chat_history = qb.where(
-				Properties.Thread.eq(thread)).list();
-		DatabaseUtil.close();
+
+		/*
+		 * NOTE: this will not work due to the ever changing thread
+		 * // This will not QueryBuilder<MessageEntity> qb = daoSession
+		 * .queryBuilder(MessageEntity.class); List<MessageEntity> chat_history
+		 * = qb.where( Properties.Thread.eq(thread)).list();
+		 * DatabaseUtil.close();
+		 */
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 

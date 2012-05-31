@@ -51,7 +51,7 @@ public class BuddyListActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context ctx, Intent intent) {
-			if (intent.getAction().equals(XMPPService.ACTION_BUDDY_NEW_MESSAGE)) {
+			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
 				if (intent.hasExtra(XMPPService.FROM_JID)) {
 					// TODO message from certain jid, give visual feedback
 					// (flashing listitem or something), load the activity again
@@ -94,7 +94,7 @@ public class BuddyListActivity extends ListActivity {
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
-		actionFilter.addAction(XMPPService.ACTION_BUDDY_NEW_MESSAGE);
+		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);

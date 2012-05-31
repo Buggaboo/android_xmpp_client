@@ -169,7 +169,7 @@ public class XMPPService extends Service {
 	 * Intent actions (for Broadcasting)
 	 */
 	public static final String ACTION_BUDDY_PRESENCE_UPDATE = "nl.sison.xmpp.ACTION_BUDDY_PRESENCE_UPDATE";
-	public static final String ACTION_BUDDY_NEW_MESSAGE = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
+	public static final String ACTION_MESSAGE_INCOMING = "nl.sison.xmpp.ACTION_BUDDY_NEW_MESSAGE";
 	public static final String ACTION_CONNECTION_LOST = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String ACTION_CONNECTION_RESUMED = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String ACTION_REQUEST_CHAT_GRANTED = "nl.sison.xmpp.ACTION_REQUEST_CHAT_GRANTED";
@@ -326,7 +326,7 @@ public class XMPPService extends Service {
 	}
 
 	private void broadcastMessage(long id) {
-		Intent intent = new Intent(ACTION_BUDDY_NEW_MESSAGE);
+		Intent intent = new Intent(ACTION_MESSAGE_INCOMING);
 		intent.putExtra(KEY_MESSAGE_INDEX, id);
 		sendBroadcast(intent);
 	}
