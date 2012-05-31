@@ -21,7 +21,7 @@ public class BuddyEntity {
     private java.util.Date last_seen_online_date;
     private Boolean isAvailable;
     private Boolean isAway;
-    private Long connectionId;
+    private long connectionId;
 
     /** Used to resolve relations */
     private DaoSession daoSession;
@@ -40,7 +40,7 @@ public class BuddyEntity {
         this.id = id;
     }
 
-    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, Long connectionId) {
+    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, long connectionId) {
         this.id = id;
         this.partial_jid = partial_jid;
         this.last_seen_resource = last_seen_resource;
@@ -151,11 +151,11 @@ public class BuddyEntity {
         this.isAway = isAway;
     }
 
-    public Long getConnectionId() {
+    public long getConnectionId() {
         return connectionId;
     }
 
-    public void setConnectionId(Long connectionId) {
+    public void setConnectionId(long connectionId) {
         this.connectionId = connectionId;
     }
 
@@ -173,8 +173,11 @@ public class BuddyEntity {
     }
 
     public void setConnectionConfigurationEntity(ConnectionConfigurationEntity connectionConfigurationEntity) {
+        if (connectionConfigurationEntity == null) {
+            throw new DaoException("To-one property 'connectionId' has not-null constraint; cannot set to-one to null");
+        }
         this.connectionConfigurationEntity = connectionConfigurationEntity;
-        connectionId = connectionConfigurationEntity == null ? null : connectionConfigurationEntity.getId();
+        connectionId = connectionConfigurationEntity.getId();
         connectionConfigurationEntity__resolvedKey = connectionId;
     }
 

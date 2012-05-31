@@ -211,8 +211,8 @@ public class CRUDConnectionActivity extends Activity {
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
 							 // the following two equal a restart
-							stopService(restartConnectionOnService);
-							startService(restartConnectionOnService);
+//							stopService(restartConnectionOnService); // TODO determine if this causes the major crash
+//							startService(restartConnectionOnService);
 							finish();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));

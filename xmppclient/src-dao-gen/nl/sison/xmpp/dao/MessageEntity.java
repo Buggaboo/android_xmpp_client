@@ -20,7 +20,7 @@ public class MessageEntity {
     private java.util.Date received_date;
     private Boolean delivered;
     private String thread;
-    private Long buddyId;
+    private long buddyId;
 
     /** Used to resolve relations */
     private DaoSession daoSession;
@@ -39,7 +39,7 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered, String thread, Long buddyId) {
+    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered, String thread, long buddyId) {
         this.id = id;
         this.sender_jid = sender_jid;
         this.receiver_jid = receiver_jid;
@@ -120,11 +120,11 @@ public class MessageEntity {
         this.thread = thread;
     }
 
-    public Long getBuddyId() {
+    public long getBuddyId() {
         return buddyId;
     }
 
-    public void setBuddyId(Long buddyId) {
+    public void setBuddyId(long buddyId) {
         this.buddyId = buddyId;
     }
 
@@ -142,8 +142,11 @@ public class MessageEntity {
     }
 
     public void setBuddyEntity(BuddyEntity buddyEntity) {
+        if (buddyEntity == null) {
+            throw new DaoException("To-one property 'buddyId' has not-null constraint; cannot set to-one to null");
+        }
         this.buddyEntity = buddyEntity;
-        buddyId = buddyEntity == null ? null : buddyEntity.getId();
+        buddyId = buddyEntity.getId();
         buddyEntity__resolvedKey = buddyId;
     }
 

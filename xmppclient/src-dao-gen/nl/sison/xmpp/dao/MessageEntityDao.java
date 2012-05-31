@@ -29,7 +29,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         public final static Property Received_date = new Property(4, java.util.Date.class, "received_date", false, "RECEIVED_DATE");
         public final static Property Delivered = new Property(5, Boolean.class, "delivered", false, "DELIVERED");
         public final static Property Thread = new Property(6, String.class, "thread", false, "THREAD");
-        public final static Property BuddyId = new Property(7, Long.class, "buddyId", false, "BUDDY_ID");
+        public final static Property BuddyId = new Property(7, long.class, "buddyId", false, "BUDDY_ID");
     };
 
     private DaoSession daoSession;
@@ -54,7 +54,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
                 "'RECEIVED_DATE' INTEGER NOT NULL ," + // 4: received_date
                 "'DELIVERED' INTEGER," + // 5: delivered
                 "'THREAD' TEXT," + // 6: thread
-                "'BUDDY_ID' INTEGER);"; // 7: buddyId
+                "'BUDDY_ID' INTEGER NOT NULL );"; // 7: buddyId
         db.execSQL(sql);
     }
 
@@ -87,11 +87,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         if (thread != null) {
             stmt.bindString(7, thread);
         }
- 
-        Long buddyId = entity.getBuddyId();
-        if (buddyId != null) {
-            stmt.bindLong(8, buddyId);
-        }
+        stmt.bindLong(8, entity.getBuddyId());
     }
 
     @Override
@@ -117,7 +113,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
             new java.util.Date(cursor.getLong(offset + 4)), // received_date
             cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // delivered
             cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // thread
-            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // buddyId
+            cursor.getLong(offset + 7) // buddyId
         );
         return entity;
     }
@@ -132,7 +128,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         entity.setReceived_date(new java.util.Date(cursor.getLong(offset + 4)));
         entity.setDelivered(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
         entity.setThread(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setBuddyId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
+        entity.setBuddyId(cursor.getLong(offset + 7));
      }
     
     @Override
@@ -178,7 +174,9 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         int offset = getAllColumns().length;
 
         BuddyEntity buddyEntity = loadCurrentOther(daoSession.getBuddyEntityDao(), cursor, offset);
-        entity.setBuddyEntity(buddyEntity);
+         if(buddyEntity != null) {
+            entity.setBuddyEntity(buddyEntity);
+        }
 
         return entity;    
     }
