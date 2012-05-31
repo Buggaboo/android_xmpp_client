@@ -51,6 +51,8 @@ public class ChatActivity extends Activity {
 
 	private long buddy_id;
 
+	private List<MessageEntity> chat_history;
+
 	private final static String TAG = "ChatActivity";
 
 	class MessageBroadcastReceiver extends BroadcastReceiver {
@@ -190,12 +192,15 @@ public class ChatActivity extends Activity {
 		// You probably need a groupchat activity for this thing
 		// and a different database
 
-		List<MessageEntity> chat_history = qb.list();
+		chat_history = qb.list();
+		DatabaseUtil.close();
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 		makeToast("own_jid: " + own_jid);
 
 		chat_list.setAdapter(adapter);
+		
+		
 	}
 
 	@Override
