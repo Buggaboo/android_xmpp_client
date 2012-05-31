@@ -8,7 +8,7 @@
     <string name="modify_connection">Modify</string>
     <string name="remove_connection">Remove</string>
     <string name="create_connection">Create</string>
-    <string name="request_create_conn">There are no connections configured yet.</string>
+    <string name="request_create_conn">Please create a connection.</string>
     <string name="sure_remove_conn">Are you sure you want to remove - </string>
 
     <!-- connection related stuff -->

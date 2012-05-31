@@ -132,7 +132,7 @@ public class CRUDConnectionActivity extends Activity {
 		long ccid = getIntent().getExtras().getLong(
 				ConnectionListActivity.CONNECTION_ROW_INDEX);
 
-		makeToast("intent extra " + ccid);
+//		makeToast("intent extra " + ccid);
 
 		ConnectionConfigurationEntity cc = DatabaseUtil
 				.getReadOnlyDatabaseSession(this)
@@ -181,9 +181,9 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-							makeToast("connection will be compressed");
+//							makeToast("connection will be compressed");
 						} else {
-							makeToast("connection will NOT be compressed");
+//							makeToast("connection will NOT be compressed");
 						}
 					}
 				});
@@ -192,9 +192,9 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-							makeToast("connection will be sasl_authenticated");
+//							makeToast("connection will be sasl_authenticated");
 						} else {
-							makeToast("connection will NOT be sasl_authenticated");
+//							makeToast("connection will NOT be sasl_authenticated");
 						}
 					}
 				});
@@ -203,10 +203,10 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-							makeToast("connection will be encrypted");
+//							makeToast("connection will be encrypted");
 							makeToast("Warning: encryption on this version of smack lib is most likely broken.");
 						} else {
-							makeToast("connection will NOT be encrypted");
+//							makeToast("connection will NOT be encrypted");
 						}
 					}
 				});
@@ -250,7 +250,7 @@ public class CRUDConnectionActivity extends Activity {
 										R.layout.edit_connection, null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
-								makeToast("stored bad configuration");
+//								makeToast("stored bad configuration");
 								finish();
 							}
 						})
@@ -258,7 +258,7 @@ public class CRUDConnectionActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								makeToast("cancel store bad configuration");
+//								makeToast("cancel store bad configuration");
 							}
 						});
 		builder.create().show();
@@ -274,12 +274,12 @@ public class CRUDConnectionActivity extends Activity {
 		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
 		try {
 			connection.connect();
-			makeToast(cc.getLabel() + "is connected:"
-					+ connection.isConnected());
+//			makeToast(cc.getLabel() + "is connected:"
+//					+ connection.isConnected());
 			connection.login(cc.getUsername(), cc.getPassword(),
 					cc.getResource());
-			makeToast(cc.getLabel() + "is authenticated:"
-					+ connection.isAuthenticated());
+//			makeToast(cc.getLabel() + "is authenticated:"
+//					+ connection.isAuthenticated());
 		} catch (XMPPException e) {
 			connection = null;
 			e.printStackTrace();
