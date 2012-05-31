@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao;
+import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
@@ -78,7 +79,7 @@ public class XMPPService extends Service {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			makeToast("Intent received:" + intent.getAction());
+//			makeToast("Intent received:" + intent.getAction());
 			// TODO - status = away unavailable etc.
 			// TODO + start chat
 			if (intent.getAction()
@@ -103,13 +104,7 @@ public class XMPPService extends Service {
 				String message = bundle.getString(ChatActivity.MESSAGE);
 				long buddy_id = bundle.getLong(ChatActivity.KEY_BUDDY_INDEX);
 
-				makeToast("thread: " + thread);
-				makeToast("message: " + message);
-				makeToast("buddy_id: " + buddy_id);
-
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
-
-				makeToast("buddy connection id: " + buddy.getConnectionId());
 
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
@@ -129,8 +124,10 @@ public class XMPPService extends Service {
 					}
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
-					ack_intent.putExtra(KEY_MESSAGE_INDEX,
-							storeMessageEntityReturnId(context, message, connection, chat));
+					ack_intent.putExtra(
+							KEY_MESSAGE_INDEX,
+							storeMessageEntityReturnId(context, message,
+									connection, chat, buddy_id));
 					DatabaseUtil.close();
 					context.sendBroadcast(ack_intent);
 				} catch (XMPPException e) {
@@ -142,8 +139,9 @@ public class XMPPService extends Service {
 
 		}
 
-		private long storeMessageEntityReturnId(Context context, String message,
-				XMPPConnection connection, Chat chat) {
+		private long storeMessageEntityReturnId(Context context,
+				String message, XMPPConnection connection, Chat chat,
+				long buddy_id) {
 			DaoSession daoSession = DatabaseUtil
 					.getWriteableDatabaseSession(context);
 			MessageEntity me = new MessageEntity();
@@ -153,6 +151,7 @@ public class XMPPService extends Service {
 			me.setReceiver_jid(chat.getParticipant());
 			me.setSender_jid(connection.getUser());
 			me.setThread(chat.getThreadID());
+			me.setBuddyId(buddy_id);
 			return daoSession.getMessageEntityDao().insert(me);
 		}
 
@@ -254,7 +253,6 @@ public class XMPPService extends Service {
 			}
 
 			String partial_jid = re.getUser();
-			// makeToast("re.getUser(): " + partial_jid);
 			Presence p = roster.getPresence(partial_jid); // TODO - experiment
 															// with
 															// partial_jid
@@ -339,6 +337,13 @@ public class XMPPService extends Service {
 		message.setSender_jid(StringUtils.parseBareAddress(m.getFrom()));
 		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
 		message.setThread(m.getThread());
+
+		daoSession
+				.getBuddyEntityDao()
+				.queryBuilder()
+				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
+						.getFrom())));
+
 		return daoSession.getMessageEntityDao().insert(message);
 	}
 
@@ -455,11 +460,11 @@ public class XMPPService extends Service {
 		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
 		try {
 			connection.connect();
-			makeToast(cc.getLabel() + "is connected:"
+			makeToast(cc.getLabel() + " is connected:"
 					+ connection.isConnected());
 			connection.login(cc.getUsername(), cc.getPassword(),
 					cc.getResource());
-			makeToast(cc.getLabel() + "is authenticated:"
+			makeToast(cc.getLabel() + " is authenticated:"
 					+ connection.isAuthenticated());
 			cc.setConnection_success(cc.getConnection_success() + 1);
 		} catch (XMPPException e) {
@@ -520,7 +525,6 @@ public class XMPPService extends Service {
 				conn.disconnect();
 			}
 		}
-		makeToast("onDestroy");
 	}
 
 	/**

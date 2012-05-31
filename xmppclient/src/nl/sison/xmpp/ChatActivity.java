@@ -166,26 +166,14 @@ public class ChatActivity extends Activity {
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		// TODO - read from the database
-		// ArrayList<HashMap<String, String>> chat_history = new
-		// ArrayList<HashMap<String, String>>();
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-		// QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
-		// .queryBuilder();
-		// qb.where(Properties.Receiver_jid.eq(other_jid));
-		// qb.or(Properties.Sender_jid.eq(other_jid), null, null); // TODO + or
-		// match
-		// // against
-		// // thread
+		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
+				.queryBuilder();
+		qb.where(Properties.Receiver_jid.eq(other_jid));
+		qb.or(Properties.Sender_jid.eq(other_jid), null, null);
 
-		/*
-		 * NOTE: this will not work due to the ever changing thread
-		 * // This will not QueryBuilder<MessageEntity> qb = daoSession
-		 * .queryBuilder(MessageEntity.class); List<MessageEntity> chat_history
-		 * = qb.where( Properties.Thread.eq(thread)).list();
-		 * DatabaseUtil.close();
-		 */
-
+		List<MessageEntity> chat_history = qb.list();
+		
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 
 		if (chat_history.size() != 0) {
