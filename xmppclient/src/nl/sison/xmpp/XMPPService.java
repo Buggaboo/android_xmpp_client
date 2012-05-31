@@ -90,8 +90,10 @@ public class XMPPService extends Service {
 					CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
 				long cc_id = intent.getExtras().getLong(
 						CRUDConnectionActivity.KEY_CONNECTION_INDEX);
-				DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(context);
-				ConnectionConfigurationEntity cc = daoSession.load(ConnectionConfigurationEntity.class, cc_id);
+				DaoSession daoSession = DatabaseUtil
+						.getReadOnlyDatabaseSession(context);
+				ConnectionConfigurationEntity cc = daoSession.load(
+						ConnectionConfigurationEntity.class, cc_id);
 				connectAndPopulateBuddyList(cc);
 			}
 
@@ -127,11 +129,11 @@ public class XMPPService extends Service {
 				try {
 					if (chat != null) {
 						chat.sendMessage(message);
-//						makeToast("recycled chat object");
+						// makeToast("recycled chat object");
 					} else {
 						chat = connection.getChatManager().createChat(
 								buddy.getPartial_jid(), thread, null);
-//						makeToast("newly created chat object");
+						// makeToast("newly created chat object");
 					}
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
@@ -248,7 +250,7 @@ public class XMPPService extends Service {
 			long cc_id = cc.getId();
 			connection_hashmap.put(cc_id, connection);
 			setListeners(connection, cc_id);
-			// auto-accept subscribe request 
+			// auto-accept subscribe request
 			connection.getRoster().setSubscriptionMode(
 					SubscriptionMode.accept_all);
 			populateBuddyLists(connection, cc_id);
@@ -288,11 +290,13 @@ public class XMPPService extends Service {
 
 	private void setBuddyPresence(BuddyEntity b, Presence p) {
 		b.setIsAvailable(p.isAvailable());
-//		makeToast("p.isAvailable(): " + p.isAvailable());
-		// these makeToast might have broken the update mechanism
+		Log.i(TAG, "p.isAvailable(): " + p.isAvailable());
+
+		// these makeToast might have broken the update mechanism // ->
+		// Nope: apparently it didn't
 
 		b.setIsAway(p.isAway());
-//		makeToast("p.isAway(): " + p.isAway());
+		Log.i(TAG, "p.isAway(): " + p.isAway());
 
 		b.setPresence_status(p.getStatus());
 		b.setPresence_type(p.getType().toString());
@@ -372,7 +376,7 @@ public class XMPPService extends Service {
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
 		String from = p.getFrom();
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
-//		intent.putExtra(JID, p.getFrom()); // NOTE: not very useful
+		// intent.putExtra(JID, p.getFrom()); // NOTE: not very useful
 
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
