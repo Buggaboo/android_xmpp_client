@@ -17,6 +17,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+// TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
+/**
+ * 
+ * @author jasm
+ *
+ */
 public class BuddyListActivity extends ListActivity {
 	private static final String TAG = "BuddyListActivity";
 
@@ -76,16 +82,20 @@ public class BuddyListActivity extends ListActivity {
 				// TODO make all buddies that are available online, but
 				// ACTION_BUDDY_PRESENCE_UPDATE should already do that (test!)
 			}
-			if (intent.getAction()
-					.equals(XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
+			if (intent.getAction().equals(
+					XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
 				Bundle bundle = intent.getExtras();
-				Intent startActivityIntent = new Intent(BuddyListActivity.this, ChatActivity.class);
-				startActivityIntent.putExtra(KEY_BUDDY_INDEX, bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
-				startActivityIntent.putExtra(THREAD, bundle.getString(XMPPService.THREAD));
-				startActivityIntent.putExtra(JID, bundle.getString(XMPPService.JID));
+				Intent startActivityIntent = new Intent(BuddyListActivity.this,
+						ChatActivity.class);
+				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
+						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
+				startActivityIntent.putExtra(THREAD,
+						bundle.getString(XMPPService.THREAD));
+				startActivityIntent.putExtra(JID,
+						bundle.getString(XMPPService.JID));
 				startActivity(startActivityIntent);
-			}			
-			
+			}
+
 		}
 	};
 
@@ -108,7 +118,8 @@ public class BuddyListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long message_id) {
+	protected void onListItemClick(ListView l, View v, int position,
+			long message_id) {
 		// Intent intent = new Intent(BuddyListActivity.this,
 		// ChatActivity.class);
 

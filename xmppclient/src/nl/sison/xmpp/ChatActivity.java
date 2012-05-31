@@ -21,7 +21,12 @@ import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
 // TODO implement away message
-
+// TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
+/**
+ * 
+ * @author jasm
+ *
+ */
 public class ChatActivity extends Activity {
 	/**
 	 * Intent action
@@ -83,19 +88,20 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-//			makeToast("message: " + message.getContent());
-//			makeToast("message.getBuddyId(): " + message.getBuddyId());
+			// makeToast("message: " + message.getContent());
+			// makeToast("message.getBuddyId(): " + message.getBuddyId());
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtil.close();
-//				makeToast("The message is either null or not set with the buddy id field: " + message);
+				// makeToast("The message is either null or not set with the buddy id field: "
+				// + message);
 				return;
 			}
 
 			DatabaseUtil.close();
 
-//			makeToast("adapter adding message - start");
+			// makeToast("adapter adding message - start");
 			adapter.add(message);
-//			makeToast("adapter adding message - end");
+			// makeToast("adapter adding message - end");
 		}
 	}
 
@@ -202,8 +208,7 @@ public class ChatActivity extends Activity {
 		makeToast("own_jid: " + own_jid);
 
 		chat_list.setAdapter(adapter);
-		
-		
+
 	}
 
 	@Override

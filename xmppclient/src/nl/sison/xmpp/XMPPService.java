@@ -42,6 +42,11 @@ import android.util.Log;
 import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
+/**
+ * 
+ * @author jasm
+ *
+ */
 public class XMPPService extends Service {
 	/**
 	 * ISSUES
@@ -174,8 +179,8 @@ public class XMPPService extends Service {
 	public static final String ACTION_CONNECTION_RESUMED = "nl.sison.xmpp.ACTION_BUDDY_CONNECTION_LOST";
 	public static final String ACTION_REQUEST_CHAT_GRANTED = "nl.sison.xmpp.ACTION_REQUEST_CHAT_GRANTED";
 	public static final String ACTION_REQUEST_CHAT_ERROR = "nl.sison.xmpp.ACTION_REQUEST_CHAT_ERROR";
-	public static final String ACTION_MESSAGE_SENT = "239e#$%uun348";
-	public static final String ACTION_MESSAGE_ERROR = "239e#$%uun348";
+	public static final String ACTION_MESSAGE_SENT = "nl.sison.xmpp.ACTION_MESSAGE_SENT";
+	public static final String ACTION_MESSAGE_ERROR = "nl.sison.xmpp.ACTION_MESSAGE_ERROR";
 
 	/**
 	 * Intent extras
@@ -335,8 +340,8 @@ public class XMPPService extends Service {
 		MessageEntity message = new MessageEntity();
 		message.setContent(m.getBody());
 		message.setReceived_date(new Date());
-		message.setSender_jid(StringUtils.parseBareAddress(m.getFrom()));
-		message.setReceiver_jid(StringUtils.parseBareAddress(m.getTo()));
+		message.setSender_jid(m.getFrom());
+		message.setReceiver_jid(m.getTo());
 		message.setThread(m.getThread());
 
 		BuddyEntity buddy = daoSession

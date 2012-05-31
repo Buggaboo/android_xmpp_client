@@ -5,7 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import nl.sison.xmpp.dao.DaoMaster;
 import nl.sison.xmpp.dao.DaoMaster.DevOpenHelper;
 import nl.sison.xmpp.dao.DaoSession;
-
+/**
+ * 
+ * @author jasm
+ *
+ */
 public class DatabaseUtil {
 	public static final String XMPP_CLIENT_DATABASE = "xmpp_client_database.db";
 	private static DevOpenHelper helper;
