@@ -1,4 +1,5 @@
 TODO 31-05-12
+- make translatable to different languages, use the prefix technique in CRUDConnection.
 - limit number of messages on the chat screen, add button on top of the List
 + implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
 	+ implement removal of notifications of a buddy, when the messages have been seen.
