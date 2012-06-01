@@ -19,6 +19,7 @@ TODO 31-05-12
 - create an icon
 - remove the stupid header (aka titlebar), or add custom stuff there
 - prettify interface
+- modify notification to show a picture
 + improve connection testing
 	@ refactor out test code to just use the service by sending an intent, CRUDConnectionActivity
 	No this design is better. Less complicated easier to manage, tradeoff copy-paste code.

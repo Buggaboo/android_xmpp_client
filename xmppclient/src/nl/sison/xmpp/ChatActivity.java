@@ -89,8 +89,6 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-//			makeToast("message.getBuddyId() == buddy_id:" + (message.getBuddyId() == buddy_id));
-			
 			// this prevents messages from other buddies to leak into this context 
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtils.close();

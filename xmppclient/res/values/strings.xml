@@ -35,7 +35,7 @@
     <string name="text_literal">text</string>
     
     <!-- Notification related stuff -->
-    <string name="notify_new_msg">sent you a new message</string>
+    <string name="says"> says </string>
 
     <!-- default settings -->
     <string-array name="hint_prefixes">
