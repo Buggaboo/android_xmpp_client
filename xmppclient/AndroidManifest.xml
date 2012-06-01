@@ -22,8 +22,14 @@
             android:name=".XMPPService"
             android:icon="@drawable/ic_launcher" >
         </service>
+        <service
+            android:name=".XMPPMessageNotificationService"
+            android:icon="@drawable/ic_launcher" >
+        </service>
 
-        <receiver android:name=".StartXMPPServiceReceiver" android:enabled="true">
+        <receiver
+            android:name=".StartXMPPServiceReceiver"
+            android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -43,7 +49,7 @@
         <activity android:name=".BuddyListActivity" >
         </activity>
         <activity android:name=".ChatActivity" >
-        </activity>        
+        </activity>
     </application>
 
 </manifest>

@@ -62,16 +62,16 @@ public class ConnectionListActivity extends ListActivity {
 			createCRConnectionDialog(getString(R.string.request_create_conn));
 		}
 
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 	}
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
 		// TODO get connections from database, produce array list
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntityDao conn_conf_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 		return all_conns;
 	}
 
@@ -139,14 +139,14 @@ public class ConnectionListActivity extends ListActivity {
 	private void modifyConnection(String message) {
 		Intent intent = new Intent(ConnectionListActivity.this,
 				CRUDConnectionActivity.class);
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
 		Long cc_id = qb.where(Properties.Label.eq(message)).build().list()
 				.get(0).getId();
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 		startActivityForResult(intent, RQ_MODIFY_CONN);
 	}
 
@@ -158,13 +158,13 @@ public class ConnectionListActivity extends ListActivity {
 
 	private void deleteConnection(String message) {
 		// makeToast("Deleting " + message);
-		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder()
 				.where(Properties.Label.eq(message)).limit(1);
 		ccdao.delete(qb.list().get(0));
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 	}
 
 	private void createDialogDeleteConnection(final String message) {

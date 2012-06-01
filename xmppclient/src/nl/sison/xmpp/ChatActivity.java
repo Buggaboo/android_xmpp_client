@@ -82,7 +82,7 @@ public class ChatActivity extends Activity {
 				message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
 			}
 
-			DaoSession daoSession = DatabaseUtil
+			DaoSession daoSession = DatabaseUtils
 					.getReadOnlyDatabaseSession(context);
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
@@ -90,13 +90,13 @@ public class ChatActivity extends Activity {
 			// makeToast("message: " + message.getContent());
 			// makeToast("message.getBuddyId(): " + message.getBuddyId());
 			if (message == null || message.getBuddyId() != buddy_id) {
-				DatabaseUtil.close();
+				DatabaseUtils.close();
 				// makeToast("The message is either null or not set with the buddy id field: "
 				// + message);
 				return;
 			}
 
-			DatabaseUtil.close();
+			DatabaseUtils.close();
 
 			// makeToast("adapter adding message - start");
 			adapter.add(message);
@@ -185,7 +185,7 @@ public class ChatActivity extends Activity {
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
@@ -196,7 +196,7 @@ public class ChatActivity extends Activity {
 		// and a different database
 
 		chat_history = qb.list();
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
 

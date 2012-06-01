@@ -90,7 +90,7 @@ public class XMPPService extends Service {
 					CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
 				long cc_id = intent.getExtras().getLong(
 						CRUDConnectionActivity.KEY_CONNECTION_INDEX);
-				DaoSession daoSession = DatabaseUtil
+				DaoSession daoSession = DatabaseUtils
 						.getReadOnlyDatabaseSession(context);
 				ConnectionConfigurationEntity cc = daoSession.load(
 						ConnectionConfigurationEntity.class, cc_id);
@@ -141,7 +141,7 @@ public class XMPPService extends Service {
 							KEY_MESSAGE_INDEX,
 							storeMessageEntityReturnId(context, message,
 									connection, chat, buddy_id));
-					DatabaseUtil.close();
+					DatabaseUtils.close();
 					context.sendBroadcast(ack_intent);
 				} catch (XMPPException e) {
 					context.sendBroadcast(new Intent(ACTION_MESSAGE_ERROR));
@@ -155,7 +155,7 @@ public class XMPPService extends Service {
 		private long storeMessageEntityReturnId(Context context,
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
-			DaoSession daoSession = DatabaseUtil
+			DaoSession daoSession = DatabaseUtils
 					.getWriteableDatabaseSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
@@ -169,10 +169,10 @@ public class XMPPService extends Service {
 		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
-			DaoSession daoSession = DatabaseUtil
+			DaoSession daoSession = DatabaseUtils
 					.getReadOnlyDatabaseSession(context);
 			BuddyEntity buddy = daoSession.load(BuddyEntity.class, id);
-			DatabaseUtil.close();
+			DatabaseUtils.close();
 			return buddy;
 		}
 	};
@@ -258,7 +258,7 @@ public class XMPPService extends Service {
 	}
 
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
-		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
 		Roster roster = connection.getRoster();
@@ -287,7 +287,7 @@ public class XMPPService extends Service {
 
 			daoSession.insertOrReplace(b);
 		}
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 	}
 
 	private void setBuddyPresence(BuddyEntity b, Presence p) {
@@ -340,7 +340,7 @@ public class XMPPService extends Service {
 			public void processPacket(Packet p) {
 				Message m = (Message) p;
 				broadcastMessage(storeSmackMessageReturnId(m));
-				DatabaseUtil.close();
+				DatabaseUtils.close();
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
@@ -356,7 +356,7 @@ public class XMPPService extends Service {
 	}
 
 	private long storeSmackMessageReturnId(Message m) {
-		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		MessageEntity message = new MessageEntity();
 		message.setContent(m.getBody());
 		message.setReceived_date(new Date());
@@ -380,7 +380,7 @@ public class XMPPService extends Service {
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
 		// intent.putExtra(JID, p.getFrom()); // NOTE: not very useful
 
-		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
 		List<BuddyEntity> query_result = qb.where(
@@ -515,22 +515,22 @@ public class XMPPService extends Service {
 	}
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		List<ConnectionConfigurationEntity> all = daoSession
 				.getConnectionConfigurationEntityDao().loadAll();
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 		return all;
 	}
 
 	// TODO refactor this away to the the DatabaseUtil, this is the same as
 	// onListItemClick code in ConnectionListActivity
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntity cc = daoSession
 				.getConnectionConfigurationEntityDao().load(cc_id);
 		// TODO there's a lag before the database is written to, so the table
 		// appears to be empty right before it's read
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 		return cc;
 	}
 

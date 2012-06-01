@@ -71,12 +71,12 @@ public class BuddyListActivity extends ListActivity {
 					// + intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
 					// 0));
 					// TODO determine to do with this specific buddy id
-					BuddyEntity be = DatabaseUtil.getReadOnlyDatabaseSession(
+					BuddyEntity be = DatabaseUtils.getReadOnlyDatabaseSession(
 							context)
 							.load(BuddyEntity.class,
 									intent.getLongExtra(
 											XMPPService.KEY_BUDDY_INDEX, 0));
-					DatabaseUtil.close();
+					DatabaseUtils.close();
 					refreshList(be.getConnectionId());
 				}
 
@@ -173,7 +173,7 @@ public class BuddyListActivity extends ListActivity {
 		// whole adapter
 		adapter = null;
 		registerForContextMenu(getListView());
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		// List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
@@ -181,7 +181,7 @@ public class BuddyListActivity extends ListActivity {
 		// This is necessary, in case a new account is made, and there are no
 		// buddies to connect to.
 		if (buddies == null || buddies.size() == 0) {
-			DatabaseUtil.close();
+			DatabaseUtils.close();
 			return;
 		}
 
@@ -193,7 +193,7 @@ public class BuddyListActivity extends ListActivity {
 		}
 
 		adapter = new BuddyAdapter(this, buddies);
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 		setListAdapter(adapter);
 	}
 
