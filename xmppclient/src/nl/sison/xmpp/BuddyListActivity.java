@@ -3,6 +3,7 @@ package nl.sison.xmpp;
 import java.util.List;
 
 import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -55,7 +56,7 @@ public class BuddyListActivity extends ListActivity {
 		 */
 
 		@Override
-		public void onReceive(Context ctx, Intent intent) {
+		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
 				if (intent.hasExtra(XMPPService.FROM_JID)) {
 					// TODO message from certain jid, give visual feedback
@@ -66,11 +67,19 @@ public class BuddyListActivity extends ListActivity {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
 				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
-					makeToast("buddy row index: "
-							+ intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
-									0));
+					// makeToast("buddy row index: "
+					// + intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
+					// 0));
+					// TODO determine to do with this specific buddy id
+					BuddyEntity be = DatabaseUtil.getReadOnlyDatabaseSession(
+							context)
+							.load(BuddyEntity.class,
+									intent.getLongExtra(
+											XMPPService.KEY_BUDDY_INDEX, 0));
+					DatabaseUtil.close();
+					refreshList(be.getConnectionId());
 				}
-				refreshList();
+
 			}
 			if (intent.getAction().equals(XMPPService.ACTION_CONNECTION_LOST)) {
 				// TODO change the buddy presences to offline
@@ -101,7 +110,7 @@ public class BuddyListActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getIntent().getExtras().getLong(
-				ConnectionListActivity.CONNECTION_ROW_INDEX);
+				ConnectionListActivity.KEY_CONNECTION_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
@@ -117,25 +126,18 @@ public class BuddyListActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position,
-			long message_id) {
+			long buddy_id) {
 		// Intent intent = new Intent(BuddyListActivity.this,
 		// ChatActivity.class);
 
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
-		intent.putExtra(KEY_BUDDY_INDEX, message_id);
-		makeToast("onListItemClick id: " + message_id);
+		intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		sendBroadcast(intent);
 
 		// TODO
-
-		// - match jid
-
-		// - get chronological last chat thread
-
-		// - confirm chat recent
-
-		// startActivityForResult(intent, RC_CREATE_NEW_THREAD_FROM_JID);
-		// startActivityForResult(intent, RC_CONTINUE_OLD_THREAD);
+		// @ match jid -> boeit ook niet
+		// @ get chronological last chat thread, -> dat boeit niet...
+		// - confirm chat recent -> I don't recall wtf I mean by this...
 	}
 
 	/**
@@ -155,8 +157,9 @@ public class BuddyListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// TODO filter on cc_id, all buddies have a foreign key to cc
-		refreshList();
+		// TODO + filter on cc_id, all buddies have a foreign key to cc
+		refreshList(getIntent().getLongExtra(
+				ConnectionListActivity.KEY_CONNECTION_INDEX, 0));
 	}
 
 	/**
@@ -164,15 +167,16 @@ public class BuddyListActivity extends ListActivity {
 	 * http://stackoverflow.com/questions
 	 * /3669325/notifydatasetchanged-example/5092426#5092426
 	 */
-	private void refreshList() {
+	private void refreshList(long cc_id) {
 		// TODO finish context menu for the dialog
 		// TODO consider deleting the buddies, instead of throwing away the
 		// whole adapter
 		adapter = null;
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
-		// NOTE: right now: show all the buddies irrespective
+		// List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
+		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
+				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
 
 		// This is necessary, in case a new account is made, and there are no
 		// buddies to connect to.
@@ -180,10 +184,9 @@ public class BuddyListActivity extends ListActivity {
 			DatabaseUtil.close();
 			return;
 		}
-		
+
 		// testing purposes // TODO remove
-		for (BuddyEntity be : buddies)
-		{
+		for (BuddyEntity be : buddies) {
 			Log.i(TAG, "id: " + be.getId());
 			Log.i(TAG, "isAway: " + be.getIsAway());
 			Log.i(TAG, "isAvailable: " + be.getIsAvailable());
@@ -194,6 +197,7 @@ public class BuddyListActivity extends ListActivity {
 		setListAdapter(adapter);
 	}
 
+	@Deprecated
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;

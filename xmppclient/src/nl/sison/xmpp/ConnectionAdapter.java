@@ -17,29 +17,21 @@ import android.widget.TextView;
  * @author Jasm Sison
  * 
  */
-public class ConnectionAdapter extends ArrayAdapter {
-	private List<ConnectionConfigurationEntity> connections; // TODO redo this
-																// class to
-																// actually use
-																// the add,
-																// remove,
-																// insert
-																// capabilities
-																// of
-																// ArrayAdapter
+public class ConnectionAdapter extends
+		ArrayAdapter<ConnectionConfigurationEntity> {
 
-	public ConnectionAdapter(List<ConnectionConfigurationEntity> all_conns,
-			Context context) {
+	public ConnectionAdapter(Context context,
+			List<ConnectionConfigurationEntity> connections) {
 		super(context, 0);
-		this.connections = all_conns;
+		this.setNotifyOnChange(true);
+		if (connections != null && connections.size() > 0) {
+			this.addAll(connections);
+		}
 	}
 
-	public int getCount() {
-		return connections.size();
-	}
-
-	public Object getItem(int position) {
-		return (Object) connections.get(position);
+	@Override
+	public long getItemId(int position) {
+		return super.getItem(position).getId();
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -49,7 +41,7 @@ public class ConnectionAdapter extends ArrayAdapter {
 		TextView connection_view = (TextView) itemLayout
 				.findViewById(R.id.connection_name);
 
-		ConnectionConfigurationEntity item = (ConnectionConfigurationEntity) getItem(position);
+		ConnectionConfigurationEntity item = getItem(position);
 		connection_view.setText(item.getLabel());
 
 		return itemLayout;
