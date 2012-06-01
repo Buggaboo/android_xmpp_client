@@ -1,16 +1,37 @@
-=README=
+README
+======
 
-==Description==
+url: http://walkablogabout.blogspot.nl/2012/06/yet-another-xmpp-client-for-android.html
+
+Description
+-----------
+
 Multi-provider XMPP Client for android.
 
-==Share!==
+Features
+--------
+
+* GreenDao, database access. Say goodbye to e.g. SQL injection exploits, crap manual data type conversions;
+* Smack library, modified for Android, with bugs, but not crashworthy;
+* Support for android Notifications;
+* Translatable to different languages, by leveraging the xml Resource;
+* Multiple provider support, i.e. connect with google, microsoft, meebo, whatever you want;
+
+Share!
+------
+
 Fork this project and please send improvements my way. Thanks!
 
-==Warning==
+Warning
+-------
+
 This software might not work as expected...
 This is largely untested with different xmpp servers, providers etc.
+This code was largely hammered out in a 12 day coding binge. You have been warned.
 
-==Licence==
+Licence
+-------
+
 GPLv3 http://www.gnu.org/copyleft/gpl.html
 
 
