@@ -23,7 +23,7 @@
             android:icon="@drawable/ic_launcher" >
         </service>
         <service
-            android:name=".XMPPMessageNotificationService"
+            android:name=".XMPPNotificationService"
             android:icon="@drawable/ic_launcher" >
         </service>
 

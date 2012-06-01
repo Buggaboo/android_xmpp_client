@@ -21,10 +21,11 @@ import de.greenrobot.dao.QueryBuilder;
 
 // TODO implement away message
 // TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
+// TODO implement group chat
 /**
  * 
  * @author Jasm Sison
- *
+ * 
  */
 public class ChatActivity extends Activity {
 	/**
@@ -140,17 +141,19 @@ public class ChatActivity extends Activity {
 		super.onResume();
 
 		Intent intent = getIntent();
+
 		Bundle bundle = intent.getExtras();
-		if (intent.hasExtra(BuddyListActivity.KEY_BUDDY_INDEX)) {
+
+		if (bundle.containsKey(BuddyListActivity.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
-		}
-
-		if (intent.hasExtra(BuddyListActivity.THREAD)) {
 			thread = bundle.getString(BuddyListActivity.THREAD);
-		}
-
-		if (intent.hasExtra(BuddyListActivity.JID)) {
 			own_jid = bundle.getString(BuddyListActivity.JID);
+		} else if (bundle
+				.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
+			buddy_id = bundle
+					.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
+			thread = bundle.getString(XMPPNotificationService.THREAD);
+			own_jid = bundle.getString(XMPPNotificationService.JID);
 		}
 
 		setupListView();
