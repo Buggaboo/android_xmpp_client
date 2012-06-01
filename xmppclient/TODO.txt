@@ -1,19 +1,12 @@
 TODO 31-05-12
+- implement setAway, unavailable, available etc. shared dialog by all activities
 - make translatable to different languages, use the prefix technique in CRUDConnection.
-- limit number of messages on the chat screen, add button on top of the List
-+ implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
-	+ implement removal of notifications of a buddy, when the messages have been seen.
-	  => chatactivity sends a broadcast with the buddy_id, notification service receives the buddy_id and fetches all the message_ids connected to the buddy_id
-	+ eliminate cause of crashes (cause: competing threads for the database)
-		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
-	+ turn on in the onCreate of XMPPService
+- limit number of messages on the chat screen, add button on top of the List, to load previous messages
 - fix presence updates, too many false positives
     - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
     - read and digest this: http://stackoverflow.com/questions/1919489/unable-to-get-presence-of-roster-by-using-smack-openfire
     	apparently all you need to do is Thread.sleep(ms); this is unacceptable for the most important service
       - take action by implementing AsyncTask
-- determine why some outgoing message packets do not arrive, are they being sent at all? Is it due to the bad library or inconsistent use of threads?
-- implement setAway, unavailable, available etc. shared dialog by all activities
 - create test accounts on other providers
     - microsoft
     - meebo.com
@@ -30,3 +23,9 @@ TODO 31-05-12
 	It seems stable... 
 + turn on debugger and put checkpoints on the listeners for outgoing messages in XMPPService (determine if this is a server or client issue), problem solved
   => it was a jabber thread issue, forcing the reuse of the thread is not appreciated by google?
++ implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
+	+ implement removal of notifications of a buddy, when the messages have been seen.
+	  => chatactivity sends a broadcast with the buddy_id, notification service receives the buddy_id and fetches all the message_ids connected to the buddy_id
+	+ eliminate cause of crashes (cause: competing threads for the database)
+		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
+	+ turn on in the onCreate of XMPPService
