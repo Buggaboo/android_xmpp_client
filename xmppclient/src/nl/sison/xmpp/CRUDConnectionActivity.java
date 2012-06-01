@@ -134,7 +134,7 @@ public class CRUDConnectionActivity extends Activity {
 
 //		makeToast("intent extra " + ccid);
 
-		ConnectionConfigurationEntity cc = DatabaseUtil
+		ConnectionConfigurationEntity cc = DatabaseUtils
 				.getReadOnlyDatabaseSession(this)
 				.getConnectionConfigurationEntityDao().queryBuilder()
 				.where(Properties.Id.eq(ccid)).list().get(0);
@@ -155,7 +155,7 @@ public class CRUDConnectionActivity extends Activity {
 		setToggleButtonState(list_view, R.id.conn_sasl_authenticated,
 				cc.getSaslauthenticated());
 
-		DatabaseUtil.close();
+		DatabaseUtils.close();
 	}
 
 	private void setTextViewData(View parent, int view_id, String value) {
@@ -219,7 +219,7 @@ public class CRUDConnectionActivity extends Activity {
 						if (connection != null && connection.isConnected()
 								&& connection.isAuthenticated()) {
 							long cc_id = storeConnectionConfiguration(conn_conf);
-							DatabaseUtil.close();
+							DatabaseUtils.close();
 							Intent restartConnectionOnService = new Intent(
 									CRUDConnectionActivity.this,
 									XMPPService.class);
@@ -295,7 +295,7 @@ public class CRUDConnectionActivity extends Activity {
 
 	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
-		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		return conn_config_dao.insertOrReplace(conn_config);

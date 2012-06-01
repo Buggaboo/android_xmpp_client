@@ -7,6 +7,13 @@ TODO 31-05-12
 	It seems stable...
 - fix presence updates, too many false positives
     - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
+- determine why some outgoing message packets do not arrive, are they being sent at all? Is it due to the bad library or inconsistent use of threads?
 - prettify interface
-- create test accounts on other providers 
+- implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
+- create test accounts on other providers
+    - microsoft
+    - meebo.com
+    - local
+- create an icon
+- remove the stupid header (aka titlebar), or add custom stuff there
 - more testing 
