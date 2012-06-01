@@ -1,8 +1,10 @@
 TODO 31-05-12
 + implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
-	- eliminate cause of crashes (cause: competing threads for the database)
-		- test new idea! sleep! put in a delay. 5000 ms.
-	- turn on in the onCreate of XMPPService
+	- implement removal of notifications of a buddy, when the messages have been seen.
+	  => chatactivity sends a broadcast with the buddy_id, notification service receives the buddy_id and fetches all the message_ids connected to the buddy_id
+	+ eliminate cause of crashes (cause: competing threads for the database)
+		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
+	+ turn on in the onCreate of XMPPService
 - fix presence updates, too many false positives
     - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
     - read and digest this: http://stackoverflow.com/questions/1919489/unable-to-get-presence-of-roster-by-using-smack-openfire
