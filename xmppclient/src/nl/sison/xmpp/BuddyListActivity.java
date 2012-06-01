@@ -197,6 +197,7 @@ public class BuddyListActivity extends ListActivity {
 		setListAdapter(adapter);
 	}
 
+	@Deprecated
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;

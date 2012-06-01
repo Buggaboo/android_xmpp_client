@@ -204,7 +204,7 @@ public class ChatActivity extends Activity {
 		DatabaseUtil.close();
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
-		makeToast("own_jid: " + own_jid);
+//		makeToast("own_jid: " + own_jid);
 
 		chat_list.setAdapter(adapter);
 

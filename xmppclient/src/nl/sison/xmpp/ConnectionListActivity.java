@@ -75,6 +75,7 @@ public class ConnectionListActivity extends ListActivity {
 		return all_conns;
 	}
 
+	@Deprecated
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
