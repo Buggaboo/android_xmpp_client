@@ -31,7 +31,8 @@ public class ChatActivity extends Activity {
 	/**
 	 * Intent action
 	 */
-	public static final String ACTION_REQUEST_DELIVER_MESSAGE = "23yididxb3@#$%";
+	public static final String ACTION_REQUEST_DELIVER_MESSAGE = "23yididxb3@#{}$%";
+	public static final String ACTION_REQUEST_REMOVE_NOTIFICATIONS = "23yid#@idxb3@#$%";
 
 	/**
 	 * Intent extras
@@ -88,20 +89,17 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-			// makeToast("message: " + message.getContent());
-			// makeToast("message.getBuddyId(): " + message.getBuddyId());
+//			makeToast("message.getBuddyId() == buddy_id:" + (message.getBuddyId() == buddy_id));
+			
+			// this prevents messages from other buddies to leak into this context 
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtils.close();
-				// makeToast("The message is either null or not set with the buddy id field: "
-				// + message);
 				return;
 			}
 
 			DatabaseUtils.close();
-
-			// makeToast("adapter adding message - start");
+			broadcastRequestRemoveNotifications();
 			adapter.add(message);
-			// makeToast("adapter adding message - end");
 		}
 	}
 
@@ -155,6 +153,8 @@ public class ChatActivity extends Activity {
 			thread = bundle.getString(XMPPNotificationService.THREAD);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
 		}
+		
+		broadcastRequestRemoveNotifications();
 
 		setupListView();
 
@@ -185,6 +185,12 @@ public class ChatActivity extends Activity {
 			}
 		});
 
+	}
+
+	private void broadcastRequestRemoveNotifications() {
+		Intent request_remove_notifications = new Intent(ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
+		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
+		sendBroadcast(request_remove_notifications);
 	}
 
 	private void setupListView() { // TODO broken! fix it!
