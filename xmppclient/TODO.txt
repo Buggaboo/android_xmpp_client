@@ -1,6 +1,7 @@
 TODO 31-05-12
+- limit number of messages on the chat screen, add button on top of the List
 + implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
-	- implement removal of notifications of a buddy, when the messages have been seen.
+	+ implement removal of notifications of a buddy, when the messages have been seen.
 	  => chatactivity sends a broadcast with the buddy_id, notification service receives the buddy_id and fetches all the message_ids connected to the buddy_id
 	+ eliminate cause of crashes (cause: competing threads for the database)
 		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
