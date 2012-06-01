@@ -220,6 +220,7 @@ public class XMPPService extends Service {
 		filter.addAction(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE);
 		filter.addAction(CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST);
 		registerReceiver(receiver, filter);
+//		startService(new Intent(ConnectionListActivity.this, XMPPNotificationService.class));
 	}
 
 	private void makeConnectionsFromDatabase() {

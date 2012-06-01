@@ -15,7 +15,7 @@ public class StartXMPPServiceReceiver extends BroadcastReceiver {
 		Intent xmpp_service = new Intent(context, XMPPService.class);
 		context.startService(xmpp_service);
 		
-		Intent notification_service = new Intent(context, XMPPMessageNotificationService.class);
+		Intent notification_service = new Intent(context, XMPPNotificationService.class);
 		context.startService(notification_service);		
 	}
 
