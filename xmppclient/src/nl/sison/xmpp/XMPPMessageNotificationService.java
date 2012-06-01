@@ -19,7 +19,6 @@ import android.os.IBinder;
 
 public class XMPPMessageNotificationService extends Service {
 
-	private static final int SERVICE_ID = 0;
 	private NotificationManager notificationManager;
 	private ServiceReceiver receiver;
 
