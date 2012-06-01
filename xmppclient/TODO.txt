@@ -1,19 +1,25 @@
 TODO 31-05-12
-+ improve connection testing
-	@ refactor out test code to just use the service by sending an intent, CRUDConnectionActivity
-	No this design is better. Less complicated easier to manage, tradeoff copy-paste code.
-	Although CRUDConnectionActivity could send a broadcast to the service, populate the buddylist
-	+ implement populate buddy list via onReceive on XMPPService
-	It seems stable...
++ implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
+	- eliminate cause of crashes (cause: competing threads for the database)
+		- test new idea! sleep! put in a delay. 5000 ms.
+	- turn on in the onCreate of XMPPService
 - fix presence updates, too many false positives
     - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
+    - read and digest this: http://stackoverflow.com/questions/1919489/unable-to-get-presence-of-roster-by-using-smack-openfire
+    	apparently all you need to do is Thread.sleep(ms); this is unacceptable for the most important service
+      - take action by implementing AsyncTask
 - determine why some outgoing message packets do not arrive, are they being sent at all? Is it due to the bad library or inconsistent use of threads?
-- prettify interface
-- implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
+- implement setAway, unavailable, available etc. shared dialog by all activities
 - create test accounts on other providers
     - microsoft
     - meebo.com
     - local
 - create an icon
 - remove the stupid header (aka titlebar), or add custom stuff there
-- more testing 
+- prettify interface
++ improve connection testing
+	@ refactor out test code to just use the service by sending an intent, CRUDConnectionActivity
+	No this design is better. Less complicated easier to manage, tradeoff copy-paste code.
+	Although CRUDConnectionActivity could send a broadcast to the service, populate the buddylist
+	+ implement populate buddy list via onReceive on XMPPService
+	It seems stable... 
