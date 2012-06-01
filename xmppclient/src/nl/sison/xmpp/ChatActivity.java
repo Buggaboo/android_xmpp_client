@@ -186,7 +186,6 @@ public class ChatActivity extends Activity {
 	}
 
 	private void broadcastRequestRemoveNotifications() {
-//		makeToast("broadcast remove notifications");
 		Intent request_remove_notifications = new Intent(ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		sendBroadcast(request_remove_notifications);
