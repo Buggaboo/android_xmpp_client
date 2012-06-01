@@ -1,5 +1,4 @@
 TODO 31-05-12
-- turn on debugger and put checkpoints on the listeners for outgoing messages in XMPPService (determine if this is a server or client issue)
 - make translatable to different languages, use the prefix technique in CRUDConnection.
 - limit number of messages on the chat screen, add button on top of the List
 + implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
@@ -29,3 +28,5 @@ TODO 31-05-12
 	Although CRUDConnectionActivity could send a broadcast to the service, populate the buddylist
 	+ implement populate buddy list via onReceive on XMPPService
 	It seems stable... 
++ turn on debugger and put checkpoints on the listeners for outgoing messages in XMPPService (determine if this is a server or client issue), problem solved
+  => it was a jabber thread issue, forcing the reuse of the thread is not appreciated by google?

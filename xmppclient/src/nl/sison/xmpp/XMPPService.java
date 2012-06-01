@@ -125,16 +125,12 @@ public class XMPPService extends Service {
 
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
-				Chat chat = connection.getChatManager().getThreadChat(thread);
+
+				// fuck the thread prefetch...
+				Chat chat = connection.getChatManager().createChat(
+						buddy.getPartial_jid(), null);
 				try {
-					if (chat != null) {
-						chat.sendMessage(message);
-						// makeToast("recycled chat object");
-					} else {
-						chat = connection.getChatManager().createChat(
-								buddy.getPartial_jid(), thread, null);
-						// makeToast("newly created chat object");
-					}
+					chat.sendMessage(message);
 
 					Intent ack_intent = new Intent(ACTION_MESSAGE_SENT);
 					ack_intent.putExtra(
@@ -387,9 +383,6 @@ public class XMPPService extends Service {
 		List<BuddyEntity> query_result = qb.where(
 				BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
 						.parseBareAddress(p.getFrom()))).list();
-		
-		// TODO - remove test code
-		Log.i(TAG, "p.getFrom(): " +p.getFrom());
 
 		// create entity if it doesn't exist yet
 		// otherwise the broadcast will be pointless
