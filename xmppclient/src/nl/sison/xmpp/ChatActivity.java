@@ -189,11 +189,6 @@ public class ChatActivity extends Activity {
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
-		/*
-		 * NOTE: this breaks because other_jid is not initialized
-		 * qb.where(Properties.Receiver_jid.eq(other_jid)); qb.or(
-		 * Properties.Sender_jid.eq(other_jid), null, null);
-		 */
 
 		qb.where(Properties.BuddyId.eq(buddy_id));
 		// NOTE: this presents a challenge for group chat
@@ -204,7 +199,6 @@ public class ChatActivity extends Activity {
 		DatabaseUtil.close();
 
 		adapter = new MessageAdapter(this, chat_history, own_jid);
-//		makeToast("own_jid: " + own_jid);
 
 		chat_list.setAdapter(adapter);
 
