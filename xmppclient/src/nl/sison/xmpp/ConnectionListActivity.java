@@ -24,22 +24,20 @@ import de.greenrobot.dao.QueryBuilder;
 /**
  * 
  * @author Jasm Sison
- *
+ * 
  */
-// TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
+// TODO implement titlebar
+// http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 public class ConnectionListActivity extends ListActivity {
 	private final static String TAG = "BuddyListActivity";
 	private AlertDialog crudConnectionDialog;
-	private ArrayAdapter<?> adapter;
+	private ArrayAdapter<ConnectionConfigurationEntity> adapter;
 
 	public final static int RQ_NEW_CONN = 0; // intent request code
 	public final static int RQ_MODIFY_CONN = 1;
 	public final static int RQ_DELETE_CONN = 2;
 
-	public final static String CONNECTION_ROW_INDEX = "USTHUASNOEH#@$$**&*UAONETUH";
-
-	// source:
-	// http://united-coders.com/phillip-steffensen/android-dealing-with-listactivities-customized-listadapters-and-custom-designed-0
+	public final static String KEY_CONNECTION_INDEX = "H#@$$**&*UAONETUH";
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -49,7 +47,6 @@ public class ConnectionListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		makeToast("onResume");
 		refreshList();
 	}
 
@@ -57,17 +54,13 @@ public class ConnectionListActivity extends ListActivity {
 		// register context menu for the dialog
 		registerForContextMenu(getListView());
 
-		List<ConnectionConfigurationEntity> all_conns = getAllConnectionConfigurations();
-		if (all_conns.size() > 0) {
-
-			adapter = new ConnectionAdapter(all_conns,
-					ConnectionListActivity.this);
-
+		List<ConnectionConfigurationEntity> connections = getAllConnectionConfigurations();
+		if (connections != null && connections.size() > 0) {
+			adapter = new ConnectionAdapter(this, connections);
+			setListAdapter(adapter);
 		} else {
 			createCRConnectionDialog(getString(R.string.request_create_conn));
 		}
-
-		setListAdapter(adapter);
 
 		DatabaseUtil.close();
 	}
@@ -91,19 +84,18 @@ public class ConnectionListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
+	protected void onListItemClick(ListView l, View v, int position, long cc_id) {
+		super.onListItemClick(l, v, position, cc_id);
 		Intent intent = new Intent(ConnectionListActivity.this,
 				BuddyListActivity.class);
-		DaoSession daoSession = DatabaseUtil.getReadOnlyDatabaseSession(this);
-		intent.putExtra(CONNECTION_ROW_INDEX, getCCRowIdxFromPosition(id, daoSession));
-		DatabaseUtil.close();
+		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		startActivity(intent);
 	}
 
+	@Deprecated
 	private long getCCRowIdxFromPosition(long id, DaoSession daoSession) {
 		ConnectionConfigurationEntity conn_conf = (ConnectionConfigurationEntity) daoSession
-		.getConnectionConfigurationEntityDao().loadAll().toArray()[(int) id];
+				.getConnectionConfigurationEntityDao().loadAll().toArray()[(int) id];
 		long connection_index = conn_conf.getId();
 		return connection_index;
 	}
@@ -132,7 +124,6 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("create connection");
 								createNewConnection();
 							}
 						});
@@ -151,22 +142,21 @@ public class ConnectionListActivity extends ListActivity {
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
-		Long ccid = qb.where(Properties.Label.eq(message)).build().list()
+		Long cc_id = qb.where(Properties.Label.eq(message)).build().list()
 				.get(0).getId();
-//		makeToast("intent extra " + ccid);
-		intent.putExtra(CONNECTION_ROW_INDEX, ccid);
+		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtil.close();
 		startActivityForResult(intent, RQ_MODIFY_CONN);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
+		// TODO Determine what to do here
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private void deleteConnection(String message) {
-//		makeToast("Deleting " + message);
+		// makeToast("Deleting " + message);
 		DaoSession daoSession = DatabaseUtil.getWriteableDatabaseSession(this);
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
@@ -183,7 +173,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("yes, delete connection");
+								// makeToast("yes, delete connection");
 								deleteConnection(message);
 								refreshList();
 							}
@@ -191,7 +181,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNegativeButton(android.R.string.no,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("no, preserve connection");
+								// makeToast("no, preserve connection");
 							}
 						}).create().show();
 	}
@@ -204,7 +194,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("create connection");
+								// makeToast("create connection");
 								createNewConnection();
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -213,7 +203,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNegativeButton(R.string.remove_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("delete connection");
+								// makeToast("delete connection");
 								createDialogDeleteConnection(message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -223,7 +213,7 @@ public class ConnectionListActivity extends ListActivity {
 				.setNeutralButton(R.string.modify_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-//								makeToast("update connection");
+								// makeToast("update connection");
 								modifyConnection(message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -235,10 +225,11 @@ public class ConnectionListActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		// TODO - remove stopService, connection has to persist?
-		stopService(new Intent(ConnectionListActivity.this, XMPPService.class));
-//		makeToast("onDestroy");
+		// TODO + determine remove stopService, why does the connection have to persist? ->
+		// xmppservice will send notifications, that's why.
 
-		// TODO - reconsider why XMPPService should not or also be killed
+		// stopService(new Intent(ConnectionListActivity.this,
+		// XMPPService.class));
+		// makeToast("onDestroy");
 	};
 }
