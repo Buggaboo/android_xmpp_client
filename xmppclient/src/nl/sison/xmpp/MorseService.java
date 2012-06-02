@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources.NotFoundException;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
@@ -101,8 +102,52 @@ public class MorseService extends Service {
 		}
 
 		private int getResourceIdentifierByPrefix(String prefix, char value) {
-			return getResources().getIdentifier(prefix + value,
-					"integer-array", "nl.sison.xmpp");
+//			makeToast(prefix + value);
+
+			int res_id = translateSymbols(value);
+			if (res_id != -1) {
+				return res_id;
+			}
+
+			try {
+				return getResources().getIdentifier(prefix + value, "array",
+						"nl.sison.xmpp");
+			} catch (NotFoundException ex) {
+				ex.printStackTrace();
+				return R.array.morse_period; // if you can't find the symbol
+												// just put a period there.
+
+			}
+		}
+
+		private int translateSymbols(char value) {
+
+			if (value == '.') {
+				return R.array.morse_period;
+			} else if (value == '@') {
+				return R.array.morse_at;
+			} else if (value == '.') {
+				return R.array.morse_period;
+			} else if (value == ',') {
+				return R.array.morse_comma;
+			} else if (value == '?') {
+				return R.array.morse_question_mark;
+			} else if (value == '\'') {
+				return R.array.morse_hyphen;
+			} else if (value == '!') {
+				return R.array.morse_exclamation_mark;
+			} else if (value == '\\') {
+				return R.array.morse_slash;
+			} else if (value == '-') {
+				return R.array.morse_hyphen;
+			} else if (value == '/') {
+				return R.array.morse_fraction_bar;
+			} else if (value == ')' || value == '(') {
+				return R.array.morse_parentheses;
+			} else if (value == '"') {
+				return R.array.morse_quotation_mark;
+			}
+			return -1;
 		}
 
 		private String getMessage(Context context, long message_id) {
