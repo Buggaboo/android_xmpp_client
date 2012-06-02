@@ -163,10 +163,16 @@ public class MorseService extends Service {
 
 			BuddyEntity buddy = msg.getBuddyEntity();
 
-			if (buddy.getConnectionConfigurationEntity().getVibrate() == null)
+			// if (buddy.getConnectionConfigurationEntity().getVibrate() ==
+			// null)
+			// return "";
+			// boolean vibrate = buddy.getConnectionConfigurationEntity()
+			// .getVibrate();
+			// if (!vibrate)
+			// return "";
+			if (buddy.getVibrate() == null)
 				return "";
-			boolean vibrate = buddy.getConnectionConfigurationEntity()
-					.getVibrate();
+			boolean vibrate = buddy.getVibrate();
 			if (!vibrate)
 				return "";
 

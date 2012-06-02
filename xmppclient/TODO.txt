@@ -1,5 +1,6 @@
 TODO 02-06-12
-- put up a dialog to activite vibration
+- put up a dialog to activite vibration, vibrate per user setting?
+  - ah fuck, revert!
 - put internet check in all activities and services
 - implement nicknames configuration in buddylistactivity
 - implement setAway, unavailable, available etc. shared dialog by all activities

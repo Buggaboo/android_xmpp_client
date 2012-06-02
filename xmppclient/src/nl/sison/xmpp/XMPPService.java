@@ -273,6 +273,7 @@ public class XMPPService extends Service {
 			BuddyEntity b;
 			if (query_result.isEmpty()) {
 				b = new BuddyEntity();
+				b.setVibrate(false);
 			} else {
 				b = query_result.get(0);
 			}

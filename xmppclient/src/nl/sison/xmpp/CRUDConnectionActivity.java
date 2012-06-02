@@ -342,10 +342,6 @@ public class CRUDConnectionActivity extends Activity {
 		conn_config.setUsername(extractStringFromTextView(parent,
 				R.id.conn_username));
 
-		conn_config.setVibrate(false); // NOTE: default it doesn't vibrate, also
-										// after reconfiguring the connection,
-										// vibration is shut down
-
 		return conn_config;
 	}
 

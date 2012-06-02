@@ -14,6 +14,7 @@ public class BuddyEntity {
     private String partial_jid;
     private String last_seen_resource;
     private String nickname;
+    private Boolean vibrate;
     private String presence_status;
     private String presence_mode;
     private String presence_type;
@@ -40,11 +41,12 @@ public class BuddyEntity {
         this.id = id;
     }
 
-    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, long connectionId) {
+    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, Boolean vibrate, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, long connectionId) {
         this.id = id;
         this.partial_jid = partial_jid;
         this.last_seen_resource = last_seen_resource;
         this.nickname = nickname;
+        this.vibrate = vibrate;
         this.presence_status = presence_status;
         this.presence_mode = presence_mode;
         this.presence_type = presence_type;
@@ -93,6 +95,14 @@ public class BuddyEntity {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public Boolean getVibrate() {
+        return vibrate;
+    }
+
+    public void setVibrate(Boolean vibrate) {
+        this.vibrate = vibrate;
     }
 
     public String getPresence_status() {
