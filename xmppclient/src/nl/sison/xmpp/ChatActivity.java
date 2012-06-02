@@ -37,7 +37,6 @@ public class ChatActivity extends Activity {
 	/**
 	 * Intent extras
 	 */
-	public static final String THREAD = "23yididxb3@#$%44";
 	public static final String MESSAGE = "23yidxb3@#$%444";
 	public static final String KEY_BUDDY_INDEX = "23yidb3@#$Z44";
 
@@ -47,7 +46,7 @@ public class ChatActivity extends Activity {
 	private EditText input;
 
 	private String own_jid;
-	private String thread;
+
 	// private ArrayList<String> group_chat_jids; // TODO
 	// private String group_chat_thread; // TODO
 
@@ -145,13 +144,11 @@ public class ChatActivity extends Activity {
 
 		if (bundle.containsKey(BuddyListActivity.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
-			thread = bundle.getString(BuddyListActivity.THREAD);
 			own_jid = bundle.getString(BuddyListActivity.JID);
 		} else if (bundle
 				.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle
 					.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
-			thread = bundle.getString(XMPPNotificationService.THREAD);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
 		}
 		
@@ -163,7 +160,6 @@ public class ChatActivity extends Activity {
 			public void onClick(View v) {
 				Intent messageIntent = new Intent(
 						ACTION_REQUEST_DELIVER_MESSAGE);
-				messageIntent.putExtra(THREAD, thread);
 				String message = input.getText().toString().trim();
 				messageIntent.putExtra(MESSAGE, message);
 				messageIntent.putExtra(KEY_BUDDY_INDEX, buddy_id);
