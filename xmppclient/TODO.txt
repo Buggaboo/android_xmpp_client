@@ -1,4 +1,5 @@
 TODO 02-06-12
+- set dialogs for setting own presence and buddy related stuff (vibrate per buddy)
 - put up a dialog to activate vibration, vibrate per user setting, LongClick on BuddyListActivity item
 - put internet check in all activities and services
 - implement nicknames configuration in buddylistactivity
@@ -33,3 +34,8 @@ TODO 02-06-12
 		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
 	+ turn on in the onCreate of XMPPService
 + implemented notification triggered morse vibrations, for the blind or horny.
+
+
+ROADMAP (aka killer features I'd like to build)
+- message encryption: per message (will not vibrate on encrypted messages), or per buddy
+- read aloud messages (huge undertaking), leverage web 2.0
