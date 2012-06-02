@@ -33,6 +33,8 @@ public class MorseService extends Service {
 
 	private Random random;
 
+	private Vibrator vibrator;
+
 	class ServiceReceiver extends BroadcastReceiver {
 
 		@Override
@@ -80,18 +82,17 @@ public class MorseService extends Service {
 				}
 				morse_pattern_list.add(word_gap);
 			}
-			
+
 			long[] complete_morse_pattern = new long[morse_pattern_list.size()];
-			for(int i=0; i<morse_pattern_list.size(); i++)
-			{
+			for (int i = 0; i < morse_pattern_list.size(); i++) {
 				complete_morse_pattern[i] = morse_pattern_list.get(i);
-				// NxN time, because of the list, but first rule: KISS: make it work first.
+				// NxN time, because of the list, but first rule: KISS: make it
+				// work first.
 			}
 
-			// NOTE: besides vibration, you can have light flashes, sound bleeps
-			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE); 
-			
-			v.vibrate(complete_morse_pattern, -1); // once and
+			if (!vibrator.hasVibrator())
+				return;
+			vibrator.vibrate(complete_morse_pattern, -1); // once and
 			// once only
 		}
 
@@ -143,6 +144,8 @@ public class MorseService extends Service {
 		letter_gap = arr[3];// = 500; // Length of Gap Between Letters
 		word_gap = arr[4];// = 1000; // Length of Gap Between Words
 		message_pause = arr[5];
+
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
