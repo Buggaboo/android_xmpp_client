@@ -15,7 +15,7 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(24, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(26, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
@@ -56,6 +56,7 @@ public class DaoGeneratorXMPPClient {
 		buddy.addStringProperty("partial_jid").notNull(); // !
 		buddy.addStringProperty("last_seen_resource"); // !
 		buddy.addStringProperty("nickname"); // TODO settable by user
+		buddy.addBooleanProperty("vibrate"); // TODO settable by user
 		buddy.addStringProperty("presence_status"); // gone to lunch
 		buddy.addStringProperty("presence_mode");
 		buddy.addStringProperty("presence_type");

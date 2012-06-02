@@ -1,4 +1,5 @@
 TODO 02-06-12
+- put up a dialog to activate vibration, vibrate per user setting, LongClick on BuddyListActivity item
 - put internet check in all activities and services
 - implement nicknames configuration in buddylistactivity
 - implement setAway, unavailable, available etc. shared dialog by all activities
