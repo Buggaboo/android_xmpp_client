@@ -130,6 +130,9 @@ public class ChatActivity extends Activity {
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
 		registerReceiver(receiver, actionFilter);
+		
+		// in case it was on yet
+		startService(new Intent(ChatActivity.this, XMPPService.class));
 	}
 
 	@Override

@@ -28,6 +28,7 @@
     <string name="conn_encrypt_on">Use TLS encryption</string>
     <string name="conn_bad_conn_conf">Are you sure you want to keep this faulty configuration?</string>
     <string name="conn_pick_a_provider">Pick a provider</string>
+    <string name="no_network">You have no network, at this moment.</string>
     
     <!-- Chat related stuff -->
     <string name="submit">Send</string>
