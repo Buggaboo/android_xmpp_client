@@ -31,3 +31,4 @@ TODO 02-06-12
 	+ eliminate cause of crashes (cause: competing threads for the database)
 		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
 	+ turn on in the onCreate of XMPPService
++ implemented notification triggered morse vibrations, for the blind or horny.
