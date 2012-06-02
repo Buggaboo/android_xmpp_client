@@ -85,20 +85,33 @@ public class XMPPNotificationService extends Service {
 					intent, BIND_AUTO_CREATE);
 
 			StringBuilder str_builder = new StringBuilder();
-			String notify_ticker = str_builder.append(buddy.getPartial_jid())
+			String notify_ticker = str_builder.append(getNicknameIfAvailable(buddy))
 					.append(" ").append(getString(R.string.says)).append(" \"")
 					.append(msg.getContent()).append("\"").toString();
+			// TODO truncate if longer than ...
+			
+			getNicknameIfAvailable(buddy);
 
 			Notification.Builder builder = new Notification.Builder(context)
 					.setSmallIcon(R.drawable.ic_launcher).setAutoCancel(true)
 					.setTicker(notify_ticker).setContentText(msg.getContent())
 					.setContentIntent(p_intent).setWhen(new Date().getTime());
+			// TODO truncate msg.getContent if longer than...
 
 			Notification notification = builder.getNotification();
 			// notification.sound() // TODO
 			// notification.vibrate() // TODO - morse code
 			notificationManager.notify(DatabaseUtils.safeLongToInt(message_id),
 					notification);
+		}
+
+		private String getNicknameIfAvailable(BuddyEntity buddy) {
+			String buddy_nickname = buddy.getNickname();
+			if (buddy_nickname != null && !buddy_nickname.isEmpty()) {
+				return buddy_nickname;
+			} else {
+				return buddy.getPartial_jid();
+			}
 		}
 	}
 
@@ -142,7 +155,7 @@ public class XMPPNotificationService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		random = new Random(1337);
+		random = new Random(1337331337);
 
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 

@@ -71,7 +71,7 @@ public class DaoGeneratorXMPPClient {
 		Entity connection = schema.addEntity("ConnectionConfigurationEntity");
 		connection.addIdProperty();
 		connection.addStringProperty("label").notNull().unique();
-		connection.addStringProperty("port").notNull();
+		connection.addStringProperty("port").notNull(); // NOTE: you could consider turning this into an int...
 		connection.addStringProperty("server").notNull(); // where to connect
 		connection.addStringProperty("domain"); // xmpp jid domain
 		connection.addStringProperty("username").notNull();
