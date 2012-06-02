@@ -46,9 +46,6 @@ public class BuddyListActivity extends ListActivity {
 	private BuddyAdapter adapter;
 	private BroadcastReceiver receiver;
 
-	// ConcurrentHashMap<long, String> // TODO prevent extra database buddy
-	// queries to get jid from id
-
 	public class BuddyListReceiver extends BroadcastReceiver {
 		/**
 		 * TODO Refactor to different receivers, - one for connections, - one
@@ -58,19 +55,16 @@ public class BuddyListActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_INCOMING)) {
-				if (intent.hasExtra(XMPPService.FROM_JID)) {
+				if (intent.hasExtra(XMPPService.KEY_MESSAGE_INDEX)) {
 					// TODO message from certain jid, give visual feedback
 					// (flashing listitem or something), load the activity again
 					// with the correct connection
 				}
 			}
+			// the logic, one buddy's presence status changes, let's refresh them all
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
 				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
-					// makeToast("buddy row index: "
-					// + intent.getLongExtra(XMPPService.KEY_BUDDY_INDEX,
-					// 0));
-					// TODO determine to do with this specific buddy id
 					BuddyEntity be = DatabaseUtils.getReadOnlyDatabaseSession(
 							context)
 							.load(BuddyEntity.class,
@@ -79,7 +73,6 @@ public class BuddyListActivity extends ListActivity {
 					DatabaseUtils.close();
 					refreshList(be.getConnectionId());
 				}
-
 			}
 			if (intent.getAction().equals(XMPPService.ACTION_CONNECTION_LOST)) {
 				// TODO change the buddy presences to offline
@@ -96,8 +89,6 @@ public class BuddyListActivity extends ListActivity {
 						ChatActivity.class);
 				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
-				startActivityIntent.putExtra(THREAD,
-						bundle.getString(XMPPService.THREAD));
 				startActivityIntent.putExtra(JID,
 						bundle.getString(XMPPService.JID));
 				startActivity(startActivityIntent);
@@ -121,23 +112,14 @@ public class BuddyListActivity extends ListActivity {
 		actionFilter.addAction(XMPPService.ACTION_REQUEST_CHAT_ERROR);
 		receiver = new BuddyListReceiver();
 		registerReceiver(receiver, actionFilter);
-
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position,
 			long buddy_id) {
-		// Intent intent = new Intent(BuddyListActivity.this,
-		// ChatActivity.class);
-
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
 		intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		sendBroadcast(intent);
-
-		// TODO
-		// @ match jid -> boeit ook niet
-		// @ get chronological last chat thread, -> dat boeit niet...
-		// - confirm chat recent -> I don't recall wtf I mean by this...
 	}
 
 	/**
@@ -157,7 +139,6 @@ public class BuddyListActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// TODO + filter on cc_id, all buddies have a foreign key to cc
 		refreshList(getIntent().getLongExtra(
 				ConnectionListActivity.KEY_CONNECTION_INDEX, 0));
 	}
@@ -170,11 +151,10 @@ public class BuddyListActivity extends ListActivity {
 	private void refreshList(long cc_id) {
 		// TODO finish context menu for the dialog
 		// TODO consider deleting the buddies, instead of throwing away the
-		// whole adapter
+		// whole adapter, if this turns out to be a memory hog
 		adapter = null;
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
-		// List<BuddyEntity> buddies = daoSession.getBuddyEntityDao().loadAll();
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
 
@@ -184,13 +164,6 @@ public class BuddyListActivity extends ListActivity {
 			DatabaseUtils.close();
 			return;
 		}
-
-		// testing purposes // TODO remove
-//		for (BuddyEntity be : buddies) {
-//			Log.i(TAG, "id: " + be.getId());
-//			Log.i(TAG, "isAway: " + be.getIsAway());
-//			Log.i(TAG, "isAvailable: " + be.getIsAvailable());
-//		}
 
 		adapter = new BuddyAdapter(this, buddies);
 		DatabaseUtils.close();

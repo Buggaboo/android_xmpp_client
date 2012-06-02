@@ -84,8 +84,7 @@ public class XMPPService extends Service {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO - status = away unavailable etc.
-			// TODO + start chat
+			// TODO - activity sends the user's status = away unavailable etc.
 			if (intent.getAction().equals(
 					CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
 				long cc_id = intent.getExtras().getLong(
@@ -104,10 +103,7 @@ public class XMPPService extends Service {
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
-				Chat chat = connection.getChatManager().createChat(
-						buddy.getPartial_jid(), null);
 				Intent response_intent = new Intent(ACTION_REQUEST_CHAT_GRANTED);
-				response_intent.putExtra(THREAD, chat.getThreadID());
 				response_intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 				response_intent.putExtra(JID,
 						StringUtils.parseBareAddress(connection.getUser()));
@@ -117,7 +113,6 @@ public class XMPPService extends Service {
 			if (intent.getAction().equals(
 					ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
 				Bundle bundle = intent.getExtras();
-				String thread = bundle.getString(ChatActivity.THREAD);
 				String message = bundle.getString(ChatActivity.MESSAGE);
 				long buddy_id = bundle.getLong(ChatActivity.KEY_BUDDY_INDEX);
 
@@ -126,7 +121,6 @@ public class XMPPService extends Service {
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
 
-				// fuck the thread prefetch...
 				Chat chat = connection.getChatManager().createChat(
 						buddy.getPartial_jid(), null);
 				try {
@@ -278,10 +272,8 @@ public class XMPPService extends Service {
 				b = query_result.get(0);
 			}
 
-			String partial_jid = StringUtils.parseBareAddress(re.getUser());
-			Presence p = roster.getPresence(partial_jid); // TODO - experiment
-															// with
-															// partial_jid
+			String partial_jid = StringUtils.parseBareAddress(re.getUser()); // re.getUser returns the full jid
+			Presence p = roster.getPresence(partial_jid);
 			// TODO - determine whether roster.getPresence(... accepts partial
 			// jids or full jids (i.e. with our without resource)
 
@@ -297,14 +289,7 @@ public class XMPPService extends Service {
 
 	private void setBuddyPresence(BuddyEntity b, Presence p) {
 		b.setIsAvailable(p.isAvailable());
-		Log.i(TAG, "p.isAvailable(): " + p.isAvailable());
-
-		// these makeToast might have broken the update mechanism // ->
-		// Nope: apparently it didn't
-
 		b.setIsAway(p.isAway());
-		Log.i(TAG, "p.isAway(): " + p.isAway());
-
 		b.setPresence_status(p.getStatus());
 		b.setPresence_type(p.getType().toString());
 	}
@@ -322,7 +307,7 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		setOutgoingMessageListener(connection);
+//		setOutgoingMessageListener(connection);
 	}
 
 	@Deprecated
@@ -383,7 +368,6 @@ public class XMPPService extends Service {
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
 		String from = p.getFrom();
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
-		// intent.putExtra(JID, p.getFrom()); // NOTE: not very useful
 
 		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
@@ -493,12 +477,8 @@ public class XMPPService extends Service {
 		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
 		try {
 			connection.connect();
-			makeToast(cc.getLabel() + " is connected:"
-					+ connection.isConnected());
 			connection.login(cc.getUsername(), cc.getPassword(),
 					cc.getResource());
-			makeToast(cc.getLabel() + " is authenticated:"
-					+ connection.isAuthenticated());
 			cc.setConnection_success(cc.getConnection_success() + 1);
 		} catch (XMPPException e) {
 			connection = null;
@@ -551,23 +531,14 @@ public class XMPPService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		// Cancel the persistent notification.
 		for (long key : connection_hashmap.keySet()) {
 			XMPPConnection conn = connection_hashmap.get(key);
 			if (conn != null && conn.isConnected()) {
 				conn.disconnect();
 			}
 		}
+		unregisterReceiver(receiver);
 	}
-
-	/**
-	 * Show a notification while this service is running. TODO - use this to
-	 * notify if anyone is chatting with you, last message stuff
-	 */
-	/**
-	 * TODO refactor notification to some other service with a broadcast
-	 * receiver
-	 */
 
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
@@ -577,9 +548,11 @@ public class XMPPService extends Service {
 		toast.show();
 	}
 
+	/**
+	 * I don't use this at all
+	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
