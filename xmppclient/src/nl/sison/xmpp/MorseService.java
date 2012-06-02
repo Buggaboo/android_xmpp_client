@@ -27,7 +27,7 @@ public class MorseService extends Service {
 	private long word_gap;// = 1000; // Length of Gap Between Words
 	private long message_pause; // Length of pause between messages, at least
 
-	public static final String TAG = "XMPPNotificationService";
+	public static final String TAG = "MorseService";
 
 	// I don't need the dynamic binding here
 	private ServiceReceiver message_receiver;
@@ -88,7 +88,7 @@ public class MorseService extends Service {
 			for (int i = 0; i < morse_pattern_list.size(); i++) {
 				complete_morse_pattern[i] = morse_pattern_list.get(i);
 				// NxN time, because of the list, but first rule: KISS: make it
-				// work first.
+				// work first. // TODO - optimize memory consumption
 			}
 
 			if (!vibrator.hasVibrator())

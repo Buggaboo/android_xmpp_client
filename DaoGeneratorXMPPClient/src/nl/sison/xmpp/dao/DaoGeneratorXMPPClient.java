@@ -15,7 +15,7 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(24, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(25, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
@@ -84,6 +84,7 @@ public class DaoGeneratorXMPPClient {
 																	// authentication
 																	// is broken
 		connection.addIntProperty("connection_success").notNull();
+		connection.addBooleanProperty("vibrate").notNull();
 //		settings.addStringProperty("provider_reflection_injection"); // TODO use
 																		// reflection
 																		// to

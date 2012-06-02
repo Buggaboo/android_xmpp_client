@@ -210,7 +210,7 @@ public class CRUDConnectionActivity extends Activity {
 						}
 					}
 				});
-
+		
 		setButtonListener(parent, R.id.conn_test_and_save,
 				new View.OnClickListener() {
 					public void onClick(View v) {
