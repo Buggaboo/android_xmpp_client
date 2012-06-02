@@ -65,7 +65,7 @@ public class MorseService extends Service {
 				for (int letter_position = 0; letter_position < wordlen; letter_position++) {
 					int[] morse_pattern = getResources().getIntArray(
 							getResourceIdentifierByPrefix("morse_",
-									word.charAt(letter_position))); // int[]
+									word.charAt(letter_position)));
 					raw_morse_word_pattern[letter_position] = morse_pattern;
 				}
 				raw_morse_message_pattern[word_position] = raw_morse_word_pattern;
@@ -107,7 +107,6 @@ public class MorseService extends Service {
 		}
 
 		private int getResourceIdentifierByPrefix(String prefix, char value) {
-			// makeToast(prefix + value);
 
 			int res_id = translateSymbols(value);
 			if (res_id != -1) {
