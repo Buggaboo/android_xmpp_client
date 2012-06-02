@@ -1,4 +1,5 @@
 TODO 31-05-12
+- implement nicknames configuration in buddylistactivity
 - implement setAway, unavailable, available etc. shared dialog by all activities
 - make translatable to different languages, use the prefix technique in CRUDConnection.
 - limit number of messages on the chat screen, add button on top of the List, to load previous messages
