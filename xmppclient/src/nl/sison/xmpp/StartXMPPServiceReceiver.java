@@ -12,8 +12,8 @@ public class StartXMPPServiceReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent i) {
-		Intent xmpp_service = new Intent(context, XMPPService.class);
-		context.startService(xmpp_service);
+		context.startService(new Intent(context, XMPPService.class));
+		context.startService(new Intent(context, MorseService.class));
 	}
 
 }
