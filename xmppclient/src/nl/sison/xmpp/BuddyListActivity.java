@@ -186,11 +186,11 @@ public class BuddyListActivity extends ListActivity {
 		}
 
 		// testing purposes // TODO remove
-		for (BuddyEntity be : buddies) {
-			Log.i(TAG, "id: " + be.getId());
-			Log.i(TAG, "isAway: " + be.getIsAway());
-			Log.i(TAG, "isAvailable: " + be.getIsAvailable());
-		}
+//		for (BuddyEntity be : buddies) {
+//			Log.i(TAG, "id: " + be.getId());
+//			Log.i(TAG, "isAway: " + be.getIsAway());
+//			Log.i(TAG, "isAvailable: " + be.getIsAvailable());
+//		}
 
 		adapter = new BuddyAdapter(this, buddies);
 		DatabaseUtils.close();
