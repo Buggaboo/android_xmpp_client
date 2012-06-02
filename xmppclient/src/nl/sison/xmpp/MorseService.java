@@ -20,11 +20,11 @@ import android.widget.Toast;
 public class MorseService extends Service {
 
 	// TODO - humanize rhythm of gaps?
-	private long dot;// = 200; // Length of a Morse Code "dot" in milliseconds
-	private long dash;// = 500; // Length of a Morse Code "dash" in milliseconds
-	private long dotdash_gap;// = 200; // Length of Gap Between dots/dashes
-	private long letter_gap;// = 500; // Length of Gap Between Letters
-	private long word_gap;// = 1000; // Length of Gap Between Words
+	private long dot; // Length of a Morse Code "dot" in milliseconds
+	private long dash; // Length of a Morse Code "dash" in milliseconds
+	private long dotdash_gap; // Length of Gap Between dots/dashes
+	private long letter_gap; // Length of Gap Between Letters
+	private long word_gap; // Length of Gap Between Words
 	private long message_pause; // Length of pause between messages, at least
 
 	public static final String TAG = "MorseService";
