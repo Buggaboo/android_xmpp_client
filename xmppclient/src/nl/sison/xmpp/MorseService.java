@@ -51,7 +51,12 @@ public class MorseService extends Service {
 				e.printStackTrace();
 			}
 
-			String[] msg_arr = getMessage(context, message_id).split(" ");
+			String message = getMessage(context, message_id);
+
+			if (message.isEmpty())
+				return;
+
+			String[] msg_arr = message.split(" ");
 			int[][][] raw_morse_message_pattern = new int[msg_arr.length][][];
 			for (int word_position = 0; word_position < msg_arr.length; word_position++) {
 				String word = msg_arr[word_position];
@@ -102,7 +107,7 @@ public class MorseService extends Service {
 		}
 
 		private int getResourceIdentifierByPrefix(String prefix, char value) {
-//			makeToast(prefix + value);
+			// makeToast(prefix + value);
 
 			int res_id = translateSymbols(value);
 			if (res_id != -1) {
@@ -157,6 +162,13 @@ public class MorseService extends Service {
 					message_id);
 
 			BuddyEntity buddy = msg.getBuddyEntity();
+
+			if (buddy.getConnectionConfigurationEntity().getVibrate() == null)
+				return "";
+			boolean vibrate = buddy.getConnectionConfigurationEntity()
+					.getVibrate();
+			if (!vibrate)
+				return "";
 
 			DatabaseUtils.close();
 

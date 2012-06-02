@@ -25,14 +25,14 @@ import android.widget.ToggleButton;
 /**
  * 
  * @author Jasm Sison
- *
+ * 
  */
 
 public class CRUDConnectionActivity extends Activity {
 	/**
 	 * TODO set default value for resource
 	 */
-	
+
 	public static final String RESTART_CONNECTION = "asnehnaoseu";
 
 	public static final String ACTION_REQUEST_POPULATE_BUDDYLIST = "euthaose1!@##$";
@@ -93,10 +93,10 @@ public class CRUDConnectionActivity extends Activity {
 				"hint_port");
 		setTextViewHint(parent, R.id.conn_port, id_hint_port).setText(
 				id_hint_port);
-		
+
 		setTextViewHint(parent, R.id.conn_username,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_username"));
-		
+
 		setTextViewHint(parent, R.id.conn_resource,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_resource"));
 
@@ -132,7 +132,7 @@ public class CRUDConnectionActivity extends Activity {
 		long ccid = getIntent().getExtras().getLong(
 				ConnectionListActivity.KEY_CONNECTION_INDEX);
 
-//		makeToast("intent extra " + ccid);
+		// makeToast("intent extra " + ccid);
 
 		ConnectionConfigurationEntity cc = DatabaseUtils
 				.getReadOnlyDatabaseSession(this)
@@ -181,9 +181,9 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-//							makeToast("connection will be compressed");
+							// makeToast("connection will be compressed");
 						} else {
-//							makeToast("connection will NOT be compressed");
+							// makeToast("connection will NOT be compressed");
 						}
 					}
 				});
@@ -192,9 +192,9 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-//							makeToast("connection will be sasl_authenticated");
+							// makeToast("connection will be sasl_authenticated");
 						} else {
-//							makeToast("connection will NOT be sasl_authenticated");
+							// makeToast("connection will NOT be sasl_authenticated");
 						}
 					}
 				});
@@ -203,14 +203,14 @@ public class CRUDConnectionActivity extends Activity {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-//							makeToast("connection will be encrypted");
+							// makeToast("connection will be encrypted");
 							makeToast("Warning: encryption on this version of smack lib is most likely broken.");
 						} else {
-//							makeToast("connection will NOT be encrypted");
+							// makeToast("connection will NOT be encrypted");
 						}
 					}
 				});
-		
+
 		setButtonListener(parent, R.id.conn_test_and_save,
 				new View.OnClickListener() {
 					public void onClick(View v) {
@@ -226,8 +226,10 @@ public class CRUDConnectionActivity extends Activity {
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
-							// tell the service to connect with this new connection
-							Intent intent = new Intent(ACTION_REQUEST_POPULATE_BUDDYLIST);
+							// tell the service to connect with this new
+							// connection
+							Intent intent = new Intent(
+									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 							sendBroadcast(intent);
 							finish();
@@ -250,7 +252,7 @@ public class CRUDConnectionActivity extends Activity {
 										R.layout.edit_connection, null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
-//								makeToast("stored bad configuration");
+								// makeToast("stored bad configuration");
 								finish();
 							}
 						})
@@ -258,7 +260,7 @@ public class CRUDConnectionActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-//								makeToast("cancel store bad configuration");
+								// makeToast("cancel store bad configuration");
 							}
 						});
 		builder.create().show();
@@ -274,12 +276,12 @@ public class CRUDConnectionActivity extends Activity {
 		XMPPConnection connection = new XMPPConnection(xmpp_conn_config);
 		try {
 			connection.connect();
-//			makeToast(cc.getLabel() + "is connected:"
-//					+ connection.isConnected());
+			// makeToast(cc.getLabel() + "is connected:"
+			// + connection.isConnected());
 			connection.login(cc.getUsername(), cc.getPassword(),
 					cc.getResource());
-//			makeToast(cc.getLabel() + "is authenticated:"
-//					+ connection.isAuthenticated());
+			// makeToast(cc.getLabel() + "is authenticated:"
+			// + connection.isAuthenticated());
 		} catch (XMPPException e) {
 			connection = null;
 			e.printStackTrace();
@@ -339,6 +341,11 @@ public class CRUDConnectionActivity extends Activity {
 
 		conn_config.setUsername(extractStringFromTextView(parent,
 				R.id.conn_username));
+
+		conn_config.setVibrate(false); // NOTE: default it doesn't vibrate, also
+										// after reconfiguring the connection,
+										// vibration is shut down
+
 		return conn_config;
 	}
 

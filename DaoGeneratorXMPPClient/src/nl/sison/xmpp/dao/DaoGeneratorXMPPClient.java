@@ -84,7 +84,7 @@ public class DaoGeneratorXMPPClient {
 																	// authentication
 																	// is broken
 		connection.addIntProperty("connection_success").notNull();
-		connection.addBooleanProperty("vibrate").notNull();
+		connection.addBooleanProperty("vibrate");
 //		settings.addStringProperty("provider_reflection_injection"); // TODO use
 																		// reflection
 																		// to

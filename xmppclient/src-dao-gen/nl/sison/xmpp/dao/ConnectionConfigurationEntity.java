@@ -24,6 +24,7 @@ public class ConnectionConfigurationEntity {
     private boolean compressed;
     private boolean saslauthenticated;
     private int connection_success;
+    private Boolean vibrate;
 
     public ConnectionConfigurationEntity() {
     }
@@ -32,7 +33,7 @@ public class ConnectionConfigurationEntity {
         this.id = id;
     }
 
-    public ConnectionConfigurationEntity(Long id, String label, String port, String server, String domain, String username, String password, String resource, boolean encrypted, boolean compressed, boolean saslauthenticated, int connection_success) {
+    public ConnectionConfigurationEntity(Long id, String label, String port, String server, String domain, String username, String password, String resource, boolean encrypted, boolean compressed, boolean saslauthenticated, int connection_success, Boolean vibrate) {
         this.id = id;
         this.label = label;
         this.port = port;
@@ -45,6 +46,7 @@ public class ConnectionConfigurationEntity {
         this.compressed = compressed;
         this.saslauthenticated = saslauthenticated;
         this.connection_success = connection_success;
+        this.vibrate = vibrate;
     }
 
     public Long getId() {
@@ -153,6 +155,14 @@ public class ConnectionConfigurationEntity {
 
     public void setConnection_success(int connection_success) {
         this.connection_success = connection_success;
+    }
+
+    public Boolean getVibrate() {
+        return vibrate;
+    }
+
+    public void setVibrate(Boolean vibrate) {
+        this.vibrate = vibrate;
     }
 
 }
