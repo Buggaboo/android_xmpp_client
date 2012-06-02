@@ -42,7 +42,6 @@ public class ConnectionListActivity extends ListActivity {
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		startService(new Intent(ConnectionListActivity.this, XMPPService.class));
-		startService(new Intent(ConnectionListActivity.this, MorseService.class));
 	}
 
 	@Override

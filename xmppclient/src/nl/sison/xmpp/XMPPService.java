@@ -209,6 +209,10 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
+			makeToast(getString(R.string.no_network));
+			stopSelf();
+		}
 		makeConnectionsFromDatabase();
 		receiver = new ServiceReceiver();
 		IntentFilter filter = new IntentFilter();
@@ -216,7 +220,10 @@ public class XMPPService extends Service {
 		filter.addAction(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE);
 		filter.addAction(CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST);
 		registerReceiver(receiver, filter);
+		
+		// start services which rely on this one
 		startService(new Intent(XMPPService.this, XMPPNotificationService.class));
+		startService(new Intent(XMPPService.this, MorseService.class));
 	}
 
 	private void makeConnectionsFromDatabase() {
