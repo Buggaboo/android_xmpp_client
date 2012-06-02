@@ -198,7 +198,6 @@ public class XMPPService extends Service {
 	// incoming message
 	public static final String MESSAGE = "239e#$%unheun34808"; // String
 	public static final String FROM_JID = "23heun348$%$#&08"; // String
-	public static final String THREAD = "@$@$4P789"; // String
 
 	@Override
 	public void onCreate() {
