@@ -93,14 +93,6 @@ public class ConnectionListActivity extends ListActivity {
 		startActivity(intent);
 	}
 
-	@Deprecated
-	private long getCCRowIdxFromPosition(long id, DaoSession daoSession) {
-		ConnectionConfigurationEntity conn_conf = (ConnectionConfigurationEntity) daoSession
-				.getConnectionConfigurationEntityDao().loadAll().toArray()[(int) id];
-		long connection_index = conn_conf.getId();
-		return connection_index;
-	}
-
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
