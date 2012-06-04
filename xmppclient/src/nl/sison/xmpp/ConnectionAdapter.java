@@ -36,7 +36,7 @@ public class ConnectionAdapter extends
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
-				getContext()).inflate(R.layout.connection_item, parent, false);
+				getContext()).inflate(R.layout.connection_item_layout, parent, false);
 
 		TextView connection_view = (TextView) itemLayout
 				.findViewById(R.id.connection_name);

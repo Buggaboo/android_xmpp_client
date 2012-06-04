@@ -27,7 +27,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
-				getContext()).inflate(R.layout.buddy_item, parent, false);
+				getContext()).inflate(R.layout.buddy_item_layout, parent, false);
 
 		BuddyEntity buddy = getItem(position);
 

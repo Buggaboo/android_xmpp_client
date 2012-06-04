@@ -44,7 +44,7 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
-				getContext()).inflate(R.layout.chat_item, parent, false);
+				getContext()).inflate(R.layout.chat_item_layout, parent, false);
 
 		TextView text_date = (TextView) itemLayout
 				.findViewById(R.id.chat_item_date);

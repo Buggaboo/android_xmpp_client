@@ -7,6 +7,7 @@ TODO 02-06-12
 - set dialogs for setting own presence and buddy related stuff (vibrate per buddy)
 - put up a dialog to activate vibration, vibrate per user setting, LongClick on BuddyListActivity item
 - put internet check in all activities and services
+- sounds buddy's logging off, errors etc.
 - implement nicknames configuration in buddylistactivity
 - implement setAway, unavailable, available etc. shared dialog by all activities
 - make translatable to different languages, use the prefix technique in CRUDConnection.

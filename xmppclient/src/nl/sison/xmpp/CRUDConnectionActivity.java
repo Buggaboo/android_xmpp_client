@@ -47,7 +47,7 @@ public class CRUDConnectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final View list_view = LayoutInflater.from(this).inflate(
-				R.layout.edit_connection, null, false);
+				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
 		} else {
@@ -249,7 +249,7 @@ public class CRUDConnectionActivity extends Activity {
 							public void onClick(DialogInterface dialog, int id) {
 								View parent = LayoutInflater.from(
 										CRUDConnectionActivity.this).inflate(
-										R.layout.edit_connection, null, false);
+										R.layout.edit_connection_layout, null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
 								// makeToast("stored bad configuration");
