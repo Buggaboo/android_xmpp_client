@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -100,23 +102,31 @@ public class ChatFragment extends Fragment {
 			adapter.add(message);
 		}
 	}
-
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		Activity act = getActivity();
+		
 		if (top_orientation) {
-			setContentView(R.layout.chat_bottom_oriented_layout);
-			chat_list = (ListView) findViewById(R.id.chat_top_input);
-			submit = (Button) findViewById(R.id.submit_top_input);
-			input = (EditText) findViewById(R.id.text_input_top_input);
+			inflater.inflate(R.layout.chat_bottom_oriented_layout, container);
+			chat_list = (ListView) act.findViewById(R.id.chat_top_input);
+			submit = (Button) act.findViewById(R.id.submit_top_input);
+			input = (EditText) act.findViewById(R.id.text_input_top_input);
 
 		} else {
-			setContentView(R.layout.chat_top_oriented_layout);
-			chat_list = (ListView) findViewById(R.id.chat_bottom_input);
-			submit = (Button) findViewById(R.id.submit_bottom_input);
-			input = (EditText) findViewById(R.id.text_input_bottom_input);
+			inflater.inflate(R.layout.chat_top_oriented_layout, container);
+			chat_list = (ListView) act.findViewById(R.id.chat_bottom_input);
+			submit = (Button) act.findViewById(R.id.submit_bottom_input);
+			input = (EditText) act.findViewById(R.id.text_input_bottom_input);
 		}
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
@@ -129,10 +139,10 @@ public class ChatFragment extends Fragment {
 		// actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
-		registerReceiver(receiver, actionFilter);
+		getActivity().registerReceiver(receiver, actionFilter);
 		
 		// in case it was on yet
-		startService(new Intent(ChatFragment.this, XMPPService.class));
+		getActivity().startService(new Intent(getActivity(), XMPPService.class));
 	}
 
 	@Override
@@ -165,7 +175,7 @@ public class ChatFragment extends Fragment {
 				messageIntent.putExtra(MESSAGE, message);
 				messageIntent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 				if (message.length() != 0) {
-					sendBroadcast(messageIntent);
+					getActivity().sendBroadcast(messageIntent);
 				}
 			}
 		});
@@ -181,11 +191,11 @@ public class ChatFragment extends Fragment {
 	private void broadcastRequestRemoveNotifications() {
 		Intent request_remove_notifications = new Intent(ChatFragment.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
-		sendBroadcast(request_remove_notifications);
+		getActivity().sendBroadcast(request_remove_notifications);
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity().getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
@@ -205,16 +215,16 @@ public class ChatFragment extends Fragment {
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(receiver);
+	public void onDetach() {
+		super.onDetach();
+		getActivity().unregisterReceiver(receiver);
 	}
-
+	
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }
