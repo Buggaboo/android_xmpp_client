@@ -31,6 +31,7 @@ public class DaoGeneratorXMPPClient {
 		message.addToOne(buddy, buddyIdProperty);		
 	
 		new DaoGenerator().generateAll(schema, "../xmppclient/src-dao-gen");
+		new DaoGenerator().generateAll(schema, "../xmppclient_redone_with_fragments/src-dao-gen");
 	}
 
 	private static Entity addMessage(Schema schema) {

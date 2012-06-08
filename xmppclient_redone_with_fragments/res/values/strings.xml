@@ -2,6 +2,52 @@
 <resources>
 
     <string name="hello">Hello World, XMPPClientActivity!</string>
-    <string name="app_name">XMPPclient</string>
+    <string name="app_name">XMPPClient</string>
+    <string name="local_service_started">The xmpp service to manage connections has started</string>
+    <string name="local_service_stopped">The xmpp service to manage connections has stopped</string>
+    <string name="modify_connection">Modify</string>
+    <string name="remove_connection">Remove</string>
+    <string name="create_connection">Create</string>
+    <string name="request_create_conn">Please create a connection.</string>
+    <string name="sure_remove_conn">Are you sure you want to remove - </string>
+
+    <!-- connection related stuff -->
+    <string name="conn_label">Label</string>
+    <string name="conn_port">Port</string>
+    <string name="conn_server">Server</string>
+    <string name="conn_username">Username</string>
+    <string name="conn_password">Password</string>
+    <string name="conn_domain">Domain</string>
+    <string name="conn_resource">Resource</string>
+    <string name="conn_save">Test and Save</string>
+    <string name="conn_sasl_authenticate_off">No SASL authentication</string>
+    <string name="conn_sasl_authenticate_on">Use SASL authentication</string>
+    <string name="conn_compress_off">No compression</string>
+    <string name="conn_compress_on">Use compression</string>
+    <string name="conn_encrypt_off">No TLS encryption</string>
+    <string name="conn_encrypt_on">Use TLS encryption</string>
+    <string name="conn_bad_conn_conf">Are you sure you want to keep this faulty configuration?</string>
+    <string name="conn_pick_a_provider">Pick a provider</string>
+    <string name="no_network">You have no network, at this moment.</string>
+    
+    <!-- Chat related stuff -->
+    <string name="submit">Send</string>
+    <string name="date_literal">date</string>
+    <string name="text_literal">text</string>
+    
+    <!-- Notification related stuff -->
+    <string name="says"> says </string>
+
+    <!-- default settings -->
+    <string-array name="hint_prefixes">
+        <item >google</item>
+        <item >facebook</item>
+        <item >microsoft</item>
+        <!-- <item >yahoo</item>  -->
+        <item >meebo</item>
+        <item>other</item>        
+    </string-array>
+    
+    
 
 </resources>
