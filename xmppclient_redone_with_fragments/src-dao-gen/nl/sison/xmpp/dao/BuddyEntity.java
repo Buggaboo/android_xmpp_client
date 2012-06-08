@@ -37,8 +37,7 @@ public class BuddyEntity {
     public BuddyEntity() {
     }
 
-    public BuddyEntity(Long id, Long id) {
-        this.id = id;
+    public BuddyEntity(Long id) {
         this.id = id;
     }
 

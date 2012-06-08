@@ -7,7 +7,6 @@ import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -209,15 +208,4 @@ public class ConnectionListFragment extends ListFragment {
 						});
 		crudConnectionDialog = builder.create();
 	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		// TODO + determine remove stopService, why does the connection have to persist? ->
-		// xmppservice will send notifications, that's why.
-
-		// stopService(new Intent(ConnectionListFragment.this,
-		// XMPPService.class));
-		// makeToast("onDestroy");
-	};
 }

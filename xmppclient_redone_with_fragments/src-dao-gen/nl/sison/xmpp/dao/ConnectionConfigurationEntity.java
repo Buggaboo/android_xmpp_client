@@ -28,8 +28,7 @@ public class ConnectionConfigurationEntity {
     public ConnectionConfigurationEntity() {
     }
 
-    public ConnectionConfigurationEntity(Long id, Long id) {
-        this.id = id;
+    public ConnectionConfigurationEntity(Long id) {
         this.id = id;
     }
 

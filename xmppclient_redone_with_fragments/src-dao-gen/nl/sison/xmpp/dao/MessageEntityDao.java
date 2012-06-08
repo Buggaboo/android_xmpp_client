@@ -17,7 +17,7 @@ import nl.sison.xmpp.dao.MessageEntity;
 /** 
  * DAO for table MESSAGE_ENTITY.
 */
-public class MessageEntityDao extends AbstractDao<MessageEntity, Void> {
+public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
 
     public static final String TABLENAME = "MESSAGE_ENTITY";
 
@@ -98,7 +98,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
@@ -132,14 +132,14 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Void> {
      }
     
     @Override
-    protected Void updateKeyAfterInsert(MessageEntity entity, long rowId) {
+    protected Long updateKeyAfterInsert(MessageEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(MessageEntity entity) {
+    public Long getKey(MessageEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {
