@@ -30,7 +30,7 @@ import de.greenrobot.dao.QueryBuilder;
 // TODO implement titlebar
 // http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 public class ConnectionListFragment extends ListFragment {
-	private final static String TAG = "BuddyListActivity";
+	private final static String TAG = "BuddyListFragment";
 	private AlertDialog crudConnectionDialog;
 	private ArrayAdapter<ConnectionConfigurationEntity> adapter;
 
@@ -68,7 +68,7 @@ public class ConnectionListFragment extends ListFragment {
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
 		// TODO get connections from database, produce array list
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity());
 		ConnectionConfigurationEntityDao conn_conf_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
@@ -86,10 +86,10 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long cc_id) {
+	public void onListItemClick(ListView l, View v, int position, long cc_id) {
 		super.onListItemClick(l, v, position, cc_id);
-		Intent intent = new Intent(ConnectionListActivity.this,
-				BuddyListActivity.class);
+		Intent intent = new Intent(getActivity(),
+				BuddyListFragment.class);
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		startActivity(intent);
 	}
@@ -112,7 +112,7 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createCRConnectionDialog(CharSequence message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(message)
 				.setCancelable(false)
 				.setPositiveButton(R.string.create_connection,
@@ -125,14 +125,14 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createNewConnection() {
-		startActivityForResult(new Intent(ConnectionListActivity.this,
-				CRUDConnectionActivity.class), RQ_NEW_CONN);
+		startActivityForResult(new Intent(ConnectionListFragment.this,
+				CRUDConnectionFragment.class), RQ_NEW_CONN);
 	}
 
 	private void modifyConnection(String message) {
-		Intent intent = new Intent(ConnectionListActivity.this,
-				CRUDConnectionActivity.class);
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
+		Intent intent = new Intent(ConnectionListFragment.this,
+				CRUDConnectionFragment.class);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
@@ -151,7 +151,7 @@ public class ConnectionListFragment extends ListFragment {
 
 	private void deleteConnection(String message) {
 		// makeToast("Deleting " + message);
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder()
@@ -161,7 +161,7 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createDialogDeleteConnection(final String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(getString(R.string.sure_remove_conn) + message)
 				.setCancelable(false)
 				.setPositiveButton(android.R.string.yes,
@@ -182,7 +182,7 @@ public class ConnectionListFragment extends ListFragment {
 
 	private void createCRUDConnectionDialog(final String message) {
 		// TODO set presence with dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(message)
 				.setCancelable(true)
 				.setPositiveButton(R.string.create_connection,
@@ -222,7 +222,7 @@ public class ConnectionListFragment extends ListFragment {
 		// TODO + determine remove stopService, why does the connection have to persist? ->
 		// xmppservice will send notifications, that's why.
 
-		// stopService(new Intent(ConnectionListActivity.this,
+		// stopService(new Intent(ConnectionListFragment.this,
 		// XMPPService.class));
 		// makeToast("onDestroy");
 	};

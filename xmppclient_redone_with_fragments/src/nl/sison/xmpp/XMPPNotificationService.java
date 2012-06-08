@@ -75,7 +75,7 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			Intent intent = new Intent(XMPPNotificationService.this,
-					ChatActivity.class);
+					ChatFragment.class);
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
@@ -130,7 +130,7 @@ public class XMPPNotificationService extends Service {
 			}
 
 			long buddy_id = intent
-					.getLongExtra(ChatActivity.KEY_BUDDY_INDEX, 0);
+					.getLongExtra(ChatFragment.KEY_BUDDY_INDEX, 0);
 			DaoSession daoSession = DatabaseUtils
 					.getReadOnlyDatabaseSession(context);
 
@@ -168,7 +168,7 @@ public class XMPPNotificationService extends Service {
 		IntentFilter actionFilter2 = new IntentFilter();
 		remove_notification_receiver = new RemoveNotificationReceiver();
 		actionFilter2
-				.addAction(ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
+				.addAction(ChatFragment.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		registerReceiver(remove_notification_receiver, actionFilter2);
 	}
 

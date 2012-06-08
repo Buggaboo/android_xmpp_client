@@ -40,7 +40,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	public static final String KEY_CONNECTION_INDEX = "4433&&*";
 
-	private final String TAG = "CRUDConnectionActivity";
+	private final String TAG = "CRUDConnectionFragment";
 
 	private Long conn_config_id = (long) 0;
 
@@ -131,7 +131,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private void showValuesFromDatabase(View list_view) {
 		long ccid = getActivity().getIntent().getExtras().getLong(
-				ConnectionListActivity.KEY_CONNECTION_INDEX);
+				ConnectionListFragment.KEY_CONNECTION_INDEX);
 
 		// makeToast("intent extra " + ccid);
 
@@ -347,7 +347,7 @@ public class CRUDConnectionFragment extends Fragment {
 	}
 
 	private boolean isExtantConnection() {
-		String key_connection_index = ConnectionListActivity.KEY_CONNECTION_INDEX;
+		String key_connection_index = ConnectionListFragment.KEY_CONNECTION_INDEX;
 		return getActivity().getIntent().hasExtra(key_connection_index);
 	}
 

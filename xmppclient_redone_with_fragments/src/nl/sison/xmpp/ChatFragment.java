@@ -59,7 +59,7 @@ public class ChatFragment extends Fragment {
 
 	private List<MessageEntity> chat_history;
 
-	private final static String TAG = "ChatActivity";
+	private final static String TAG = "ChatFragment";
 
 	class MessageBroadcastReceiver extends BroadcastReceiver {
 
@@ -132,20 +132,20 @@ public class ChatFragment extends Fragment {
 		registerReceiver(receiver, actionFilter);
 		
 		// in case it was on yet
-		startService(new Intent(ChatActivity.this, XMPPService.class));
+		startService(new Intent(ChatFragment.this, XMPPService.class));
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 
-		Intent intent = getIntent();
+		Intent intent = getActivity().getIntent();
 
 		Bundle bundle = intent.getExtras();
 
-		if (bundle.containsKey(BuddyListActivity.KEY_BUDDY_INDEX)) {
-			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
-			own_jid = bundle.getString(BuddyListActivity.JID);
+		if (bundle.containsKey(BuddyListFragment.KEY_BUDDY_INDEX)) {
+			buddy_id = bundle.getLong(BuddyListFragment.KEY_BUDDY_INDEX);
+			own_jid = bundle.getString(BuddyListFragment.JID);
 		} else if (bundle
 				.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle
@@ -179,7 +179,7 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void broadcastRequestRemoveNotifications() {
-		Intent request_remove_notifications = new Intent(ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
+		Intent request_remove_notifications = new Intent(ChatFragment.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		sendBroadcast(request_remove_notifications);
 	}
