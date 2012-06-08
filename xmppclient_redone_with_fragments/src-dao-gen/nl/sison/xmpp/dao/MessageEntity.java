@@ -35,8 +35,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(Long id, Long id) {
-        this.id = id;
+    public MessageEntity(Long id) {
         this.id = id;
     }
 

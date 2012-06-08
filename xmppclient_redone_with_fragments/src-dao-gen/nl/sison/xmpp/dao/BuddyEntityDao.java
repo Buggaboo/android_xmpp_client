@@ -17,7 +17,7 @@ import nl.sison.xmpp.dao.BuddyEntity;
 /** 
  * DAO for table BUDDY_ENTITY.
 */
-public class BuddyEntityDao extends AbstractDao<BuddyEntity, Void> {
+public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
 
     public static final String TABLENAME = "BUDDY_ENTITY";
 
@@ -145,7 +145,7 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
@@ -189,14 +189,14 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Void> {
      }
     
     @Override
-    protected Void updateKeyAfterInsert(BuddyEntity entity, long rowId) {
+    protected Long updateKeyAfterInsert(BuddyEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(BuddyEntity entity) {
+    public Long getKey(BuddyEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

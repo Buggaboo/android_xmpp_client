@@ -14,7 +14,7 @@ import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 /** 
  * DAO for table CONNECTION_CONFIGURATION_ENTITY.
 */
-public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConfigurationEntity, Void> {
+public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConfigurationEntity, Long> {
 
     public static final String TABLENAME = "CONNECTION_CONFIGURATION_ENTITY";
 
@@ -94,7 +94,7 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
+    public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
@@ -136,14 +136,14 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
      }
     
     @Override
-    protected Void updateKeyAfterInsert(ConnectionConfigurationEntity entity, long rowId) {
+    protected Long updateKeyAfterInsert(ConnectionConfigurationEntity entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(ConnectionConfigurationEntity entity) {
+    public Long getKey(ConnectionConfigurationEntity entity) {
         if(entity != null) {
             return entity.getId();
         } else {

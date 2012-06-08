@@ -15,6 +15,15 @@ import de.greenrobot.daogenerator.Schema;
 public class DaoGeneratorXMPPClient {
 
 	public static void main(String[] args) throws Exception {
+		Schema schema1 = getSchema();
+		Schema schema2 = getSchema();
+	
+		DaoGenerator generator = new DaoGenerator();
+		generator.generateAll(schema1, "../xmppclient/src-dao-gen");
+		generator.generateAll(schema2, "../xmppclient_redone_with_fragments/src-dao-gen");
+	}
+
+	private static Schema getSchema() {
 		Schema schema = new Schema(26, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
@@ -28,11 +37,8 @@ public class DaoGeneratorXMPPClient {
 		
 		// many messages to one buddy
 		Property buddyIdProperty = message.addLongProperty("buddyId").notNull().getProperty();
-		message.addToOne(buddy, buddyIdProperty);		
-	
-		DaoGenerator generator = new DaoGenerator();
-		generator.generateAll(schema, "../xmppclient/src-dao-gen");
-		generator.generateAll(schema, "../xmppclient_redone_with_fragments/src-dao-gen");
+		message.addToOne(buddy, buddyIdProperty);
+		return schema;
 	}
 
 	private static Entity addMessage(Schema schema) {
