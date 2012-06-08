@@ -96,7 +96,7 @@ public class BuddyListFragment extends ListFragment {
 				*/
 				ChatFragment chat_fragment = new ChatFragment();
 				chat_fragment.setArguments(bundle); // TODO set BReceiver to listen to XMPPService.KEY_B..., and JID etc.
-				getFragmentManager().beginTransaction().add(R.layout.tab_fragment_layout, chat_fragment); // TODO - replace tab_fragment_layout
+//				getFragmentManager().beginTransaction().add(R.layout.tab_fragment_layout, chat_fragment).commit(); // TODO - replace tab_fragment_layout
 			}
 
 		}
@@ -138,7 +138,6 @@ public class BuddyListFragment extends ListFragment {
 
 	@Override
 	public void onDetach() {
-		// TODO Auto-generated method stub
 		getActivity().unregisterReceiver(receiver);
 	}
 
