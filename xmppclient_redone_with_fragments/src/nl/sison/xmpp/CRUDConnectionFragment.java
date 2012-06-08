@@ -11,6 +11,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import android.widget.ToggleButton;
  * 
  */
 
-public class CRUDConnectionActivity extends Activity {
+public class CRUDConnectionFragment extends Fragment {
 	/**
 	 * TODO set default value for resource
 	 */
@@ -44,9 +45,9 @@ public class CRUDConnectionActivity extends Activity {
 	private Long conn_config_id = (long) 0;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final View list_view = LayoutInflater.from(this).inflate(
+		final View list_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(
 				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
@@ -60,7 +61,7 @@ public class CRUDConnectionActivity extends Activity {
 	private AlertDialog createHintPrefixDialog(final View list_view) {
 		final String[] prefix_items = getResources().getStringArray(
 				R.array.hint_prefixes);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
 		builder.setTitle(getString(R.string.conn_pick_a_provider));
 		builder.setItems(prefix_items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int prefix_index) {
@@ -129,13 +130,13 @@ public class CRUDConnectionActivity extends Activity {
 	}
 
 	private void showValuesFromDatabase(View list_view) {
-		long ccid = getIntent().getExtras().getLong(
+		long ccid = getActivity().getIntent().getExtras().getLong(
 				ConnectionListActivity.KEY_CONNECTION_INDEX);
 
 		// makeToast("intent extra " + ccid);
 
 		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlyDatabaseSession(this)
+				.getReadOnlyDatabaseSession(getActivity().getApplicationContext())
 				.getConnectionConfigurationEntityDao().queryBuilder()
 				.where(Properties.Id.eq(ccid)).list().get(0);
 
@@ -221,7 +222,7 @@ public class CRUDConnectionActivity extends Activity {
 							long cc_id = storeConnectionConfiguration(conn_conf);
 							DatabaseUtils.close();
 							Intent restartConnectionOnService = new Intent(
-									CRUDConnectionActivity.this,
+									getActivity().getApplicationContext(),
 									XMPPService.class);
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
@@ -231,7 +232,7 @@ public class CRUDConnectionActivity extends Activity {
 							Intent intent = new Intent(
 									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
-							sendBroadcast(intent);
+							getActivity().sendBroadcast(intent);
 							finish();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
@@ -241,14 +242,14 @@ public class CRUDConnectionActivity extends Activity {
 	}
 
 	private void createWarningConnectionBadDialog(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
 		builder.setMessage(message)
 				.setCancelable(false)
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								View parent = LayoutInflater.from(
-										CRUDConnectionActivity.this).inflate(
+										getActivity().getApplicationContext()).inflate(
 										R.layout.edit_connection_layout, null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
@@ -297,7 +298,7 @@ public class CRUDConnectionActivity extends Activity {
 
 	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(getActivity().getApplicationContext());
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		return conn_config_dao.insertOrReplace(conn_config);
@@ -347,14 +348,14 @@ public class CRUDConnectionActivity extends Activity {
 
 	private boolean isExtantConnection() {
 		String key_connection_index = ConnectionListActivity.KEY_CONNECTION_INDEX;
-		return getIntent().hasExtra(key_connection_index);
+		return getActivity().getIntent().hasExtra(key_connection_index);
 	}
 
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }

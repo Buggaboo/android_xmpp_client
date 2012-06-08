@@ -6,6 +6,7 @@ import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +28,7 @@ import de.greenrobot.dao.QueryBuilder;
  * @author Jasm Sison
  * 
  */
-public class ChatActivity extends Activity {
+public class ChatFragment extends Fragment {
 	/**
 	 * Intent action
 	 */

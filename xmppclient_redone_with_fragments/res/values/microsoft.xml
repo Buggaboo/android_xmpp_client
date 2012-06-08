@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="microsoft_hint_label">xmpp.messenger.live.com</string>
+    <string name="microsoft_hint_server">xmpp.messenger.live.com</string>
+    <string name="microsoft_hint_domain">messenger.live.com</string>
+    <string name="microsoft_hint_port">5222</string>
+    <string name="microsoft_hint_username">jane.doe</string>
+    <string name="microsoft_hint_resource">android</string>
+    <string name="microsoft_default_encrypted">false</string>
+    <string name="microsoft_default_compressed">true</string>
+    <string name="microsoft_default_sasl_authenticated">false</string>
+    
+    <!-- 
+    <string name="yahoo_hint_label">live.yahoo.com</string>
+    <string name="yahoo_hint_server">live.yahoo.com</string>
+    <string name="yahoo_hint_domain">live.yahoo.com</string>
+    <string name="yahoo_hint_port">5222</string>
+    <string name="yahoo_hint_username">jane.doe</string>
+    <string name="yahoo_hint_resource">android</string>
+    <string name="yahoo_default_encrypted">false</string>
+    <string name="yahoo_default_compressed">true</string>
+    <string name="yahoo_default_sasl_authenticated">false</string>
+     -->
+</resources>
