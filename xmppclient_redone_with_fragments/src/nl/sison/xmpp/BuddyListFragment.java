@@ -5,7 +5,6 @@ import java.util.List;
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
-import android.app.ListActivity;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -86,6 +85,7 @@ public class BuddyListFragment extends ListFragment {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
 				Bundle bundle = intent.getExtras();
+				/*
 				Intent startActivityIntent = new Intent(BuddyListFragment.this,
 						ChatFragment.class);
 				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
@@ -93,6 +93,10 @@ public class BuddyListFragment extends ListFragment {
 				startActivityIntent.putExtra(JID,
 						bundle.getString(XMPPService.JID));
 				startActivity(startActivityIntent); // TODO replace startActivity with calls for a new Fragment
+				*/
+				ChatFragment chat_fragment = new ChatFragment();
+				chat_fragment.setArguments(bundle); // TODO set BReceiver to listen to XMPPService.KEY_B..., and JID etc.
+				getFragmentManager().beginTransaction().add(R.layout.tab_fragment_layout, chat_fragment); // TODO - replace tab_fragment_layout
 			}
 
 		}

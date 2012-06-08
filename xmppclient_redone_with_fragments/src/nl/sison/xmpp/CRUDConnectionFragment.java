@@ -9,7 +9,6 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -235,7 +234,8 @@ public class CRUDConnectionFragment extends Fragment {
 									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 							getActivity().sendBroadcast(intent);
-							finish(); // TODO tell activity to pop off from fragment stack
+//							finish(); // TODO + tell activity to pop off from fragment stack
+							getFragmentManager().popBackStack();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
 						}
@@ -256,7 +256,8 @@ public class CRUDConnectionFragment extends Fragment {
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
 								// makeToast("stored bad configuration");
-								finish();  // TODO tell activity to pop off from fragment stack
+//								finish();  // TODO + tell activity to pop off from fragment stack
+								getFragmentManager().popBackStack();
 							}
 						})
 				.setNegativeButton(android.R.string.cancel,
