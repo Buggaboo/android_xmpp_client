@@ -6,6 +6,7 @@ import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.ListActivity;
+import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import android.widget.Toast;
  * @author Jasm Sison
  * 
  */
-public class BuddyListFragment extends ListActivity {
+public class BuddyListFragment extends ListFragment {
 	private static final String TAG = "BuddyListFragment";
 
 	/**
@@ -91,16 +92,16 @@ public class BuddyListFragment extends ListActivity {
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
 				startActivityIntent.putExtra(JID,
 						bundle.getString(XMPPService.JID));
-				startActivity(startActivityIntent);
+				startActivity(startActivityIntent); // TODO replace startActivity with calls for a new Fragment
 			}
 
 		}
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getIntent().getExtras().getLong(
+		getActivity().getIntent().getExtras().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
@@ -111,15 +112,15 @@ public class BuddyListFragment extends ListActivity {
 		actionFilter.addAction(XMPPService.ACTION_REQUEST_CHAT_GRANTED);
 		actionFilter.addAction(XMPPService.ACTION_REQUEST_CHAT_ERROR);
 		receiver = new BuddyListReceiver();
-		registerReceiver(receiver, actionFilter);
+		getActivity().registerReceiver(receiver, actionFilter);
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position,
+	public void onListItemClick(ListView l, View v, int position,
 			long buddy_id) {
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
 		intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
-		sendBroadcast(intent);
+		getActivity().sendBroadcast(intent); // TODO register broadcast receiver on activity
 	}
 
 	/**
@@ -130,16 +131,17 @@ public class BuddyListFragment extends ListActivity {
 	 * TODO - implement subscribe, unsubscribe buddylist, using dialogs
 	 */
 
+
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		unregisterReceiver(receiver);
+	public void onDetach() {
+		// TODO Auto-generated method stub
+		getActivity().unregisterReceiver(receiver);
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
-		refreshList(getIntent().getLongExtra(
+		refreshList(getActivity().getIntent().getLongExtra(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
 	}
 
@@ -154,7 +156,7 @@ public class BuddyListFragment extends ListActivity {
 		// whole adapter, if this turns out to be a memory hog
 		adapter = null;
 		registerForContextMenu(getListView());
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity().getApplicationContext());
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
 
@@ -165,7 +167,7 @@ public class BuddyListFragment extends ListActivity {
 			return;
 		}
 
-		adapter = new BuddyAdapter(this, buddies);
+		adapter = new BuddyAdapter(getActivity(), buddies);
 		DatabaseUtils.close();
 		setListAdapter(adapter);
 	}
@@ -175,7 +177,7 @@ public class BuddyListFragment extends ListActivity {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }

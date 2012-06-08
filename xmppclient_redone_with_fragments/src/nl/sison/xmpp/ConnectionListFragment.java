@@ -46,7 +46,7 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 		refreshList();
 	}
@@ -57,7 +57,7 @@ public class ConnectionListFragment extends ListFragment {
 
 		List<ConnectionConfigurationEntity> connections = getAllConnectionConfigurations();
 		if (connections != null && connections.size() > 0) {
-			adapter = new ConnectionAdapter(this, connections);
+			adapter = new ConnectionAdapter(getActivity(), connections);
 			setListAdapter(adapter);
 		} else {
 			createCRConnectionDialog(getString(R.string.request_create_conn));
@@ -125,12 +125,12 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createNewConnection() {
-		startActivityForResult(new Intent(ConnectionListFragment.this,
+		startActivityForResult(new Intent(getActivity(),
 				CRUDConnectionFragment.class), RQ_NEW_CONN);
 	}
 
 	private void modifyConnection(String message) {
-		Intent intent = new Intent(ConnectionListFragment.this,
+		Intent intent = new Intent(getActivity(),
 				CRUDConnectionFragment.class);
 		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
@@ -140,13 +140,7 @@ public class ConnectionListFragment extends ListFragment {
 				.get(0).getId();
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtils.close();
-		startActivityForResult(intent, RQ_MODIFY_CONN);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Determine what to do here
-		super.onActivityResult(requestCode, resultCode, data);
+		startActivity(intent); // TODO replace code with fragment start thingy
 	}
 
 	private void deleteConnection(String message) {
@@ -217,7 +211,7 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	@Override
-	protected void onDestroy() {
+	public void onDestroy() {
 		super.onDestroy();
 		// TODO + determine remove stopService, why does the connection have to persist? ->
 		// xmppservice will send notifications, that's why.
