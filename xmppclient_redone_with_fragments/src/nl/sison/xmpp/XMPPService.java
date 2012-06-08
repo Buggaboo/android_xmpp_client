@@ -86,9 +86,9 @@ public class XMPPService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			// TODO - activity sends the user's status = away unavailable etc.
 			if (intent.getAction().equals(
-					CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
+					CRUDConnectionFragment.ACTION_REQUEST_POPULATE_BUDDYLIST)) {
 				long cc_id = intent.getExtras().getLong(
-						CRUDConnectionActivity.KEY_CONNECTION_INDEX);
+						CRUDConnectionFragment.KEY_CONNECTION_INDEX);
 				DaoSession daoSession = DatabaseUtils
 						.getReadOnlyDatabaseSession(context);
 				ConnectionConfigurationEntity cc = daoSession.load(
@@ -97,9 +97,9 @@ public class XMPPService extends Service {
 			}
 
 			if (intent.getAction()
-					.equals(BuddyListActivity.ACTION_REQUEST_CHAT)) {
+					.equals(BuddyListFragment.ACTION_REQUEST_CHAT)) {
 				long buddy_id = intent.getExtras().getLong(
-						BuddyListActivity.KEY_BUDDY_INDEX);
+						BuddyListFragment.KEY_BUDDY_INDEX);
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 				XMPPConnection connection = connection_hashmap.get(buddy
 						.getConnectionId());
@@ -111,10 +111,10 @@ public class XMPPService extends Service {
 			}
 
 			if (intent.getAction().equals(
-					ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE)) {
+					ChatFragment.ACTION_REQUEST_DELIVER_MESSAGE)) {
 				Bundle bundle = intent.getExtras();
-				String message = bundle.getString(ChatActivity.MESSAGE);
-				long buddy_id = bundle.getLong(ChatActivity.KEY_BUDDY_INDEX);
+				String message = bundle.getString(ChatFragment.MESSAGE);
+				long buddy_id = bundle.getLong(ChatFragment.KEY_BUDDY_INDEX);
 
 				BuddyEntity buddy = getBuddyEntityFromId(context, buddy_id);
 
@@ -209,9 +209,9 @@ public class XMPPService extends Service {
 		makeConnectionsFromDatabase();
 		receiver = new ServiceReceiver();
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(BuddyListActivity.ACTION_REQUEST_CHAT);
-		filter.addAction(ChatActivity.ACTION_REQUEST_DELIVER_MESSAGE);
-		filter.addAction(CRUDConnectionActivity.ACTION_REQUEST_POPULATE_BUDDYLIST);
+		filter.addAction(BuddyListFragment.ACTION_REQUEST_CHAT);
+		filter.addAction(ChatFragment.ACTION_REQUEST_DELIVER_MESSAGE);
+		filter.addAction(CRUDConnectionFragment.ACTION_REQUEST_POPULATE_BUDDYLIST);
 		registerReceiver(receiver, filter);
 		
 		// start services which rely on this one
@@ -315,7 +315,7 @@ public class XMPPService extends Service {
 			public void interceptPacket(Packet p) {
 				// storeMessage((Message) p);
 				// NOTE: this must be done in the broadcastreceiver, otherwise
-				// the chatactivity's adapter can't be updated, via the intent
+				// the ChatFragment's adapter can't be updated, via the intent
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
@@ -504,7 +504,7 @@ public class XMPPService extends Service {
 	}
 
 	// TODO refactor this away to the the DatabaseUtil, this is the same as
-	// onListItemClick code in ConnectionListActivity
+	// onListItemClick code in ConnectionListFragment
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
 		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
 		ConnectionConfigurationEntity cc = daoSession.load(ConnectionConfigurationEntity.class, cc_id);
@@ -518,9 +518,9 @@ public class XMPPService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
-		if (intent.hasExtra(CRUDConnectionActivity.RESTART_CONNECTION)) {
+		if (intent.hasExtra(CRUDConnectionFragment.RESTART_CONNECTION)) {
 			long cc_id = intent.getExtras().getLong(
-					CRUDConnectionActivity.RESTART_CONNECTION);
+					CRUDConnectionFragment.RESTART_CONNECTION);
 			connectToServer(getConnectionConfiguration(cc_id));
 		}
 		return START_STICKY;

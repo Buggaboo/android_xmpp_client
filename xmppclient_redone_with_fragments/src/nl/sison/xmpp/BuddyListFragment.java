@@ -23,7 +23,7 @@ import android.widget.Toast;
  * 
  */
 public class BuddyListFragment extends ListActivity {
-	private static final String TAG = "BuddyListActivity";
+	private static final String TAG = "BuddyListFragment";
 
 	/**
 	 * Intent request code
@@ -85,8 +85,8 @@ public class BuddyListFragment extends ListActivity {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
 				Bundle bundle = intent.getExtras();
-				Intent startActivityIntent = new Intent(BuddyListActivity.this,
-						ChatActivity.class);
+				Intent startActivityIntent = new Intent(BuddyListFragment.this,
+						ChatFragment.class);
 				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
 				startActivityIntent.putExtra(JID,
@@ -101,7 +101,7 @@ public class BuddyListFragment extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getIntent().getExtras().getLong(
-				ConnectionListActivity.KEY_CONNECTION_INDEX);
+				ConnectionListFragment.KEY_CONNECTION_INDEX);
 
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
@@ -140,7 +140,7 @@ public class BuddyListFragment extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		refreshList(getIntent().getLongExtra(
-				ConnectionListActivity.KEY_CONNECTION_INDEX, 0));
+				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
 	}
 
 	/**

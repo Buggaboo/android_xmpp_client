@@ -30,8 +30,9 @@ public class DaoGeneratorXMPPClient {
 		Property buddyIdProperty = message.addLongProperty("buddyId").notNull().getProperty();
 		message.addToOne(buddy, buddyIdProperty);		
 	
-		new DaoGenerator().generateAll(schema, "../xmppclient/src-dao-gen");
-		new DaoGenerator().generateAll(schema, "../xmppclient_redone_with_fragments/src-dao-gen");
+		DaoGenerator generator = new DaoGenerator();
+		generator.generateAll(schema, "../xmppclient/src-dao-gen");
+		generator.generateAll(schema, "../xmppclient_redone_with_fragments/src-dao-gen");
 	}
 
 	private static Entity addMessage(Schema schema) {
