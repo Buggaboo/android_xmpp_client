@@ -198,7 +198,7 @@ public class ChatFragment extends Fragment {
 		chat_history = qb.list();
 		DatabaseUtils.close();
 
-		adapter = new MessageAdapter(this, chat_history, own_jid);
+		adapter = new MessageAdapter(getActivity(), chat_history, own_jid);
 
 		chat_list.setAdapter(adapter);
 

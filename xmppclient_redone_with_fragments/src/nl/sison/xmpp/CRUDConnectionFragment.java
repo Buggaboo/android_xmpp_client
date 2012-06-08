@@ -355,7 +355,7 @@ public class CRUDConnectionFragment extends Fragment {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }

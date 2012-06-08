@@ -81,7 +81,7 @@ public class ConnectionListFragment extends ListFragment {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 
