@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,8 +46,8 @@ public class CRUDConnectionFragment extends Fragment {
 	private Long conn_config_id = (long) 0;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		final View list_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(
 				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
@@ -55,7 +56,8 @@ public class CRUDConnectionFragment extends Fragment {
 			createHintPrefixDialog(list_view).show();
 		}
 		setButtons(list_view);
-		setContentView(list_view);
+		return list_view;
+//		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	private AlertDialog createHintPrefixDialog(final View list_view) {
@@ -233,7 +235,7 @@ public class CRUDConnectionFragment extends Fragment {
 									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 							getActivity().sendBroadcast(intent);
-							finish();
+							finish(); // TODO tell activity to pop off from fragment stack
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
 						}
@@ -254,7 +256,7 @@ public class CRUDConnectionFragment extends Fragment {
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
 								// makeToast("stored bad configuration");
-								finish();
+								finish();  // TODO tell activity to pop off from fragment stack
 							}
 						})
 				.setNegativeButton(android.R.string.cancel,
