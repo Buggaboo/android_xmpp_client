@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,12 +43,13 @@ public class ConnectionListFragment extends ListFragment {
 
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		getActivity().startService(new Intent(getActivity(), XMPPService.class));
+		getActivity().startService(new Intent(getActivity(), XMPPService.class)); // TODO refactor away to activity
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
+		makeToast("onResume");
 		refreshList();
 	}
 
@@ -58,8 +61,10 @@ public class ConnectionListFragment extends ListFragment {
 		if (connections != null && connections.size() > 0) {
 			adapter = new ConnectionAdapter(getActivity(), connections);
 			setListAdapter(adapter);
+			makeToast("show connections");
 		} else {
 			createCRConnectionDialog(getString(R.string.request_create_conn));
+			makeToast("show connection creation dialog");
 		}
 
 		DatabaseUtils.close();
