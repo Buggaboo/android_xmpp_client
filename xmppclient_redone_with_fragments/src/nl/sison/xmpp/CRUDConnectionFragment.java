@@ -131,10 +131,8 @@ public class CRUDConnectionFragment extends Fragment {
 	}
 
 	private void showValuesFromDatabase(View list_view) {
-		long ccid = getActivity().getIntent().getExtras().getLong(
+		long ccid = getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX);
-
-		// makeToast("intent extra " + ccid);
 
 		ConnectionConfigurationEntity cc = DatabaseUtils
 				.getReadOnlyDatabaseSession(getActivity().getApplicationContext())
@@ -270,6 +268,13 @@ public class CRUDConnectionFragment extends Fragment {
 		builder.create().show();
 	}
 
+	/**
+	 * 
+	 * This code is copy-pasted from the service code, baaaaad. But it works purrrrrrfectly.
+	 * 
+	 * @param cc
+	 * @return
+	 */
 	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc) {
 		ConnectionConfiguration xmpp_conn_config = new ConnectionConfiguration(
 				cc.getServer(), Integer.valueOf(cc.getPort()), cc.getDomain());
@@ -350,8 +355,8 @@ public class CRUDConnectionFragment extends Fragment {
 	}
 
 	private boolean isExtantConnection() {
-		String key_connection_index = ConnectionListFragment.KEY_CONNECTION_INDEX;
-		return getActivity().getIntent().hasExtra(key_connection_index);
+		String connection_index = ConnectionListFragment.KEY_CONNECTION_INDEX;
+		return getArguments().getLong(connection_index) > 0;
 	}
 
 	private void makeToast(String message) {

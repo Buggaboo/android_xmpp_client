@@ -44,13 +44,12 @@ public class ConnectionListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		makeToast("onResume");
 		refreshList();
 	}
 
@@ -62,11 +61,9 @@ public class ConnectionListFragment extends ListFragment {
 		if (connections != null && connections.size() > 0) {
 			adapter = new ConnectionAdapter(getActivity(), connections);
 			setListAdapter(adapter);
-			makeToast("show connections");
 		} else {
 			setEmptyText(getString(R.string.conn_non_available));
 			createCRConnectionDialog(getString(R.string.request_create_conn));
-			makeToast("show connection creation dialog");
 		}
 
 		DatabaseUtils.close();
@@ -98,7 +95,7 @@ public class ConnectionListFragment extends ListFragment {
 		super.onListItemClick(l, v, position, cc_id);
 		Intent intent = new Intent(getActivity(), BuddyListFragment.class);
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
-//		startActivity(intent); // deprecated
+		// startActivity(intent); // deprecated
 		((SinglePanelActivity) getActivity()).loadFragment(intent);
 		// TODO depending on the layout, load the fragment
 	}
@@ -134,8 +131,10 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createNewConnection() {
-		startActivityForResult(new Intent(getActivity(),
-				CRUDConnectionFragment.class), RQ_NEW_CONN);
+		// startActivityForResult(new Intent(getActivity(),
+		// CRUDConnectionFragment.class), RQ_NEW_CONN); // TODO - deprecate field, remove field
+		// TODO - determine if you really need startActivityForResult
+		((FragmentLoader) getActivity()).loadFragment(new Intent(getActivity(), CRUDConnectionFragment.class)); // broken
 	}
 
 	private void modifyConnection(String message) {
@@ -149,7 +148,7 @@ public class ConnectionListFragment extends ListFragment {
 				.get(0).getId();
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtils.close();
-		startActivity(intent); // TODO replace code with fragment start thingy
+		((FragmentLoader) getActivity()).loadFragment(intent); // TODO - fix broken
 	}
 
 	private void deleteConnection(String message) {

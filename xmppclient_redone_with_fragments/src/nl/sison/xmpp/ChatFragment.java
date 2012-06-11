@@ -30,7 +30,7 @@ import de.greenrobot.dao.QueryBuilder;
  * @author Jasm Sison
  * 
  */
-public class ChatFragment extends Fragment implements FragmentLoader {
+public class ChatFragment extends Fragment {
 	/**
 	 * Intent action
 	 */
@@ -91,7 +91,8 @@ public class ChatFragment extends Fragment implements FragmentLoader {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-			// this prevents messages from other buddies to leak into this context 
+			// this prevents messages from other buddies to leak into this
+			// context
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtils.close();
 				return;
@@ -102,13 +103,13 @@ public class ChatFragment extends Fragment implements FragmentLoader {
 			adapter.add(message);
 		}
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		Activity act = getActivity();
-		
+
 		if (top_orientation) {
 			inflater.inflate(R.layout.chat_bottom_oriented_layout, container);
 			chat_list = (ListView) act.findViewById(R.id.chat_top_input);
@@ -140,29 +141,26 @@ public class ChatFragment extends Fragment implements FragmentLoader {
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
 		getActivity().registerReceiver(receiver, actionFilter);
-		
+
 		// in case it was on yet
-		getActivity().startService(new Intent(getActivity(), XMPPService.class));
+		getActivity()
+				.startService(new Intent(getActivity(), XMPPService.class));
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		Intent intent = getActivity().getIntent();
-
-		Bundle bundle = intent.getExtras();
+		Bundle bundle = getArguments();
 
 		if (bundle.containsKey(BuddyListFragment.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(BuddyListFragment.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(BuddyListFragment.JID);
-		} else if (bundle
-				.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
-			buddy_id = bundle
-					.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
+		} else if (bundle.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
+			buddy_id = bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
 		}
-		
+
 		broadcastRequestRemoveNotifications();
 
 		setupListView();
@@ -182,20 +180,23 @@ public class ChatFragment extends Fragment implements FragmentLoader {
 
 		submit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
-
+				// TODO - do something with this event...
 			}
 		});
 
 	}
 
 	private void broadcastRequestRemoveNotifications() {
-		Intent request_remove_notifications = new Intent(ChatFragment.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
+		Intent request_remove_notifications = new Intent(
+				ChatFragment.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		getActivity().sendBroadcast(request_remove_notifications);
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity().getApplicationContext());
+		DaoSession daoSession = DatabaseUtils
+				.getReadOnlyDatabaseSession(getActivity()
+						.getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
@@ -219,24 +220,13 @@ public class ChatFragment extends Fragment implements FragmentLoader {
 		super.onDetach();
 		getActivity().unregisterReceiver(receiver);
 	}
-	
+
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+		Toast toast = Toast
+				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
-	}
-
-	@Override
-	public void loadFragment(Intent intent) throws NullPointerException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void swipeToFragment(Intent intent) throws NullPointerException {
-		// TODO Auto-generated method stub
-		
 	}
 }

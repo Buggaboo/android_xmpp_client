@@ -22,7 +22,7 @@ import android.widget.Toast;
  * @author Jasm Sison
  * 
  */
-public class BuddyListFragment extends ListFragment implements FragmentLoader {
+public class BuddyListFragment extends ListFragment {
 	private static final String TAG = "BuddyListFragment";
 
 	/**
@@ -85,18 +85,18 @@ public class BuddyListFragment extends ListFragment implements FragmentLoader {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_REQUEST_CHAT_GRANTED)) {
 				Bundle bundle = intent.getExtras();
-				/*
-				Intent startActivityIntent = new Intent(BuddyListFragment.this,
+
+				Intent fragmentIntent = new Intent(getActivity(),
 						ChatFragment.class);
-				startActivityIntent.putExtra(KEY_BUDDY_INDEX,
+				
+				// pass on the intent, using different keys
+				fragmentIntent.putExtra(KEY_BUDDY_INDEX,
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
-				startActivityIntent.putExtra(JID,
+				fragmentIntent.putExtra(JID,
 						bundle.getString(XMPPService.JID));
-				startActivity(startActivityIntent); // TODO replace startActivity with calls for a new Fragment
-				*/
-				ChatFragment chat_fragment = new ChatFragment();
-				chat_fragment.setArguments(bundle); // TODO set BReceiver to listen to XMPPService.KEY_B..., and JID etc.
-//				getFragmentManager().beginTransaction().add(R.layout.tab_fragment_layout, chat_fragment).commit(); // TODO - replace tab_fragment_layout
+				
+//				startActivity(startActivityIntent); // TODO + replace startActivity with calls for a new Fragment
+				((FragmentLoader)getActivity()).loadFragment(fragmentIntent);
 			}
 
 		}
@@ -105,9 +105,6 @@ public class BuddyListFragment extends ListFragment implements FragmentLoader {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getActivity().getIntent().getExtras().getLong(
-				ConnectionListFragment.KEY_CONNECTION_INDEX);
-
 		IntentFilter actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
@@ -138,13 +135,14 @@ public class BuddyListFragment extends ListFragment implements FragmentLoader {
 
 	@Override
 	public void onDetach() {
+		super.onDetach();
 		getActivity().unregisterReceiver(receiver);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		refreshList(getActivity().getIntent().getLongExtra(
+		refreshList(getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
 	}
 
@@ -182,17 +180,5 @@ public class BuddyListFragment extends ListFragment implements FragmentLoader {
 		Log.i(TAG, message);
 		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
 		toast.show();
-	}
-
-	@Override
-	public void loadFragment(Intent intent) throws NullPointerException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void swipeToFragment(Intent intent) throws NullPointerException {
-		// TODO Auto-generated method stub
-		
 	}
 }
