@@ -4,6 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <!--
     <TabHost
         android:id="@+id/tabhost"
         android:layout_width="fill_parent"
@@ -34,11 +35,18 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </TabHost>
-    
+    -->
+
     <fragment
-        android:id="@+id/panel"
+        android:id="@+id/double_panel_1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1" />    
+        android:layout_weight="1" />
+
+    <fragment
+        android:id="@+id/double_panel_2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import java.util.List;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class ConnectionAdapter extends
 		return super.getItem(position).getId();
 	}
 
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
 				getContext()).inflate(R.layout.connection_item_layout, parent, false);
@@ -43,7 +45,7 @@ public class ConnectionAdapter extends
 
 		ConnectionConfigurationEntity item = getItem(position);
 		connection_view.setText(item.getLabel());
-
+		
 		return itemLayout;
 	}
 }

@@ -18,8 +18,21 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
+        <service
+            android:name=".XMPPService"
+            android:icon="@drawable/ic_launcher" >
+        </service>
+        <service
+            android:name=".XMPPNotificationService"
+            android:icon="@drawable/ic_launcher" >
+        </service>
+        <service
+            android:name=".MorseService"
+            android:icon="@drawable/ic_launcher" >
+        </service>
+        <!-- TODO replace .SinglePanelActivity with other activity that checks the orientation & screen estate -->
         <activity
-            android:name=".ChatFragment"
+            android:name=".SinglePanelActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
