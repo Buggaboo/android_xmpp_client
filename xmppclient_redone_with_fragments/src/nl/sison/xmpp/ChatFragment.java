@@ -30,7 +30,7 @@ import de.greenrobot.dao.QueryBuilder;
  * @author Jasm Sison
  * 
  */
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements FragmentLoader {
 	/**
 	 * Intent action
 	 */
@@ -226,5 +226,17 @@ public class ChatFragment extends Fragment {
 		Log.i(TAG, message);
 		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
+	}
+
+	@Override
+	public void loadFragment(Intent intent) throws NullPointerException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void swipeToFragment(Intent intent) throws NullPointerException {
+		// TODO Auto-generated method stub
+		
 	}
 }

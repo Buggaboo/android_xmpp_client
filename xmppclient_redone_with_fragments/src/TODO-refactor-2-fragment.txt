@@ -4,7 +4,7 @@ TODO 8-06-2012
 - enter SinglePanelActivity in Manifest
 - use tabbed_single_fragment_layout.xml for tabs
 - create Interface for (Singe/Multi)PanelActivity with functions to call from Fragment to switch between fragments
-- 
+- Sounds for every intent more or less... make a service for that...
 
 ...
 

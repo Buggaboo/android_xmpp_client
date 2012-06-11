@@ -22,7 +22,7 @@ import android.widget.Toast;
  * @author Jasm Sison
  * 
  */
-public class BuddyListFragment extends ListFragment {
+public class BuddyListFragment extends ListFragment implements FragmentLoader {
 	private static final String TAG = "BuddyListFragment";
 
 	/**
@@ -182,5 +182,17 @@ public class BuddyListFragment extends ListFragment {
 		Log.i(TAG, message);
 		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
 		toast.show();
+	}
+
+	@Override
+	public void loadFragment(Intent intent) throws NullPointerException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void swipeToFragment(Intent intent) throws NullPointerException {
+		// TODO Auto-generated method stub
+		
 	}
 }
