@@ -42,12 +42,13 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private final String TAG = "CRUDConnectionFragment";
 
-	private Long conn_config_id = (long) 0;
+	private Long conn_config_id = (long) 0; // default value: isExtantConnection fails if default
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		final View list_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(
+		final View list_view = LayoutInflater.from(
+				getActivity().getApplicationContext()).inflate(
 				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
@@ -56,13 +57,14 @@ public class CRUDConnectionFragment extends Fragment {
 		}
 		setButtons(list_view);
 		return list_view;
-//		return super.onCreateView(inflater, container, savedInstanceState);
+		// return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	private AlertDialog createHintPrefixDialog(final View list_view) {
 		final String[] prefix_items = getResources().getStringArray(
 				R.array.hint_prefixes);
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()
+				.getApplicationContext());
 		builder.setTitle(getString(R.string.conn_pick_a_provider));
 		builder.setItems(prefix_items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int prefix_index) {
@@ -133,13 +135,11 @@ public class CRUDConnectionFragment extends Fragment {
 	private void showValuesFromDatabase(View list_view) {
 		long ccid = getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX);
+		
+		conn_config_id = ccid;
 
-		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity().getApplicationContext())
-				.getConnectionConfigurationEntityDao().queryBuilder()
-				.where(Properties.Id.eq(ccid)).list().get(0);
-
-		conn_config_id = cc.getId();
+		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlyDatabaseSession(getActivity()).load(
+				ConnectionConfigurationEntity.class, ccid);
 
 		setTextViewData(list_view, R.id.conn_label, cc.getLabel());
 		setTextViewData(list_view, R.id.conn_port, cc.getPort());
@@ -232,7 +232,8 @@ public class CRUDConnectionFragment extends Fragment {
 									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 							getActivity().sendBroadcast(intent);
-//							finish(); // TODO + tell activity to pop off from fragment stack
+							// finish(); // TODO + tell activity to pop off from
+							// fragment stack
 							getFragmentManager().popBackStack();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
@@ -242,19 +243,24 @@ public class CRUDConnectionFragment extends Fragment {
 	}
 
 	private void createWarningConnectionBadDialog(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()
+				.getApplicationContext());
 		builder.setMessage(message)
 				.setCancelable(false)
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								View parent = LayoutInflater.from(
-										getActivity().getApplicationContext()).inflate(
-										R.layout.edit_connection_layout, null, false);
+								View parent = LayoutInflater
+										.from(getActivity()
+												.getApplicationContext())
+										.inflate(
+												R.layout.edit_connection_layout,
+												null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
 								// makeToast("stored bad configuration");
-//								finish();  // TODO + tell activity to pop off from fragment stack
+								// finish(); // TODO + tell activity to pop off
+								// from fragment stack
 								getFragmentManager().popBackStack();
 							}
 						})
@@ -270,7 +276,8 @@ public class CRUDConnectionFragment extends Fragment {
 
 	/**
 	 * 
-	 * This code is copy-pasted from the service code, baaaaad. But it works purrrrrrfectly.
+	 * This code is copy-pasted from the service code, baaaaad. But it works
+	 * purrrrrrfectly.
 	 * 
 	 * @param cc
 	 * @return
@@ -306,7 +313,9 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(getActivity().getApplicationContext());
+		DaoSession daoSession = DatabaseUtils
+				.getWriteableDatabaseSession(getActivity()
+						.getApplicationContext());
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		return conn_config_dao.insertOrReplace(conn_config);
@@ -363,7 +372,8 @@ public class CRUDConnectionFragment extends Fragment {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+		Toast toast = Toast
+				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }
