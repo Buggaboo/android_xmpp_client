@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+
 
     <TabHost
         android:id="@+id/tabhost"
@@ -34,17 +36,17 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </TabHost>
+-->
 
-    <fragment
-        android:id="@+id/panel_1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
-    
-    <fragment
-        android:id="@+id/panel_2"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
-    
-</LinearLayout>
+<fragment
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/single_panel_1"
+    android:name="nl.sison.xmpp.ConnectionListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1" />
+<!-- TODO - try android:layout_height="0dp" -->
+<!-- TODO - use interface (inherit from Fragment), dynamic linking instead of hardcoding the Fragment class -->
+<!-- TODO - reinstate tabs, i.e. remove xml namespace attr -->
+
+<!-- </LinearLayout> -->

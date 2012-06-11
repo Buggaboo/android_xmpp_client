@@ -9,3 +9,4 @@ TODO 8-06-2012
 ...
 
 - detect orientation, reload fragment (if necessary)
+- check empty inputs in configuration, and provide values if necessary.

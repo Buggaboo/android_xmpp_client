@@ -519,6 +519,7 @@ public class XMPPService extends Service {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
 		if (intent.hasExtra(CRUDConnectionFragment.RESTART_CONNECTION)) {
+			// TODO refactor all static bundle keys to base class, in any case out of the fragment
 			long cc_id = intent.getExtras().getLong(
 					CRUDConnectionFragment.RESTART_CONNECTION);
 			connectToServer(getConnectionConfiguration(cc_id));
