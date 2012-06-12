@@ -42,6 +42,7 @@ public class XMPPMainActivity extends Activity {
 			intent.putExtra(XMPPNotificationService.THREAD,
 					bundle.getString(XMPPNotificationService.THREAD));
 		} else { // not started by a notification service
+			// start service just in case
 			startService(new Intent(this, XMPPService.class));
 		}
 		startActivityForResult(intent, 0);
