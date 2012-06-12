@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">AntoniusXMPPApplication</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="are_you_sure_you_want_to_exit">Wilt u de app verlaten?</string>
+    <string name="settings">Instellingen</string>
+    <string name="hint_password">xmpp wachtwoord</string>
+    <string name="hint_jid_domain">antoniusziekenhuis.nl</string>
+    <string name="hint_server">xmpp server</string>
+    <string name="hint_client_port">5222</string>
+    <string name="hint_username">pietje</string>
+    <string name="hint_resource">android</string>
+    <string name="label_password">wachtwoord</string>
+    <string name="label_xmpp_server_port">Server/Poort</string>
+    <string name="hint_partial_jid_example">pietje@antoniusziekenhuis.nl</string>
+    <string name="save">Opslaan</string>
+    <string name="back">Terug</string>
+    <string name="unable_to_connect_to_server">Geen verbinding mogelijk met de server. Wijzig de server settings of verlaat de applicatie.</string>
+    <string name="label_jid">e-mail</string>
+    <!--<string name="label_at">@</string>-->
+    <string name="label_at">at</string>
+    <!--<string name="label_slash">/</string>-->
+    <string name="label_slash">slash</string>
+    <string name="no_connectivity">Geen tcp/ip mogelijk.</string>
+    <string name="no_list_data">Geen gegevens beschikbaar.</string>
+    <string name="send">Verstuur</string>
+    <string name="submit">Versturen</string>
+    <string name="date_literal">date</string>
+    <string name="text_literal">text</string>
+</resources>

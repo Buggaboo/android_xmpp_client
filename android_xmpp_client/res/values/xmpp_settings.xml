@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="xmpp_client_port">5222</string>
+    <string name="xmpp_server_name">172.19.100.52</string>
+    <string name="xmpp_username">jasm</string>
+	<string name="xmpp_jid_domain">mov-svap003.amg.local</string>
+    <string name="xmpp_password">jasm</string>
+    <string name="xmpp_resource">android</string> 
+</resources>

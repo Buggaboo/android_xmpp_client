@@ -1,0 +1,6 @@
+R.java
+*.class
+*.apk
+*log
+resources.ap_
+classes.dex
