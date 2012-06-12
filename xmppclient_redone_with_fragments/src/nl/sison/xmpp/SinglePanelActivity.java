@@ -35,8 +35,16 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 
 		setContentView(R.layout.tabbed_single_fragment_layout);
 
-		// During initial setup, plug in the details fragment.
-		Fragment fragment = new ConnectionListFragment();
+		Intent intent = getIntent();
+		
+		// launched by NotificationService
+		Fragment fragment;
+		if (intent != null
+				&& intent.hasExtra(XMPPNotificationService.KEY_BUDDY_INDEX)) {
+			fragment = new ChatFragment();
+		} else {
+			fragment = new ConnectionListFragment();
+		}
 		fragment.setArguments(getIntent().getExtras());
 		getFragmentManager().beginTransaction()
 				.add(R.id.single_panel_1, fragment).commit();

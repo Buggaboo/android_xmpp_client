@@ -75,7 +75,7 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			Intent intent = new Intent(XMPPNotificationService.this,
-					ChatFragment.class);
+					XMPPMainActivity.class); // NOTE: main detects the screen size and launches the correct Activity 
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
