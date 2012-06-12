@@ -113,7 +113,7 @@ public class ChatFragment extends Fragment {
 
 		if (top_orientation) {
 			parent_view = inflater.inflate(
-					R.layout.chat_bottom_oriented_layout, null, false);
+					R.layout.chat_top_oriented_layout, null, false);
 			chat_list = (ListView) parent_view
 					.findViewById(R.id.chat_top_input);
 			submit = (Button) parent_view.findViewById(R.id.submit_top_input);
@@ -121,7 +121,7 @@ public class ChatFragment extends Fragment {
 					.findViewById(R.id.text_input_top_input);
 
 		} else {
-			parent_view = inflater.inflate(R.layout.chat_top_oriented_layout,
+			parent_view = inflater.inflate(R.layout.chat_bottom_oriented_layout,
 					null, false);
 			chat_list = (ListView) parent_view
 					.findViewById(R.id.chat_bottom_input);
@@ -130,11 +130,6 @@ public class ChatFragment extends Fragment {
 			input = (EditText) parent_view
 					.findViewById(R.id.text_input_bottom_input);
 		}
-
-		makeToast("parent_view: " + parent_view);
-		makeToast("chat_list: " + chat_list);
-		makeToast("submit: " + submit);
-		makeToast("input: " + input);
 		
 		return parent_view;
 	}
