@@ -33,8 +33,8 @@ public class XMPPMainActivity extends Activity {
 		// DoublePanel... TriplePanel, combine the screen size detection
 		// TODO - determine a faster way to pass on the extras
 		Intent intent = new Intent(this, SinglePanelActivity.class);
-		Bundle bundle = intent.getExtras();
-		if (!bundle.isEmpty()) {
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null && !bundle.isEmpty()) {
 			intent.putExtra(XMPPNotificationService.JID,
 					bundle.getString(XMPPNotificationService.JID));
 			intent.putExtra(XMPPNotificationService.KEY_BUDDY_INDEX,
@@ -42,13 +42,12 @@ public class XMPPMainActivity extends Activity {
 			intent.putExtra(XMPPNotificationService.THREAD,
 					bundle.getString(XMPPNotificationService.THREAD));
 		}
-		startActivity(intent);
+		startActivityForResult(intent, 0);
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		// TODO detect if this is the last screen, then finish.
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		finish();
 	}
 
