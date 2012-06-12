@@ -129,17 +129,14 @@ public class CRUDConnectionActivity extends Activity {
 	}
 
 	private void showValuesFromDatabase(View list_view) {
-		long ccid = getIntent().getExtras().getLong(
+		long cc_id = getIntent().getExtras().getLong(
 				ConnectionListActivity.KEY_CONNECTION_INDEX);
 
-		// makeToast("intent extra " + ccid);
-
 		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlyDatabaseSession(this)
-				.getConnectionConfigurationEntityDao().queryBuilder()
-				.where(Properties.Id.eq(ccid)).list().get(0);
+				.getReadOnlyDatabaseSession(this).load(
+						ConnectionConfigurationEntity.class, cc_id);
 
-		conn_config_id = cc.getId();
+		conn_config_id = cc_id;
 
 		setTextViewData(list_view, R.id.conn_label, cc.getLabel());
 		setTextViewData(list_view, R.id.conn_port, cc.getPort());
@@ -249,7 +246,8 @@ public class CRUDConnectionActivity extends Activity {
 							public void onClick(DialogInterface dialog, int id) {
 								View parent = LayoutInflater.from(
 										CRUDConnectionActivity.this).inflate(
-										R.layout.edit_connection_layout, null, false);
+										R.layout.edit_connection_layout, null,
+										false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
 								// makeToast("stored bad configuration");
