@@ -61,11 +61,11 @@ public class ConnectionListFragment extends ListFragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		try {
-			getActivity().unregisterReceiver(receiver);
-		} catch (IllegalArgumentException ex) {
-			makeToast("The receiver is not registered.");
-		}
+//		try {
+//			getActivity().unregisterReceiver(receiver);
+//		} catch (IllegalArgumentException ex) {
+//			makeToast("The receiver is not registered.");
+//		}
 	}	
 
 	private void refreshList() {
