@@ -105,13 +105,13 @@ public class ChatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		if (top_orientation) {
-			setContentView(R.layout.chat_bottom_oriented_layout);
+			setContentView(R.layout.chat_top_oriented_layout);
 			chat_list = (ListView) findViewById(R.id.chat_top_input);
 			submit = (Button) findViewById(R.id.submit_top_input);
 			input = (EditText) findViewById(R.id.text_input_top_input);
 
 		} else {
-			setContentView(R.layout.chat_top_oriented_layout);
+			setContentView(R.layout.chat_bottom_oriented_layout);
 			chat_list = (ListView) findViewById(R.id.chat_bottom_input);
 			submit = (Button) findViewById(R.id.submit_bottom_input);
 			input = (EditText) findViewById(R.id.text_input_bottom_input);
