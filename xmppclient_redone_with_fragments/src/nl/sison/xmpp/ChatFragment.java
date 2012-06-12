@@ -64,6 +64,7 @@ public class ChatFragment extends Fragment {
 	private List<MessageEntity> chat_history;
 
 	private final static String TAG = "ChatFragment";
+	private IntentFilter actionFilter;
 
 	class MessageBroadcastReceiver extends BroadcastReceiver {
 
@@ -112,8 +113,8 @@ public class ChatFragment extends Fragment {
 		final View parent_view;
 
 		if (top_orientation) {
-			parent_view = inflater.inflate(
-					R.layout.chat_top_oriented_layout, null, false);
+			parent_view = inflater.inflate(R.layout.chat_top_oriented_layout,
+					null, false);
 			chat_list = (ListView) parent_view
 					.findViewById(R.id.chat_top_input);
 			submit = (Button) parent_view.findViewById(R.id.submit_top_input);
@@ -121,8 +122,8 @@ public class ChatFragment extends Fragment {
 					.findViewById(R.id.text_input_top_input);
 
 		} else {
-			parent_view = inflater.inflate(R.layout.chat_bottom_oriented_layout,
-					null, false);
+			parent_view = inflater.inflate(
+					R.layout.chat_bottom_oriented_layout, null, false);
 			chat_list = (ListView) parent_view
 					.findViewById(R.id.chat_bottom_input);
 			submit = (Button) parent_view
@@ -130,7 +131,7 @@ public class ChatFragment extends Fragment {
 			input = (EditText) parent_view
 					.findViewById(R.id.text_input_bottom_input);
 		}
-		
+
 		return parent_view;
 	}
 
@@ -139,7 +140,7 @@ public class ChatFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		receiver = new MessageBroadcastReceiver();
-		IntentFilter actionFilter = new IntentFilter();
+		actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_SENT); // DONE!
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_ERROR); // DONE!
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING); // DONE!
@@ -159,6 +160,8 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		// TODO - determine the risk of registering the receiver more than once
+		getActivity().registerReceiver(receiver, actionFilter);
 
 		Bundle bundle = getArguments();
 
@@ -168,13 +171,12 @@ public class ChatFragment extends Fragment {
 		} else if (bundle.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
-		}else
-		{
+		} else {
 			throw new IllegalStateException("No arguments given.");
 		}
-		
+
 		// strategy to cleanup notifications
-		preventNotificationOfActiveBuddy();		
+		preventNotificationOfActiveBuddy();
 		broadcastRequestRemoveNotifications();
 
 		setupListView();
@@ -204,15 +206,22 @@ public class ChatFragment extends Fragment {
 
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(receiver);
+	}
+
 	private void preventNotificationOfActiveBuddy() {
-		BuddyEntityDao dao = DatabaseUtils.getWriteableDatabaseSession(getActivity()).getBuddyEntityDao();
+		BuddyEntityDao dao = DatabaseUtils.getWriteableDatabaseSession(
+				getActivity()).getBuddyEntityDao();
 		List<BuddyEntity> deactivated_buddies = dao.loadAll();
-		for (BuddyEntity buddy : deactivated_buddies)
-		{
+		for (BuddyEntity buddy : deactivated_buddies) {
 			buddy.setIsActive(false);
 			dao.insertOrReplace(buddy);
 		}
-//		dao.insertInTx(deactivated_buddies); // TODO - determine why this triggers a SQLiteConstraintException
+		// dao.insertInTx(deactivated_buddies); // TODO - determine why this
+		// triggers a SQLiteConstraintException
 		BuddyEntity active_buddy = dao.load(buddy_id);
 		active_buddy.setIsActive(true);
 		dao.insertOrReplace(active_buddy);

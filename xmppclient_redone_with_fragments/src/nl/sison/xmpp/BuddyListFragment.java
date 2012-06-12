@@ -49,6 +49,8 @@ public class BuddyListFragment extends ListFragment {
 	private BuddyAdapter adapter;
 	private BroadcastReceiver receiver;
 
+	private IntentFilter actionFilter;
+
 	public class BuddyListReceiver extends BroadcastReceiver {
 		/**
 		 * TODO Refactor to different receivers, - one for connections, - one
@@ -109,7 +111,7 @@ public class BuddyListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		IntentFilter actionFilter = new IntentFilter();
+		actionFilter = new IntentFilter();
 		actionFilter.addAction(XMPPService.ACTION_MESSAGE_INCOMING);
 		actionFilter.addAction(XMPPService.ACTION_BUDDY_PRESENCE_UPDATE);
 		actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
@@ -141,10 +143,18 @@ public class BuddyListFragment extends ListFragment {
 		super.onDetach();
 		getActivity().unregisterReceiver(receiver);
 	}
+	
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		getActivity().unregisterReceiver(receiver);
+	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		getActivity().registerReceiver(receiver, actionFilter);
 		refreshList(getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
 	}

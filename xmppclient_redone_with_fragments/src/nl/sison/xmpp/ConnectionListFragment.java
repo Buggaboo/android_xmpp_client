@@ -46,7 +46,16 @@ public class ConnectionListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		// getActivity().registerReceiver(receiver, filter)
+		// TODO implement green indicator the connection is online
+		// TODO implement register broadcastreceiver
 		refreshList();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		// TODO implement register broadcastreceiver 
 	}
 
 	private void refreshList() {
@@ -104,8 +113,7 @@ public class ConnectionListFragment extends ListFragment {
 		AdapterView.AdapterContextMenuInfo info;
 		try {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-			long cc_id = getListAdapter()
-					.getItemId(info.position);
+			long cc_id = getListAdapter().getItemId(info.position);
 			createCRUDConnectionDialog(cc_id);
 			crudConnectionDialog.show();
 		} catch (ClassCastException e) {
@@ -128,16 +136,19 @@ public class ConnectionListFragment extends ListFragment {
 
 	private void createNewConnection() {
 		// startActivityForResult(new Intent(getActivity(),
-		// CRUDConnectionFragment.class), RQ_NEW_CONN); // TODO - deprecate field, remove field
+		// CRUDConnectionFragment.class), RQ_NEW_CONN); // TODO - deprecate
+		// field, remove field
 		// TODO - determine if you really need startActivityForResult
-		((FragmentLoader) getActivity()).loadFragment(new Intent(getActivity(), CRUDConnectionFragment.class)); // broken
+		((FragmentLoader) getActivity()).loadFragment(new Intent(getActivity(),
+				CRUDConnectionFragment.class)); // broken
 	}
 
 	private void modifyConnection(final long cc_id) {
 		Intent intent = new Intent(getActivity(), CRUDConnectionFragment.class);
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtils.close();
-		((FragmentLoader) getActivity()).loadFragment(intent); // TODO - fix broken
+		((FragmentLoader) getActivity()).loadFragment(intent); // TODO - fix
+																// broken
 	}
 
 	private void deleteConnection(final long cc_id) {
@@ -150,7 +161,8 @@ public class ConnectionListFragment extends ListFragment {
 		DatabaseUtils.close();
 	}
 
-	private void createDialogDeleteConnection(final long cc_id, final String message) {
+	private void createDialogDeleteConnection(final long cc_id,
+			final String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(getString(R.string.sure_remove_conn) + message)
 				.setCancelable(false)
@@ -171,10 +183,13 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createCRUDConnectionDialog(final long cc_id) {
-		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlyDatabaseSession(getActivity()).load(ConnectionConfigurationEntity.class, cc_id);
+		ConnectionConfigurationEntity cc = DatabaseUtils
+				.getReadOnlyDatabaseSession(getActivity()).load(
+						ConnectionConfigurationEntity.class, cc_id);
 		final String message = cc.getLabel();
-		
-		// TODO @ set presence with dialog per provider, no move that to the buddylistfrag
+
+		// TODO @ set presence with dialog per provider, no move that to the
+		// buddylistfrag
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(message)
 				.setCancelable(true)

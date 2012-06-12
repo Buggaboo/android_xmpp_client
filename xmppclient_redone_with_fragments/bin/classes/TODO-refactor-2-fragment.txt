@@ -1,5 +1,6 @@
 TODO 08-06-2012
-- implement: add active field in buddyentity, to detect which buddy is active, so notification need waste effort
+- implement indicator a server is online in connectionfragment
+- test registering broadcastreceiver onResume, unregistering onPause
 - implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - implement actionbar tabs: http://android.codeandmagic.org/2011/07/android-tabs-with-fragments/
     more tabs: http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
