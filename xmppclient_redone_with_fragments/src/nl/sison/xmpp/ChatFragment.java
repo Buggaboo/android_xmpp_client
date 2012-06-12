@@ -108,20 +108,19 @@ public class ChatFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		Activity act = getActivity();
 		View parent_view;
 
 		if (top_orientation) {
-			parent_view = inflater.inflate(R.layout.chat_bottom_oriented_layout, null, false);
-			chat_list = (ListView) act.findViewById(R.id.chat_top_input);
-			submit = (Button) act.findViewById(R.id.submit_top_input);
-			input = (EditText) act.findViewById(R.id.text_input_top_input);
+			parent_view = LayoutInflater.from(getActivity()).inflate(R.layout.chat_bottom_oriented_layout, null, false);
+			chat_list = (ListView) parent_view.findViewById(R.id.chat_top_input);
+			submit = (Button) parent_view.findViewById(R.id.submit_top_input);
+			input = (EditText) parent_view.findViewById(R.id.text_input_top_input);
 
 		} else {
-			parent_view = inflater.inflate(R.layout.chat_top_oriented_layout, null, false);
-			chat_list = (ListView) act.findViewById(R.id.chat_bottom_input);
-			submit = (Button) act.findViewById(R.id.submit_bottom_input);
-			input = (EditText) act.findViewById(R.id.text_input_bottom_input);
+			parent_view = LayoutInflater.from(getActivity()).inflate(R.layout.chat_top_oriented_layout, null, false);
+			chat_list = (ListView) parent_view.findViewById(R.id.chat_bottom_input);
+			submit = (Button) parent_view.findViewById(R.id.submit_bottom_input);
+			input = (EditText) parent_view.findViewById(R.id.text_input_bottom_input);
 		}
 		return parent_view;
 	}
@@ -211,17 +210,8 @@ public class ChatFragment extends Fragment {
 		DatabaseUtils.close();
 
 		adapter = new MessageAdapter(getActivity(), chat_history, own_jid);
-
-		/**
-		 * TODO - remove this test code
-		 */
-		makeToast("adapter: " + adapter);
-		makeToast("getActivity: " + getActivity());
-		makeToast("chat_history: " + chat_history);
-		makeToast("own_jid: " + own_jid);
 		
 		chat_list.setAdapter(adapter);
-
 	}
 
 	@Override

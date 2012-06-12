@@ -12,3 +12,4 @@ TODO 8-06-2012
 - check empty inputs in configuration, and provide values if necessary.
 - add contextmenu items to chatlist: e-mail, text, calendar... (launch application thru intent?)
 - get google, hotmail, yahoo account from other applications (no-fucking-clue how to do this)
+- ultra-low priority: replace all dialoghelpers that are based on activity, to DialogFragments...
