@@ -141,9 +141,13 @@ public class BuddyListFragment extends ListFragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		getActivity().unregisterReceiver(receiver);
+		try {
+			getActivity().unregisterReceiver(receiver);
+		} catch (IllegalArgumentException ex) {
+			makeToast("The receiver is not registered.");
+		}
 	}
-	
+
 	@Override
 	public void onPause() {
 		// TODO Auto-generated method stub

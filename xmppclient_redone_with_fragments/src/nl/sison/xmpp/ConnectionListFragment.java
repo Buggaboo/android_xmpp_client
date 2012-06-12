@@ -57,6 +57,16 @@ public class ConnectionListFragment extends ListFragment {
 		super.onPause();
 		// TODO implement register broadcastreceiver 
 	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		try {
+			getActivity().unregisterReceiver(receiver);
+		} catch (IllegalArgumentException ex) {
+			makeToast("The receiver is not registered.");
+		}
+	}	
 
 	private void refreshList() {
 		// register context menu for the dialog

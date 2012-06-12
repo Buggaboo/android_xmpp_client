@@ -260,7 +260,11 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		getActivity().unregisterReceiver(receiver);
+		try {
+			getActivity().unregisterReceiver(receiver);
+		} catch (IllegalArgumentException ex) {
+			makeToast("The receiver is not registered.");
+		}
 	}
 
 	private void makeToast(String message) {
