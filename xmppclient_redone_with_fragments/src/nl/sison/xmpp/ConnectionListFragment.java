@@ -4,7 +4,6 @@ import java.util.List;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.AlertDialog;
 import android.app.ListFragment;
@@ -13,15 +12,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import de.greenrobot.dao.QueryBuilder;
 
 /**
  * 
@@ -108,9 +104,9 @@ public class ConnectionListFragment extends ListFragment {
 		AdapterView.AdapterContextMenuInfo info;
 		try {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-			ConnectionConfigurationEntity cc = (ConnectionConfigurationEntity) getListAdapter()
-					.getItem(info.position);
-			createCRUDConnectionDialog(cc.getLabel());
+			long cc_id = getListAdapter()
+					.getItemId(info.position);
+			createCRUDConnectionDialog(cc_id);
 			crudConnectionDialog.show();
 		} catch (ClassCastException e) {
 			return;
@@ -137,33 +133,24 @@ public class ConnectionListFragment extends ListFragment {
 		((FragmentLoader) getActivity()).loadFragment(new Intent(getActivity(), CRUDConnectionFragment.class)); // broken
 	}
 
-	private void modifyConnection(String message) {
+	private void modifyConnection(final long cc_id) {
 		Intent intent = new Intent(getActivity(), CRUDConnectionFragment.class);
-		DaoSession daoSession = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity());
-		ConnectionConfigurationEntityDao ccdao = daoSession
-				.getConnectionConfigurationEntityDao();
-		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
-		Long cc_id = qb.where(Properties.Label.eq(message)).build().list()
-				.get(0).getId();
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtils.close();
 		((FragmentLoader) getActivity()).loadFragment(intent); // TODO - fix broken
 	}
 
-	private void deleteConnection(String message) {
+	private void deleteConnection(final long cc_id) {
 		// makeToast("Deleting " + message);
 		DaoSession daoSession = DatabaseUtils
 				.getWriteableDatabaseSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
-		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder()
-				.where(Properties.Label.eq(message)).limit(1);
-		ccdao.delete(qb.list().get(0));
+		ccdao.deleteByKey(cc_id);
 		DatabaseUtils.close();
 	}
 
-	private void createDialogDeleteConnection(final String message) {
+	private void createDialogDeleteConnection(final long cc_id, final String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(getString(R.string.sure_remove_conn) + message)
 				.setCancelable(false)
@@ -171,7 +158,7 @@ public class ConnectionListFragment extends ListFragment {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("yes, delete connection");
-								deleteConnection(message);
+								deleteConnection(cc_id);
 								refreshList();
 							}
 						})
@@ -183,8 +170,11 @@ public class ConnectionListFragment extends ListFragment {
 						}).create().show();
 	}
 
-	private void createCRUDConnectionDialog(final String message) {
-		// TODO set presence with dialog
+	private void createCRUDConnectionDialog(final long cc_id) {
+		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlyDatabaseSession(getActivity()).load(ConnectionConfigurationEntity.class, cc_id);
+		final String message = cc.getLabel();
+		
+		// TODO @ set presence with dialog per provider, no move that to the buddylistfrag
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(message)
 				.setCancelable(true)
@@ -201,7 +191,7 @@ public class ConnectionListFragment extends ListFragment {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("delete connection");
-								createDialogDeleteConnection(message);
+								createDialogDeleteConnection(cc_id, message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
 							}
@@ -211,7 +201,7 @@ public class ConnectionListFragment extends ListFragment {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("update connection");
-								modifyConnection(message);
+								modifyConnection(cc_id);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
 							}

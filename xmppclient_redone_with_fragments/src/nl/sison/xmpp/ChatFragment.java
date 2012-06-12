@@ -107,27 +107,43 @@ public class ChatFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		Activity act = getActivity();
+		makeToast("onCreateView"); // TODO - remove
+		
+		final View parent_view;
 
 		if (top_orientation) {
-			inflater.inflate(R.layout.chat_bottom_oriented_layout, container);
-			chat_list = (ListView) act.findViewById(R.id.chat_top_input);
-			submit = (Button) act.findViewById(R.id.submit_top_input);
-			input = (EditText) act.findViewById(R.id.text_input_top_input);
+			parent_view = inflater.inflate(
+					R.layout.chat_bottom_oriented_layout, null, false);
+			chat_list = (ListView) parent_view
+					.findViewById(R.id.chat_top_input);
+			submit = (Button) parent_view.findViewById(R.id.submit_top_input);
+			input = (EditText) parent_view
+					.findViewById(R.id.text_input_top_input);
 
 		} else {
-			inflater.inflate(R.layout.chat_top_oriented_layout, container);
-			chat_list = (ListView) act.findViewById(R.id.chat_bottom_input);
-			submit = (Button) act.findViewById(R.id.submit_bottom_input);
-			input = (EditText) act.findViewById(R.id.text_input_bottom_input);
+			parent_view = inflater.inflate(R.layout.chat_top_oriented_layout,
+					null, false);
+			chat_list = (ListView) parent_view
+					.findViewById(R.id.chat_bottom_input);
+			submit = (Button) parent_view
+					.findViewById(R.id.submit_bottom_input);
+			input = (EditText) parent_view
+					.findViewById(R.id.text_input_bottom_input);
 		}
-		return super.onCreateView(inflater, container, savedInstanceState);
+
+		makeToast("parent_view: " + parent_view);
+		makeToast("chat_list: " + chat_list);
+		makeToast("submit: " + submit);
+		makeToast("input: " + input);
+		
+		return parent_view;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		makeToast("onCreate"); // TODO - remove
 
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
@@ -150,6 +166,8 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		makeToast("onResume"); // TODO - remove
 
 		Bundle bundle = getArguments();
 
@@ -169,7 +187,11 @@ public class ChatFragment extends Fragment {
 			public void onClick(View v) {
 				Intent messageIntent = new Intent(
 						ACTION_REQUEST_DELIVER_MESSAGE);
-				String message = input.getText().toString().trim();
+				String message = input.getText().toString().trim(); // TODO -
+																	// manipulate
+																	// input
+																	// here
+				// TODO - detect smileys etc.
 				messageIntent.putExtra(MESSAGE, message);
 				messageIntent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 				if (message.length() != 0) {
@@ -201,7 +223,8 @@ public class ChatFragment extends Fragment {
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
 
-		qb.where(Properties.BuddyId.eq(buddy_id));
+		qb.where(Properties.BuddyId.eq(buddy_id)); // match with foreign key
+													// (buddy)
 		// NOTE: this presents a challenge for group chat
 		// You probably need a groupchat activity for this thing
 		// and a different database
@@ -212,7 +235,6 @@ public class ChatFragment extends Fragment {
 		adapter = new MessageAdapter(getActivity(), chat_history, own_jid);
 
 		chat_list.setAdapter(adapter);
-
 	}
 
 	@Override

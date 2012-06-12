@@ -26,6 +26,9 @@ public class BuddyListFragment extends ListFragment {
 	private static final String TAG = "BuddyListFragment";
 
 	/**
+	 * TODO - remove useless request code
+	 */
+	/**
 	 * Intent request code
 	 */
 	public static final int RC_CREATE_NEW_THREAD_FROM_JID = 1111;
