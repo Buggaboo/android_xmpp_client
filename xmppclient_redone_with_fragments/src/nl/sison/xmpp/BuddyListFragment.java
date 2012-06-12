@@ -64,7 +64,8 @@ public class BuddyListFragment extends ListFragment {
 					// with the correct connection
 				}
 			}
-			// the logic, one buddy's presence status changes, let's refresh them all
+			// the logic, one buddy's presence status changes, let's refresh
+			// them all
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
 				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
@@ -91,15 +92,15 @@ public class BuddyListFragment extends ListFragment {
 
 				Intent fragmentIntent = new Intent(getActivity(),
 						ChatFragment.class);
-				
+
 				// pass on the intent, using different keys
 				fragmentIntent.putExtra(KEY_BUDDY_INDEX,
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
-				fragmentIntent.putExtra(JID,
-						bundle.getString(XMPPService.JID));
-				
-//				startActivity(startActivityIntent); // TODO + replace startActivity with calls for a new Fragment
-				((FragmentLoader)getActivity()).loadFragment(fragmentIntent);
+				fragmentIntent.putExtra(JID, bundle.getString(XMPPService.JID));
+
+				// startActivity(startActivityIntent); // TODO + replace
+				// startActivity with calls for a new Fragment
+				((FragmentLoader) getActivity()).loadFragment(fragmentIntent);
 			}
 
 		}
@@ -120,11 +121,11 @@ public class BuddyListFragment extends ListFragment {
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position,
-			long buddy_id) {
+	public void onListItemClick(ListView l, View v, int position, long buddy_id) {
 		Intent intent = new Intent(ACTION_REQUEST_CHAT);
 		intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
-		getActivity().sendBroadcast(intent); // TODO register broadcast receiver on activity
+		getActivity().sendBroadcast(intent); // TODO register broadcast receiver
+												// on activity
 	}
 
 	/**
@@ -134,7 +135,6 @@ public class BuddyListFragment extends ListFragment {
 	/**
 	 * TODO - implement subscribe, unsubscribe buddylist, using dialogs
 	 */
-
 
 	@Override
 	public void onDetach() {
@@ -160,7 +160,9 @@ public class BuddyListFragment extends ListFragment {
 		// whole adapter, if this turns out to be a memory hog
 		adapter = null;
 		registerForContextMenu(getListView());
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(getActivity().getApplicationContext());
+		DaoSession daoSession = DatabaseUtils
+				.getReadOnlyDatabaseSession(getActivity()
+						.getApplicationContext());
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
 
@@ -181,7 +183,8 @@ public class BuddyListFragment extends ListFragment {
 		if (!BuildConfig.DEBUG)
 			return;
 		Log.i(TAG, message);
-		Toast toast = Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(getActivity().getApplicationContext(),
+				message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
 }

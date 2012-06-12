@@ -210,11 +210,12 @@ public class ChatFragment extends Fragment {
 		for (BuddyEntity buddy : deactivated_buddies)
 		{
 			buddy.setIsActive(false);
+			dao.insertOrReplace(buddy);
 		}
-		dao.insertInTx(deactivated_buddies);
+//		dao.insertInTx(deactivated_buddies); // TODO - determine why this triggers a SQLiteConstraintException
 		BuddyEntity active_buddy = dao.load(buddy_id);
 		active_buddy.setIsActive(true);
-		dao.insert(active_buddy);
+		dao.insertOrReplace(active_buddy);
 		DatabaseUtils.close();
 	}
 
