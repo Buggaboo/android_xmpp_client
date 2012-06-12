@@ -2,7 +2,6 @@ package nl.sison.xmpp;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;

@@ -3,8 +3,6 @@ package nl.sison.xmpp;
 import java.util.List;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -19,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import de.greenrobot.dao.QueryBuilder;
 
 /**
  * 
