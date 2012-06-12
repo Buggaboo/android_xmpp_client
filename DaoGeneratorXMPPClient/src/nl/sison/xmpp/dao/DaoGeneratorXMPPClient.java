@@ -17,26 +17,28 @@ public class DaoGeneratorXMPPClient {
 	public static void main(String[] args) throws Exception {
 		Schema schema1 = getSchema();
 		Schema schema2 = getSchema();
-	
+
 		DaoGenerator generator = new DaoGenerator();
 		generator.generateAll(schema1, "../xmppclient/src-dao-gen");
-		generator.generateAll(schema2, "../xmppclient_redone_with_fragments/src-dao-gen");
+		generator.generateAll(schema2,
+				"../xmppclient_redone_with_fragments/src-dao-gen");
 	}
 
 	private static Schema getSchema() {
-		Schema schema = new Schema(26, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(27, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
 		Entity connection = addConnectionConfiguration(schema);
-		
-		
+
 		// many buddies to one connection
-		Property connectionIdProperty = buddy.addLongProperty("connectionId").notNull().getProperty();
+		Property connectionIdProperty = buddy.addLongProperty("connectionId")
+				.notNull().getProperty();
 		buddy.addToOne(connection, connectionIdProperty);
-		
+
 		// many messages to one buddy
-		Property buddyIdProperty = message.addLongProperty("buddyId").notNull().getProperty();
+		Property buddyIdProperty = message.addLongProperty("buddyId").notNull()
+				.getProperty();
 		message.addToOne(buddy, buddyIdProperty);
 		return schema;
 	}
@@ -50,7 +52,7 @@ public class DaoGeneratorXMPPClient {
 		message.addDateProperty("received_date").notNull(); // !
 		message.addBooleanProperty("delivered");
 		message.addStringProperty("thread");
-		
+
 		return message;
 	}
 
@@ -72,6 +74,9 @@ public class DaoGeneratorXMPPClient {
 		buddy.addDateProperty("last_seen_online_date");
 		buddy.addBooleanProperty("isAvailable");
 		buddy.addBooleanProperty("isAway");
+		buddy.addBooleanProperty("isActive"); // used by notification and
+												// chatfragment (TODO port to
+												// chatactivity)
 
 		return buddy;
 	}
@@ -80,28 +85,33 @@ public class DaoGeneratorXMPPClient {
 		Entity connection = schema.addEntity("ConnectionConfigurationEntity");
 		connection.addIdProperty();
 		connection.addStringProperty("label").notNull().unique();
-		connection.addStringProperty("port").notNull(); // NOTE: you could consider turning this into an int...
+		connection.addStringProperty("port").notNull(); // NOTE: you could
+														// consider turning this
+														// into an int...
 		connection.addStringProperty("server").notNull(); // where to connect
 		connection.addStringProperty("domain"); // xmpp jid domain
 		connection.addStringProperty("username").notNull();
 		connection.addStringProperty("password").notNull();
 		connection.addStringProperty("resource").notNull();
-		connection.addBooleanProperty("encrypted").notNull(); // TLS/SSL encryption is
-															// broken
+		connection.addBooleanProperty("encrypted").notNull(); // TLS/SSL
+																// encryption is
+																// broken
 		connection.addBooleanProperty("compressed").notNull();
 		connection.addBooleanProperty("saslauthenticated").notNull(); // sasl
-																	// authentication
-																	// is broken
+																		// authentication
+																		// is
+																		// broken
 		connection.addIntProperty("connection_success").notNull();
-//		settings.addStringProperty("provider_reflection_injection"); // TODO use
-																		// reflection
-																		// to
-																		// inject
-																		// behaviour
-																		// in
-																		// the
-																		// connection
-																		// process
+		// settings.addStringProperty("provider_reflection_injection"); // TODO
+		// use
+		// reflection
+		// to
+		// inject
+		// behaviour
+		// in
+		// the
+		// connection
+		// process
 		return connection;
 	}
 }

@@ -34,7 +34,8 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         public final static Property Last_seen_online_date = new Property(9, java.util.Date.class, "last_seen_online_date", false, "LAST_SEEN_ONLINE_DATE");
         public final static Property IsAvailable = new Property(10, Boolean.class, "isAvailable", false, "IS_AVAILABLE");
         public final static Property IsAway = new Property(11, Boolean.class, "isAway", false, "IS_AWAY");
-        public final static Property ConnectionId = new Property(12, long.class, "connectionId", false, "CONNECTION_ID");
+        public final static Property IsActive = new Property(12, Boolean.class, "isActive", false, "IS_ACTIVE");
+        public final static Property ConnectionId = new Property(13, long.class, "connectionId", false, "CONNECTION_ID");
     };
 
     private DaoSession daoSession;
@@ -64,7 +65,8 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
                 "'LAST_SEEN_ONLINE_DATE' INTEGER," + // 9: last_seen_online_date
                 "'IS_AVAILABLE' INTEGER," + // 10: isAvailable
                 "'IS_AWAY' INTEGER," + // 11: isAway
-                "'CONNECTION_ID' INTEGER NOT NULL );"; // 12: connectionId
+                "'IS_ACTIVE' INTEGER," + // 12: isActive
+                "'CONNECTION_ID' INTEGER NOT NULL );"; // 13: connectionId
         db.execSQL(sql);
     }
 
@@ -134,7 +136,12 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         if (isAway != null) {
             stmt.bindLong(12, isAway ? 1l: 0l);
         }
-        stmt.bindLong(13, entity.getConnectionId());
+ 
+        Boolean isActive = entity.getIsActive();
+        if (isActive != null) {
+            stmt.bindLong(13, isActive ? 1l: 0l);
+        }
+        stmt.bindLong(14, entity.getConnectionId());
     }
 
     @Override
@@ -165,7 +172,8 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // last_seen_online_date
             cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0, // isAvailable
             cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // isAway
-            cursor.getLong(offset + 12) // connectionId
+            cursor.isNull(offset + 12) ? null : cursor.getShort(offset + 12) != 0, // isActive
+            cursor.getLong(offset + 13) // connectionId
         );
         return entity;
     }
@@ -185,7 +193,8 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         entity.setLast_seen_online_date(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
         entity.setIsAvailable(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
         entity.setIsAway(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
-        entity.setConnectionId(cursor.getLong(offset + 12));
+        entity.setIsActive(cursor.isNull(offset + 12) ? null : cursor.getShort(offset + 12) != 0);
+        entity.setConnectionId(cursor.getLong(offset + 13));
      }
     
     @Override
