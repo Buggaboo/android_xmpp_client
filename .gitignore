@@ -2,4 +2,5 @@
 *.apk
 *.ap_
 *.dex
+*/bin
 R.java
