@@ -31,8 +31,6 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 		// anything to the container
 		// object in onCreateView
 
-		startService(new Intent(this, XMPPService.class));
-
 		setContentView(R.layout.tabbed_single_fragment_layout);
 
 		Intent intent = getIntent();
