@@ -1,5 +1,4 @@
 TODO 08-06-2012
-- fix notification (this started an activity, this was hardcoded before in the notification service (get from the database?)
 - implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - implement actionbar tabs: http://android.codeandmagic.org/2011/07/android-tabs-with-fragments/
     more tabs: http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
