@@ -210,6 +210,15 @@ public class ChatFragment extends Fragment {
 	public void onPause() {
 		super.onPause();
 		getActivity().unregisterReceiver(receiver);
+		releaseBuddyForNotification();
+	}
+	
+	private void releaseBuddyForNotification() {
+		DaoSession dao = DatabaseUtils.getWriteableDatabaseSession(getActivity());
+		BuddyEntity b = dao.load(BuddyEntity.class, buddy_id);
+		b.setIsActive(false);
+		dao.insertOrReplace(b);
+		DatabaseUtils.close();
 	}
 
 	private void preventNotificationOfActiveBuddy() {

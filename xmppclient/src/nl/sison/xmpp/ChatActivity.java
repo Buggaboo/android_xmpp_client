@@ -2,6 +2,8 @@ package nl.sison.xmpp;
 
 import java.util.List;
 
+import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
@@ -88,7 +90,8 @@ public class ChatActivity extends Activity {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-			// this prevents messages from other buddies to leak into this context 
+			// this prevents messages from other buddies to leak into this
+			// context
 			if (message == null || message.getBuddyId() != buddy_id) {
 				DatabaseUtils.close();
 				return;
@@ -129,7 +132,7 @@ public class ChatActivity extends Activity {
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_LOST);
 		// actionFilter.addAction(XMPPService.ACTION_CONNECTION_RESUMED);
 		registerReceiver(receiver, actionFilter);
-		
+
 		// in case it was on yet
 		startService(new Intent(ChatActivity.this, XMPPService.class));
 	}
@@ -145,13 +148,13 @@ public class ChatActivity extends Activity {
 		if (bundle.containsKey(BuddyListActivity.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(BuddyListActivity.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(BuddyListActivity.JID);
-		} else if (bundle
-				.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
-			buddy_id = bundle
-					.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
+		} else if (bundle.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
+			buddy_id = bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
 		}
-		
+
+		// strategy to cleanup notifications
+		preventNotificationOfActiveBuddy();
 		broadcastRequestRemoveNotifications();
 
 		setupListView();
@@ -177,8 +180,25 @@ public class ChatActivity extends Activity {
 
 	}
 
+	private void preventNotificationOfActiveBuddy() {
+		BuddyEntityDao dao = DatabaseUtils.getWriteableDatabaseSession(this)
+				.getBuddyEntityDao();
+		List<BuddyEntity> deactivated_buddies = dao.loadAll();
+		for (BuddyEntity buddy : deactivated_buddies) {
+			buddy.setIsActive(false);
+			dao.insertOrReplace(buddy);
+		}
+		// dao.insertInTx(deactivated_buddies); // TODO - determine why this
+		// triggers a SQLiteConstraintException
+		BuddyEntity active_buddy = dao.load(buddy_id);
+		active_buddy.setIsActive(true);
+		dao.insertOrReplace(active_buddy);
+		DatabaseUtils.close();
+	}
+
 	private void broadcastRequestRemoveNotifications() {
-		Intent request_remove_notifications = new Intent(ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
+		Intent request_remove_notifications = new Intent(
+				ChatActivity.ACTION_REQUEST_REMOVE_NOTIFICATIONS);
 		request_remove_notifications.putExtra(KEY_BUDDY_INDEX, buddy_id);
 		sendBroadcast(request_remove_notifications);
 	}
@@ -207,6 +227,15 @@ public class ChatActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(receiver);
+		releaseBuddyForNotification();
+	}
+
+	private void releaseBuddyForNotification() {
+		DaoSession dao = DatabaseUtils.getWriteableDatabaseSession(this);
+		BuddyEntity b = dao.load(BuddyEntity.class, buddy_id);
+		b.setIsActive(false);
+		dao.insertOrReplace(b);
+		DatabaseUtils.close();
 	}
 
 	private void makeToast(String message) {

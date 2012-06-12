@@ -65,6 +65,15 @@ public class XMPPNotificationService extends Service {
 					message_id);
 
 			BuddyEntity buddy = msg.getBuddyEntity();
+
+			if (buddy.getIsActive() != null && buddy.getIsActive()) {
+				/**
+				 * Don't send a notification is the buddy is already active
+				 */
+				DatabaseUtils.close();
+				return;
+			}
+
 			Long buddy_id = buddy.getId();
 			ConnectionConfigurationEntity connection = buddy
 					.getConnectionConfigurationEntity();
@@ -85,11 +94,12 @@ public class XMPPNotificationService extends Service {
 					intent, BIND_AUTO_CREATE);
 
 			StringBuilder str_builder = new StringBuilder();
-			String notify_ticker = str_builder.append(getNicknameIfAvailable(buddy))
-					.append(" ").append(getString(R.string.says)).append(" \"")
+			String notify_ticker = str_builder
+					.append(getNicknameIfAvailable(buddy)).append(" ")
+					.append(getString(R.string.says)).append(" \"")
 					.append(msg.getContent()).append("\"").toString();
 			// TODO truncate if longer than ...
-			
+
 			getNicknameIfAvailable(buddy);
 
 			Notification.Builder builder = new Notification.Builder(context)
