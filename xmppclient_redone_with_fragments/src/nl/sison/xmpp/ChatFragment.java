@@ -2,6 +2,8 @@ package nl.sison.xmpp;
 
 import java.util.List;
 
+import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
@@ -166,8 +168,13 @@ public class ChatFragment extends Fragment {
 		} else if (bundle.containsKey(XMPPNotificationService.KEY_BUDDY_INDEX)) {
 			buddy_id = bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX);
 			own_jid = bundle.getString(XMPPNotificationService.JID);
+		}else
+		{
+			throw new IllegalStateException("No arguments given.");
 		}
-
+		
+		// strategy to cleanup notifications
+		preventNotificationOfActiveBuddy();		
 		broadcastRequestRemoveNotifications();
 
 		setupListView();
@@ -195,6 +202,20 @@ public class ChatFragment extends Fragment {
 			}
 		});
 
+	}
+
+	private void preventNotificationOfActiveBuddy() {
+		BuddyEntityDao dao = DatabaseUtils.getWriteableDatabaseSession(getActivity()).getBuddyEntityDao();
+		List<BuddyEntity> deactivated_buddies = dao.loadAll();
+		for (BuddyEntity buddy : deactivated_buddies)
+		{
+			buddy.setIsActive(false);
+		}
+		dao.insertInTx(deactivated_buddies);
+		BuddyEntity active_buddy = dao.load(buddy_id);
+		active_buddy.setIsActive(true);
+		dao.insert(active_buddy);
+		DatabaseUtils.close();
 	}
 
 	private void broadcastRequestRemoveNotifications() {

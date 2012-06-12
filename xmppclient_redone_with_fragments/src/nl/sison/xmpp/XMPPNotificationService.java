@@ -65,6 +65,16 @@ public class XMPPNotificationService extends Service {
 					.load(MessageEntity.class, message_id);
 
 			BuddyEntity buddy = msg.getBuddyEntity();
+			
+			if (buddy.getIsActive() != null && buddy.getIsActive())
+			{
+				/**
+				 * Don't send a notification is the buddy is already active
+				 */
+				DatabaseUtils.close();	
+				return;
+			}
+			
 			Long buddy_id = buddy.getId();
 			ConnectionConfigurationEntity connection = buddy
 					.getConnectionConfigurationEntity();
