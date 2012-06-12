@@ -34,13 +34,15 @@ public class XMPPMainActivity extends Activity {
 		// TODO - determine a faster way to pass on the extras
 		Intent intent = new Intent(this, SinglePanelActivity.class);
 		Bundle bundle = getIntent().getExtras();
-		if (bundle != null && !bundle.isEmpty()) {
+		if (bundle != null && !bundle.isEmpty()) { // started by a notification service
 			intent.putExtra(XMPPNotificationService.JID,
 					bundle.getString(XMPPNotificationService.JID));
 			intent.putExtra(XMPPNotificationService.KEY_BUDDY_INDEX,
 					bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX));
 			intent.putExtra(XMPPNotificationService.THREAD,
 					bundle.getString(XMPPNotificationService.THREAD));
+		} else { // not started by a notification service
+			startService(new Intent(this, XMPPService.class));
 		}
 		startActivityForResult(intent, 0);
 	}
