@@ -26,6 +26,7 @@ import de.greenrobot.dao.QueryBuilder;
  * @author Jasm Sison
  * 
  */
+// TODO - wtf were you thinking when you did the querybuilder... just use loadAll or load
 // TODO implement titlebar
 // http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 public class ConnectionListActivity extends ListActivity {
@@ -68,9 +69,7 @@ public class ConnectionListActivity extends ListActivity {
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
 		// TODO get connections from database, produce array list
 		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
-		ConnectionConfigurationEntityDao conn_conf_dao = daoSession
-				.getConnectionConfigurationEntityDao();
-		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
+		List<ConnectionConfigurationEntity> all_conns = daoSession.loadAll(ConnectionConfigurationEntity.class);
 		DatabaseUtils.close();
 		return all_conns;
 	}

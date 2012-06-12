@@ -47,7 +47,7 @@ public class CRUDConnectionFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		final View list_view = LayoutInflater.from(getActivity()).inflate(
+		final View list_view = inflater.inflate(
 				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
@@ -55,7 +55,7 @@ public class CRUDConnectionFragment extends Fragment {
 			createHintPrefixDialog(list_view).show();
 		}
 		setButtons(list_view);
-		return list_view;
+		return list_view;		
 	}
 
 	private AlertDialog createHintPrefixDialog(final View list_view) {
@@ -219,7 +219,7 @@ public class CRUDConnectionFragment extends Fragment {
 							long cc_id = storeConnectionConfiguration(conn_conf);
 							DatabaseUtils.close();
 							Intent restartConnectionOnService = new Intent(
-									getActivity().getApplicationContext(),
+									getActivity(),
 									XMPPService.class);
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
@@ -230,8 +230,6 @@ public class CRUDConnectionFragment extends Fragment {
 									ACTION_REQUEST_POPULATE_BUDDYLIST);
 							intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 							getActivity().sendBroadcast(intent);
-							// finish(); // TODO + tell activity to pop off from
-							// fragment stack
 							getFragmentManager().popBackStack();
 						} else {
 							createWarningConnectionBadDialog(getString(R.string.conn_bad_conn_conf));
@@ -241,24 +239,19 @@ public class CRUDConnectionFragment extends Fragment {
 	}
 
 	private void createWarningConnectionBadDialog(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()
-				.getApplicationContext());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(message)
 				.setCancelable(false)
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								View parent = LayoutInflater
-										.from(getActivity()
-												.getApplicationContext())
+										.from(getActivity())
 										.inflate(
 												R.layout.edit_connection_layout,
 												null, false);
 								ConnectionConfigurationEntity conn_conf = getConnectionDetails(parent);
 								storeConnectionConfiguration(conn_conf);
-								// makeToast("stored bad configuration");
-								// finish(); // TODO + tell activity to pop off
-								// from fragment stack
 								getFragmentManager().popBackStack();
 							}
 						})
