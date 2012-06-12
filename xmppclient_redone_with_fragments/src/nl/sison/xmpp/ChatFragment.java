@@ -107,8 +107,6 @@ public class ChatFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		makeToast("onCreateView"); // TODO - remove
-		
 		final View parent_view;
 
 		if (top_orientation) {
@@ -137,8 +135,6 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		makeToast("onCreate"); // TODO - remove
 
 		receiver = new MessageBroadcastReceiver();
 		IntentFilter actionFilter = new IntentFilter();
@@ -161,8 +157,6 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		
-		makeToast("onResume"); // TODO - remove
 
 		Bundle bundle = getArguments();
 

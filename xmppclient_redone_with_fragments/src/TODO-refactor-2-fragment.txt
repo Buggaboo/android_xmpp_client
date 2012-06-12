@@ -1,7 +1,8 @@
-TODO 8-06-2012
-- make ListView show items
-- create SinglePanelActivity
-- enter SinglePanelActivity in Manifest
+TODO 08-06-2012
+- implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
+- implement actionbar tabs: http://android.codeandmagic.org/2011/07/android-tabs-with-fragments/
+    more tabs: http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
+- fix notification (this started an activity, this was hardcoded before in the notification service (get from the database?)
 - use tabbed_single_fragment_layout.xml for tabs
 - create Interface for (Singe/Multi)PanelActivity with functions to call from Fragment to switch between fragments
 - Sounds for every intent more or less... make a service for that...
@@ -13,3 +14,48 @@ TODO 8-06-2012
 - add contextmenu items to chatlist: e-mail, text, calendar... (launch application thru intent?)
 - get google, hotmail, yahoo account from other applications (no-fucking-clue how to do this)
 - ultra-low priority: replace all dialoghelpers that are based on activity, to DialogFragments...
+
+TODO 02-06-12    
+- set dialogs for setting own presence and buddy related stuff (vibrate per buddy)
+- put up a dialog to activate vibration, vibrate per user setting, LongClick on BuddyListActivity item
+- put internet check in all activities and services
+- sounds buddy's logging off, errors etc.
+- implement nicknames configuration in buddylistactivity
+- implement setAway, unavailable, available etc. shared dialog by all activities
+- make translatable to different languages, use the prefix technique in CRUDConnection.
+- limit number of messages on the chat screen, add button on top of the List, to load previous messages
+- fix presence updates, too many false positives
+    - determine bug in the ****ing library (low prio), by comparing with a different smack lib for android
+    - read and digest this: http://stackoverflow.com/questions/1919489/unable-to-get-presence-of-roster-by-using-smack-openfire
+    	apparently all you need to do is Thread.sleep(ms); this is unacceptable for the most important service
+      - take action by implementing AsyncTask
+- create test accounts on other providers
+    - microsoft
+    - meebo.com
+    - local
+- create an icon
+- remove the stupid header (aka titlebar), or add custom stuff there
+- prettify interface
+- modify notification to show a picture
++ improve connection testing
+	@ refactor out test code to just use the service by sending an intent, CRUDConnectionActivity
+	No this design is better. Less complicated easier to manage, tradeoff copy-paste code.
+	Although CRUDConnectionActivity could send a broadcast to the service, populate the buddylist
+	+ implement populate buddy list via onReceive on XMPPService
+	It seems stable... 
++ turn on debugger and put checkpoints on the listeners for outgoing messages in XMPPService (determine if this is a server or client issue), problem solved
+  => it was a jabber thread issue, forcing the reuse of the thread is not appreciated by google?
++ implement notifications (XMPPService.ACTION_MESSAGE_INCOMING)
+	+ implement removal of notifications of a buddy, when the messages have been seen.
+	  => chatactivity sends a broadcast with the buddy_id, notification service receives the buddy_id and fetches all the message_ids connected to the buddy_id
+	+ eliminate cause of crashes (cause: competing threads for the database)
+		+ test new idea! sleep! put in a delay. 5000 ms. -> succes!
+	+ turn on in the onCreate of XMPPService
++ implemented notification triggered morse vibrations, for the blind or horny.
+
+
+ROADMAP (aka killer features I'd like to build)
+- swipe and tabs
+- message encryption: per message (will not vibrate on encrypted messages), or per buddy
+- use image from contacts, match e-mail address, or manually match
+- read aloud messages (huge undertaking), leverage web 2.0
