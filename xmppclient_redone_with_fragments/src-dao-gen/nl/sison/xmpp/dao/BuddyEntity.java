@@ -22,6 +22,7 @@ public class BuddyEntity {
     private java.util.Date last_seen_online_date;
     private Boolean isAvailable;
     private Boolean isAway;
+    private Boolean isActive;
     private long connectionId;
 
     /** Used to resolve relations */
@@ -41,7 +42,7 @@ public class BuddyEntity {
         this.id = id;
     }
 
-    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, Boolean vibrate, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, long connectionId) {
+    public BuddyEntity(Long id, String partial_jid, String last_seen_resource, String nickname, Boolean vibrate, String presence_status, String presence_mode, String presence_type, java.util.Date last_chat_date, java.util.Date last_seen_online_date, Boolean isAvailable, Boolean isAway, Boolean isActive, long connectionId) {
         this.id = id;
         this.partial_jid = partial_jid;
         this.last_seen_resource = last_seen_resource;
@@ -54,6 +55,7 @@ public class BuddyEntity {
         this.last_seen_online_date = last_seen_online_date;
         this.isAvailable = isAvailable;
         this.isAway = isAway;
+        this.isActive = isActive;
         this.connectionId = connectionId;
     }
 
@@ -159,6 +161,14 @@ public class BuddyEntity {
 
     public void setIsAway(Boolean isAway) {
         this.isAway = isAway;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     public long getConnectionId() {
