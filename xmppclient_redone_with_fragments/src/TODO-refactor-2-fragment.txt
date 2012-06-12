@@ -10,3 +10,5 @@ TODO 8-06-2012
 
 - detect orientation, reload fragment (if necessary)
 - check empty inputs in configuration, and provide values if necessary.
+- add contextmenu items to chatlist: e-mail, text, calendar... (launch application thru intent?)
+- get google, hotmail, yahoo account from other applications (no-fucking-clue how to do this)
