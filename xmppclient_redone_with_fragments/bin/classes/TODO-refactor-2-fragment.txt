@@ -1,0 +1,15 @@
+TODO 8-06-2012
+- make ListView show items
+- create SinglePanelActivity
+- enter SinglePanelActivity in Manifest
+- use tabbed_single_fragment_layout.xml for tabs
+- create Interface for (Singe/Multi)PanelActivity with functions to call from Fragment to switch between fragments
+- Sounds for every intent more or less... make a service for that...
+
+...
+
+- detect orientation, reload fragment (if necessary)
+- check empty inputs in configuration, and provide values if necessary.
+- add contextmenu items to chatlist: e-mail, text, calendar... (launch application thru intent?)
+- get google, hotmail, yahoo account from other applications (no-fucking-clue how to do this)
+- ultra-low priority: replace all dialoghelpers that are based on activity, to DialogFragments...
