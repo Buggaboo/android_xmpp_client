@@ -28,9 +28,12 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 		super(context, 0);
 		this.setNotifyOnChange(true);
 		if (chat_history != null && chat_history.size() > 0)
-			this.addAll(chat_history);
+			this.addAll(chat_history); // TODO empty list, throw
+										// IllegalArguments, then catch in
+										// Fragment then add empty list_item
+										// with some bullshit text like:
+										// "no history"
 		this.own_jid = jid;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -40,6 +43,10 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 		return super.getItem(position).getId();
 	}
 
+	/**
+	 * TODO - Remove inflater, replace inflater with real objects (no xml is
+	 * faster)
+	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -60,7 +67,7 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 
 	private void changeAppearance(TextView text_date, TextView text_message,
 			MessageEntity msg) {
-		text_date.setText(msg.getReceived_date().toString() + "/"
+		text_date.setText(msg.getReceived_date().toString() + " "
 				+ msg.getSender_jid());
 		text_message.setText(msg.getContent());
 

@@ -109,20 +109,21 @@ public class ChatFragment extends Fragment {
 			Bundle savedInstanceState) {
 
 		Activity act = getActivity();
+		View parent_view;
 
 		if (top_orientation) {
-			inflater.inflate(R.layout.chat_bottom_oriented_layout, container);
+			parent_view = inflater.inflate(R.layout.chat_bottom_oriented_layout, null, false);
 			chat_list = (ListView) act.findViewById(R.id.chat_top_input);
 			submit = (Button) act.findViewById(R.id.submit_top_input);
 			input = (EditText) act.findViewById(R.id.text_input_top_input);
 
 		} else {
-			inflater.inflate(R.layout.chat_top_oriented_layout, container);
+			parent_view = inflater.inflate(R.layout.chat_top_oriented_layout, null, false);
 			chat_list = (ListView) act.findViewById(R.id.chat_bottom_input);
 			submit = (Button) act.findViewById(R.id.submit_bottom_input);
 			input = (EditText) act.findViewById(R.id.text_input_bottom_input);
 		}
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return parent_view;
 	}
 
 	@Override
@@ -201,7 +202,7 @@ public class ChatFragment extends Fragment {
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
 
-		qb.where(Properties.BuddyId.eq(buddy_id));
+		qb.where(Properties.BuddyId.eq(buddy_id)); //  match with foreign key (buddy)
 		// NOTE: this presents a challenge for group chat
 		// You probably need a groupchat activity for this thing
 		// and a different database
@@ -211,6 +212,14 @@ public class ChatFragment extends Fragment {
 
 		adapter = new MessageAdapter(getActivity(), chat_history, own_jid);
 
+		/**
+		 * TODO - remove this test code
+		 */
+		makeToast("adapter: " + adapter);
+		makeToast("getActivity: " + getActivity());
+		makeToast("chat_history: " + chat_history);
+		makeToast("own_jid: " + own_jid);
+		
 		chat_list.setAdapter(adapter);
 
 	}
