@@ -2,7 +2,6 @@ package nl.sison.xmpp;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
-import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -42,13 +41,13 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private final String TAG = "CRUDConnectionFragment";
 
-	private Long conn_config_id = (long) 0; // default value: isExtantConnection fails if default
+	private Long conn_config_id = (long) 0; // default value: isExtantConnection
+											// fails if default
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		final View list_view = LayoutInflater.from(
-				getActivity().getApplicationContext()).inflate(
+		final View list_view = LayoutInflater.from(getActivity()).inflate(
 				R.layout.edit_connection_layout, null, false);
 		if (isExtantConnection()) {
 			showValuesFromDatabase(list_view);
@@ -57,14 +56,12 @@ public class CRUDConnectionFragment extends Fragment {
 		}
 		setButtons(list_view);
 		return list_view;
-		// return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	private AlertDialog createHintPrefixDialog(final View list_view) {
 		final String[] prefix_items = getResources().getStringArray(
 				R.array.hint_prefixes);
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()
-				.getApplicationContext());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(getString(R.string.conn_pick_a_provider));
 		builder.setItems(prefix_items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int prefix_index) {
@@ -135,11 +132,12 @@ public class CRUDConnectionFragment extends Fragment {
 	private void showValuesFromDatabase(View list_view) {
 		long ccid = getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX);
-		
+
 		conn_config_id = ccid;
 
-		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlyDatabaseSession(getActivity()).load(
-				ConnectionConfigurationEntity.class, ccid);
+		ConnectionConfigurationEntity cc = DatabaseUtils
+				.getReadOnlyDatabaseSession(getActivity()).load(
+						ConnectionConfigurationEntity.class, ccid);
 
 		setTextViewData(list_view, R.id.conn_label, cc.getLabel());
 		setTextViewData(list_view, R.id.conn_port, cc.getPort());
@@ -365,7 +363,10 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private boolean isExtantConnection() {
 		String connection_index = ConnectionListFragment.KEY_CONNECTION_INDEX;
-		return getArguments().getLong(connection_index) > 0;
+		if (getArguments() != null
+				&& getArguments().containsKey(connection_index))
+			return getArguments().getLong(connection_index) > 0;
+		return false;
 	}
 
 	private void makeToast(String message) {
