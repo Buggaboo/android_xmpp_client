@@ -102,7 +102,7 @@ public class ConnectionListActivity extends ListActivity {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			ConnectionConfigurationEntity cc = (ConnectionConfigurationEntity) getListAdapter()
 					.getItem(info.position);
-			createCRUDConnectionDialog(cc.getLabel());
+			createCRUDConnectionDialog(cc.getId(), cc.getLabel());
 			crudConnectionDialog.show();
 		} catch (ClassCastException e) {
 			return;
@@ -127,15 +127,9 @@ public class ConnectionListActivity extends ListActivity {
 				CRUDConnectionActivity.class), RQ_NEW_CONN);
 	}
 
-	private void modifyConnection(String message) {
+	private void modifyConnection(final long cc_id) {
 		Intent intent = new Intent(ConnectionListActivity.this,
-				CRUDConnectionActivity.class);
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
-		ConnectionConfigurationEntityDao ccdao = daoSession
-				.getConnectionConfigurationEntityDao();
-		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder();
-		Long cc_id = qb.where(Properties.Label.eq(message)).build().list()
-				.get(0).getId();
+				CRUDConnectionActivity.class);;
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
 		DatabaseUtils.close();
 		startActivityForResult(intent, RQ_MODIFY_CONN);
@@ -147,18 +141,13 @@ public class ConnectionListActivity extends ListActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private void deleteConnection(String message) {
-		// makeToast("Deleting " + message);
+	private void deleteConnection(final long cc_id) {
 		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
-		ConnectionConfigurationEntityDao ccdao = daoSession
-				.getConnectionConfigurationEntityDao();
-		QueryBuilder<ConnectionConfigurationEntity> qb = ccdao.queryBuilder()
-				.where(Properties.Label.eq(message)).limit(1);
-		ccdao.delete(qb.list().get(0));
+		daoSession.getConnectionConfigurationEntityDao().deleteByKey(cc_id);
 		DatabaseUtils.close();
 	}
 
-	private void createDialogDeleteConnection(final String message) {
+	private void createDialogDeleteConnection(final long cc_id, final String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(getString(R.string.sure_remove_conn) + message)
 				.setCancelable(false)
@@ -166,7 +155,7 @@ public class ConnectionListActivity extends ListActivity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("yes, delete connection");
-								deleteConnection(message);
+								deleteConnection(cc_id);
 								refreshList();
 							}
 						})
@@ -178,7 +167,7 @@ public class ConnectionListActivity extends ListActivity {
 						}).create().show();
 	}
 
-	private void createCRUDConnectionDialog(final String message) {
+	private void createCRUDConnectionDialog(final long cc_id, final String message) {
 		// TODO set presence with dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message)
@@ -196,7 +185,7 @@ public class ConnectionListActivity extends ListActivity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("delete connection");
-								createDialogDeleteConnection(message);
+								createDialogDeleteConnection(cc_id, message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
 							}
@@ -206,7 +195,7 @@ public class ConnectionListActivity extends ListActivity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								// makeToast("update connection");
-								modifyConnection(message);
+								modifyConnection(cc_id);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
 							}
