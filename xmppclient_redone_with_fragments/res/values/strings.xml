@@ -10,6 +10,12 @@
     <string name="create_connection">Create</string>
     <string name="request_create_conn">Please create a connection.</string>
     <string name="sure_remove_conn">Are you sure you want to remove - </string>
+    <string name="no_buddy_item">There are no buddies on your Roster</string>
+    <string name="no_connection_item">There are currently no connections configured</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="vibrate">Switch vibrate</string>
+    <string name="change_nickname">Change nickname</string>
 
     <!-- connection related stuff -->
     <string name="conn_label">Label</string>

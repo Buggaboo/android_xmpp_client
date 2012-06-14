@@ -1,5 +1,7 @@
 TODO 08-06-2012
-- if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message and give an option, add buddies. 
+- if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
+	- fix by adding empty_list_item (Fragment.setEmptyText)
+	- test 
 - implement indicator a server is online in connectionfragment
 - test registering broadcastreceiver onResume, unregistering onPause
 - implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/

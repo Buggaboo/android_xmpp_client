@@ -45,11 +45,15 @@ public class ConnectionAdapter extends
 				getContext()).inflate(R.layout.connection_item_layout, parent,
 				false);
 
-		TextView connection_view = (TextView) itemLayout
-				.findViewById(R.id.connection_name);
+		TextView conn_text = (TextView) itemLayout
+				.findViewById(R.id.connection_item_text);
+		
+		TextView conn_username = (TextView) itemLayout
+				.findViewById(R.id.connection_item_username);
 
 		ConnectionConfigurationEntity item = getItem(position);
-		connection_view.setText(item.getLabel());
+		conn_text.setText(item.getLabel());
+		conn_username.setText(item.getUsername());
 
 		return itemLayout;
 	}

@@ -6,16 +6,29 @@
 
     <TextView
         android:id="@+id/buddy_presence"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:textSize="16sp" />
+        android:layout_width="20dip"
+        android:layout_height="20dip"
+        android:layout_margin="2dip" />
 
-    <TextView
-        android:id="@+id/buddy_jid"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:orientation="vertical" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/buddy_item_jid"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="2dip"
+            android:textSize="8sp"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/buddy_item_nickname"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dip"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </LinearLayout>

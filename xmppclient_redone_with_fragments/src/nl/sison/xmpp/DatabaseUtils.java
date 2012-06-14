@@ -38,7 +38,7 @@ public class DatabaseUtils {
 	}
 	
 	/**
-	 * I know this doesn't belong here. TODO - refactor elsewhere
+	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static class TypeConversionUtils
 	 * @param l
 	 * @return
 	 */

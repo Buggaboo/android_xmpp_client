@@ -40,7 +40,6 @@ public class ConnectionListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 	}
 
 	@Override
@@ -49,6 +48,7 @@ public class ConnectionListFragment extends ListFragment {
 		// getActivity().registerReceiver(receiver, filter)
 		// TODO implement green indicator the connection is online
 		// TODO implement register broadcastreceiver
+		setEmptyText(getActivity().getString(R.string.no_connection_item));		
 		refreshList();
 	}
 	
