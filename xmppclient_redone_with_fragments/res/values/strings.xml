@@ -12,6 +12,9 @@
     <string name="sure_remove_conn">Are you sure you want to remove - </string>
     <string name="no_buddy_item">There are no buddies on your Roster</string>
     <string name="no_connection_item">There are currently no connections configured</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
+    <string name="vibrate">vibrate</string>
 
     <!-- connection related stuff -->
     <string name="conn_label">Label</string>

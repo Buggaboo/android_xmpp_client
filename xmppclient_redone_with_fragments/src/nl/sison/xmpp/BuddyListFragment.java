@@ -5,14 +5,19 @@ import java.util.List;
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -137,7 +142,56 @@ public class BuddyListFragment extends ListFragment {
 	/**
 	 * TODO - implement subscribe, unsubscribe buddylist, using dialogs
 	 */
+	/**
+	 * TODO - implement set nickname
+	 */
+/*
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
 
+		AdapterView.AdapterContextMenuInfo info;
+		try {
+			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+			long buddy_id = getListAdapter().getItemId(info.position);
+			DaoSession rdao = DatabaseUtils.getReadOnlyDatabaseSession(
+					getActivity());
+			final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
+			DatabaseUtils.close();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle(buddy.getPartial_jid());
+			String[] buddy_setup_action = new String[2];// { "Set Nickname",
+														// "Vibrate" };
+			if (buddy.getVibrate()) {
+				buddy_setup_action[1] = getActivity().getString(
+						R.string.vibrate)
+						+ " " + getActivity().getString(R.string.on);
+			} else {
+				buddy_setup_action[1] = getActivity().getString(
+						R.string.vibrate)
+						+ " " + getActivity().getString(R.string.off);
+			}
+			builder.setItems(buddy_setup_action,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int i) {
+							if (i == 1)
+							{
+								buddy.setVibrate(!buddy.getVibrate());
+							}
+							DaoSession wdao = DatabaseUtils.getWriteableDatabaseSession(getActivity());
+							wdao.insertOrReplace(buddy);
+						}
+					});
+			AlertDialog d = builder.create();
+			d.show();
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+*/
 	@Override
 	public void onPause() {
 		// TODO Auto-generated method stub
@@ -148,7 +202,13 @@ public class BuddyListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		setEmptyText(getActivity().getString(R.string.no_buddy_item)); // causes crash if I put this in onCreate
+		setEmptyText(getActivity().getString(R.string.no_buddy_item)); // causes
+																		// crash
+																		// if I
+																		// put
+																		// this
+																		// in
+																		// onCreate
 		getActivity().registerReceiver(receiver, actionFilter);
 		refreshList(getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
