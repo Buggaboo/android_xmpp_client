@@ -121,7 +121,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private void setToggleButtonDefault(View parent, int view_id, boolean state) {
 		ToggleButton tb = (ToggleButton) parent.findViewById(view_id);
-		tb.setActivated(state);
+		tb.setChecked(state);
 	}
 
 	private int getResourceIdentifierByPrefix(String prefix, String value) {
