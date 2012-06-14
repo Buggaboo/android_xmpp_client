@@ -39,11 +39,16 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 	
 	private void setBuddyIdentifierText(ViewGroup parent, BuddyEntity buddy) {
 		TextView buddy_jid_view = (TextView) parent
-				.findViewById(R.id.buddy_jid);
-		if (buddy.getNickname() != null) {
-			buddy_jid_view.setText(buddy.getNickname());
+				.findViewById(R.id.buddy_item_jid);
+		TextView buddy_nickname_view = (TextView) parent
+				.findViewById(R.id.buddy_item_nickname);
+		
+		buddy_jid_view.setText(buddy.getPartial_jid() + "c TODO remove");
+		
+		if (buddy.getNickname() == null || buddy.getNickname().isEmpty()) {
+			buddy_nickname_view.setText(buddy.getPartial_jid() + "a TODO remove");
 		} else {
-			buddy_jid_view.setText(buddy.getPartial_jid());
+			buddy_nickname_view.setText(buddy.getNickname() + "b TODO remove");
 		}
 
 	}

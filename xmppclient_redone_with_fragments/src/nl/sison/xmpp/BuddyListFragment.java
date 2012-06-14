@@ -3,6 +3,7 @@ package nl.sison.xmpp;
 import java.util.List;
 
 import nl.sison.xmpp.dao.BuddyEntity;
+import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
 import android.app.AlertDialog;
@@ -13,13 +14,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 // TODO implement titlebar http://stackoverflow.com/questions/3438276/change-title-bar-text-in-android
 /**
@@ -145,7 +149,6 @@ public class BuddyListFragment extends ListFragment {
 	/**
 	 * TODO - implement set nickname
 	 */
-/*
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -155,43 +158,101 @@ public class BuddyListFragment extends ListFragment {
 		try {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			long buddy_id = getListAdapter().getItemId(info.position);
-			DaoSession rdao = DatabaseUtils.getReadOnlyDatabaseSession(
-					getActivity());
+			DaoSession rdao = DatabaseUtils
+					.getReadOnlyDatabaseSession(getActivity());
 			final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
 			DatabaseUtils.close();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(buddy.getPartial_jid());
-			String[] buddy_setup_action = new String[2];// { "Set Nickname",
-														// "Vibrate" };
+			String[] buddy_setup_action = new String[2];
+
+			final int NICKNAME_OPTION = 0;
+			final int VIBRATE_OPTION = 1;
+			buddy_setup_action[NICKNAME_OPTION] = getActivity().getString(
+					R.string.change_nickname);
 			if (buddy.getVibrate()) {
-				buddy_setup_action[1] = getActivity().getString(
-						R.string.vibrate)
-						+ " " + getActivity().getString(R.string.on);
-			} else {
-				buddy_setup_action[1] = getActivity().getString(
+				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
 						R.string.vibrate)
 						+ " " + getActivity().getString(R.string.off);
+			} else {
+				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
+						R.string.vibrate)
+						+ " " + getActivity().getString(R.string.on);
 			}
+
 			builder.setItems(buddy_setup_action,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int i) {
-							if (i == 1)
-							{
+							if (i == VIBRATE_OPTION) {
 								buddy.setVibrate(!buddy.getVibrate());
 							}
-							DaoSession wdao = DatabaseUtils.getWriteableDatabaseSession(getActivity());
+							if (i == NICKNAME_OPTION) {
+								AlertDialog.Builder alert = new AlertDialog.Builder(
+										getActivity());
+
+								alert.setTitle(getActivity().getString(
+										R.string.change_nickname));
+								alert.setMessage(buddy.getPartial_jid());
+
+								// Set an EditText view to get user input
+								final EditText input = new EditText(
+										getActivity());
+								if (buddy.getNickname() != null
+										&& !buddy.getNickname().isEmpty()) {
+									input.setText(buddy.getNickname());
+								} else {
+									input.setText("");
+									input.setFocusable(true);
+								}
+								alert.setView(input);
+
+								alert.setPositiveButton(android.R.string.ok,
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int button_id) {
+												BuddyEntityDao wdao = DatabaseUtils
+														.getWriteableDatabaseSession(
+																getActivity())
+														.getBuddyEntityDao();
+												BuddyEntity _buddy = wdao
+														.load(buddy.getId());
+												_buddy.setNickname(input
+														.getText().toString());
+												wdao.insertOrReplace(_buddy);
+												DatabaseUtils.close();
+
+											}
+										});
+
+								alert.setNegativeButton(
+										android.R.string.cancel,
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int button_id) {
+												dialog.dismiss();
+											}
+										});
+
+								alert.show();
+							}
+							BuddyEntityDao wdao = DatabaseUtils
+									.getWriteableDatabaseSession(getActivity())
+									.getBuddyEntityDao();
 							wdao.insertOrReplace(buddy);
+							DatabaseUtils.close();
+
 						}
 					});
-			AlertDialog d = builder.create();
-			d.show();
+			builder.create().show();
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 			return;
 		}
 	}
-*/
+
 	@Override
 	public void onPause() {
 		// TODO Auto-generated method stub

@@ -103,6 +103,7 @@ public class XMPPNotificationService extends Service {
 
 			getNicknameIfAvailable(buddy);
 
+			// TODO change the -ing icon
 			Notification.Builder builder = new Notification.Builder(context)
 					.setSmallIcon(R.drawable.ic_launcher).setAutoCancel(true)
 					.setTicker(notify_ticker).setContentText(msg.getContent())
@@ -110,8 +111,7 @@ public class XMPPNotificationService extends Service {
 			// TODO truncate msg.getContent if longer than...
 
 			Notification notification = builder.getNotification();
-			// notification.sound() // TODO
-			// notification.vibrate() // TODO - morse code
+			// notification.sound() // TODO create sounds on notification
 			notificationManager.notify(DatabaseUtils.safeLongToInt(message_id),
 					notification);
 		}

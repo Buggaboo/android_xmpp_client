@@ -14,7 +14,8 @@
     <string name="no_connection_item">There are currently no connections configured</string>
     <string name="on">on</string>
     <string name="off">off</string>
-    <string name="vibrate">vibrate</string>
+    <string name="vibrate">Switch vibrate</string>
+    <string name="change_nickname">Change nickname</string>
 
     <!-- connection related stuff -->
     <string name="conn_label">Label</string>
