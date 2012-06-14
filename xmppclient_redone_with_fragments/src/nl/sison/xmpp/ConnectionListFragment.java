@@ -10,14 +10,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * 
@@ -83,16 +81,6 @@ public class ConnectionListFragment extends ListFragment {
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
 		DatabaseUtils.close();
 		return all_conns;
-	}
-
-	@Deprecated
-	private void makeToast(String message) {
-		if (!BuildConfig.DEBUG)
-			return;
-		Log.i(TAG, message);
-		Toast toast = Toast
-				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
-		toast.show();
 	}
 
 	@Override

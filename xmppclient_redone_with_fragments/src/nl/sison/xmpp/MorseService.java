@@ -14,8 +14,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources.NotFoundException;
 import android.os.IBinder;
 import android.os.Vibrator;
-import android.util.Log;
-import android.widget.Toast;
 
 public class MorseService extends Service {
 
@@ -225,14 +223,4 @@ public class MorseService extends Service {
 		super.onDestroy();
 		unregisterReceiver(message_receiver);
 	}
-
-	@Deprecated
-	private void makeToast(String message) {
-		if (!BuildConfig.DEBUG)
-			return;
-		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-		toast.show();
-	}
-
 }

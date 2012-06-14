@@ -4,14 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import de.greenrobot.dao.QueryBuilder;
-
 import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
 import nl.sison.xmpp.dao.MessageEntityDao.Properties;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,8 +19,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Toast;
+import de.greenrobot.dao.QueryBuilder;
 
 public class XMPPNotificationService extends Service {
 
@@ -197,14 +193,4 @@ public class XMPPNotificationService extends Service {
 		unregisterReceiver(message_receiver);
 		unregisterReceiver(remove_notification_receiver);
 	}
-
-	@Deprecated
-	private void makeToast(String message) {
-		if (!BuildConfig.DEBUG)
-			return;
-		Log.i(TAG, message);
-		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-		toast.show();
-	}
-
 }
