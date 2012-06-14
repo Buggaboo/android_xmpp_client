@@ -148,6 +148,7 @@ public class BuddyListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		setEmptyText(getActivity().getString(R.string.no_buddy_item)); // causes crash if I put this in onCreate
 		getActivity().registerReceiver(receiver, actionFilter);
 		refreshList(getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
