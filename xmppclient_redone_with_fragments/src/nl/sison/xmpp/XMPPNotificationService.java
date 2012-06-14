@@ -65,16 +65,15 @@ public class XMPPNotificationService extends Service {
 					.load(MessageEntity.class, message_id);
 
 			BuddyEntity buddy = msg.getBuddyEntity();
-			
-			if (buddy.getIsActive() != null && buddy.getIsActive())
-			{
+
+			if (buddy.getIsActive() != null && buddy.getIsActive()) {
 				/**
 				 * Don't send a notification is the buddy is already active
 				 */
-				DatabaseUtils.close();	
+				DatabaseUtils.close();
 				return;
 			}
-			
+
 			Long buddy_id = buddy.getId();
 			ConnectionConfigurationEntity connection = buddy
 					.getConnectionConfigurationEntity();
@@ -85,7 +84,9 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			Intent intent = new Intent(XMPPNotificationService.this,
-					XMPPMainActivity.class); // NOTE: main detects the screen size and launches the correct Activity 
+					XMPPMainActivity.class); // NOTE: main detects the screen
+												// size and launches the correct
+												// Activity
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
@@ -107,6 +108,7 @@ public class XMPPNotificationService extends Service {
 			Notification.Builder builder = new Notification.Builder(context)
 					.setSmallIcon(R.drawable.ic_launcher).setAutoCancel(true)
 					.setTicker(notify_ticker).setContentText(msg.getContent())
+					.setContentTitle(getNicknameIfAvailable(buddy))
 					.setContentIntent(p_intent).setWhen(new Date().getTime());
 			// TODO truncate msg.getContent if longer than...
 
@@ -118,10 +120,11 @@ public class XMPPNotificationService extends Service {
 
 		private String getNicknameIfAvailable(BuddyEntity buddy) {
 			String buddy_nickname = buddy.getNickname();
-			if (buddy_nickname != null && !buddy_nickname.isEmpty()) {
-				return buddy_nickname;
-			} else {
+			if (buddy_nickname == null || buddy_nickname.isEmpty()) {
 				return buddy.getPartial_jid();
+
+			} else {
+				return buddy_nickname;
 			}
 		}
 	}
