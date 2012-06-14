@@ -9,10 +9,10 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -121,7 +121,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private void setToggleButtonDefault(View parent, int view_id, boolean state) {
 		ToggleButton tb = (ToggleButton) parent.findViewById(view_id);
-		tb.setActivated(state);
+		tb.setChecked(state);
 	}
 
 	private int getResourceIdentifierByPrefix(String prefix, String value) {

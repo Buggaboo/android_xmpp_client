@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -105,7 +106,7 @@ public class XMPPNotificationService extends Service {
 			getNicknameIfAvailable(buddy);
 
 			// TODO change the -ing icon
-			Notification.Builder builder = new Notification.Builder(context)
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 					.setSmallIcon(R.drawable.ic_launcher).setAutoCancel(true)
 					.setTicker(notify_ticker).setContentText(msg.getContent())
 					.setContentTitle(getNicknameIfAvailable(buddy))

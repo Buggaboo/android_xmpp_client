@@ -28,11 +28,16 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 		super(context, 0);
 		this.setNotifyOnChange(true);
 		if (chat_history != null && chat_history.size() > 0)
-			this.addAll(chat_history); // TODO empty list, throw
-										// IllegalArguments, then catch in
-										// Fragment then add empty list_item
-										// with some bullshit text like:
-										// "no history"
+		{
+			// this.addAll(chat_history); // TODO empty list, throw
+			// IllegalArguments, then catch in
+			// Fragment then add empty list_item
+			// with some bullshit text like:
+			// "no history"
+			for (MessageEntity m : chat_history) {
+				add(m);
+			}
+		}
 		this.own_jid = jid;
 	}
 

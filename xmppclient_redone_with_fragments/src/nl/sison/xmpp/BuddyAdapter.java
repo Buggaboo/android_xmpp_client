@@ -17,7 +17,10 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 	public BuddyAdapter(Context context, List<BuddyEntity> buddies) {
 		super(context, 0);
 		this.setNotifyOnChange(true);
-		this.addAll(buddies);
+//		this.addAll(buddies);
+		for (BuddyEntity b : buddies) {
+			add(b);
+		}
 	}
 	
 	@Override

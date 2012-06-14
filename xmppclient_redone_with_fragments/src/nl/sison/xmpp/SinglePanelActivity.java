@@ -1,10 +1,10 @@
 package nl.sison.xmpp;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,7 +15,7 @@ import android.widget.Toast;
  * @author Jasm Sison
  * 
  */
-public class SinglePanelActivity extends Activity implements FragmentLoader {
+public class SinglePanelActivity extends FragmentActivity implements FragmentLoader {
 	private static final String TAG = "SinglePanelActivity";
 
 	@Override
@@ -45,7 +45,7 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 			fragment = new ConnectionListFragment();
 		}
 		fragment.setArguments(getIntent().getExtras());
-		getFragmentManager().beginTransaction()
+		getSupportFragmentManager().beginTransaction()
 				.add(R.id.single_panel_1, fragment).commit();
 	}
 
@@ -65,7 +65,7 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 			makeToast("loading fragment: " + className);
 			fragment = (Fragment) Class.forName(className).newInstance(); // Reflection
 			fragment.setArguments(intent.getExtras());
-			FragmentTransaction transaction = getFragmentManager()
+			FragmentTransaction transaction = getSupportFragmentManager()
 					.beginTransaction().replace(R.id.single_panel_1, fragment);
 			transaction.addToBackStack("identifier"); // TODO - use the same
 														// "identifier" for the
