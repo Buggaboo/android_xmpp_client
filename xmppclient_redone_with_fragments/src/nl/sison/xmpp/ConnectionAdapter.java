@@ -3,10 +3,7 @@ package nl.sison.xmpp;
 import java.util.List;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
-import nl.sison.xmpp.dao.MessageEntity;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
