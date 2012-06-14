@@ -1,11 +1,4 @@
 TODO 08-06-2012
-- start supporting android 2.3.3 (api level 10), Gingerbread -> http://www.appbrain.com/stats/top-android-sdk-versions
-	- Notification.Builder does not exist, see XMPPNotificationService, change to gingerbread branch
-	- Fragment only exists in the compatibility pack, change to gingerbread branch
-	  - install, add compatiblity shit
-	- Change SinglePanelActivity's basetype to ActivityFragment, change to gingerbread branch
-	- Vibrator.hasVibrator is broken, see Vibrator in MorseService, change to gingerbread branch
-	
 - implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
 	+ fix by adding empty_list_item (Fragment.setEmptyText) (I shouldn't have added it to onResume... fuck it... it breaks if I put it before onCreateView)
