@@ -3,6 +3,7 @@ package nl.sison.xmpp;
 import java.util.List;
 
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
+import nl.sison.xmpp.dao.MessageEntity;
 
 import android.content.Context;
 import android.util.Log;
@@ -26,7 +27,10 @@ public class ConnectionAdapter extends
 		super(context, 0);
 		this.setNotifyOnChange(true);
 		if (connections != null && connections.size() > 0) {
-			this.addAll(connections);
+//			this.addAll(connections);
+			for (ConnectionConfigurationEntity cc : connections) {
+				add(cc);
+			}
 		}
 	}
 
