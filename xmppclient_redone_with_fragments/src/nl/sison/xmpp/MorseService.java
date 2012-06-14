@@ -95,9 +95,8 @@ public class MorseService extends Service {
 				// NxN time, because of the list, but first rule: KISS: make it
 				// work first. // TODO - optimize memory consumption
 			}
-
-			if (!vibrator.hasVibrator())
-				return;
+//			if (!vibrator.hasVibrator()) // TODO - determine how to check for vibrator, manifest?
+//				return;
 			vibrator.vibrate(complete_morse_pattern, -1); // once and
 			// once only
 		}
