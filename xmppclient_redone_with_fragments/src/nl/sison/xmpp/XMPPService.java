@@ -259,6 +259,11 @@ public class XMPPService extends Service {
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
 		Roster roster = connection.getRoster();
+		if(roster.getEntryCount() == 0)
+		{
+			DatabaseUtils.close();
+			return;
+		}
 		for (RosterEntry re : roster.getEntries()) {
 			List<BuddyEntity> query_result = qb.where(
 					BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
