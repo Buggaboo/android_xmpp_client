@@ -122,7 +122,6 @@ public class XMPPNotificationService extends Service {
 			String buddy_nickname = buddy.getNickname();
 			if (buddy_nickname == null || buddy_nickname.isEmpty()) {
 				return buddy.getPartial_jid();
-
 			} else {
 				return buddy_nickname;
 			}
