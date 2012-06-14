@@ -1,10 +1,11 @@
 TODO 08-06-2012
+- start supporting android 2.3.3 (api level 10), Gingerbread -> http://www.appbrain.com/stats/top-android-sdk-versions
+- implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
-	- fix by adding empty_list_item (Fragment.setEmptyText)
+	+ fix by adding empty_list_item (Fragment.setEmptyText) (I shouldn't have added it to onResume... fuck it... it breaks if I put it before onCreateView)
 	- test 
 - implement indicator a server is online in connectionfragment
 - test registering broadcastreceiver onResume, unregistering onPause
-- implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 @ implement actionbar tabs: http://android.codeandmagic.org/2011/07/android-tabs-with-fragments/
     more tabs: http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
     => not interested anymore.

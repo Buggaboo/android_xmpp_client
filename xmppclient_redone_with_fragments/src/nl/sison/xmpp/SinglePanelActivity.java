@@ -35,6 +35,7 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 
 		Intent intent = getIntent();
 		
+		
 		// launched by NotificationService
 		Fragment fragment;
 		if (intent != null
