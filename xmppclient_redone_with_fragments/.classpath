@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="libs/smackx-debug.jar"/>
 	<classpathentry kind="lib" path="libs/smackx-jingle.jar"/>
 	<classpathentry kind="lib" path="libs/smackx.jar"/>
+	<classpathentry kind="lib" path="libs/android-support-v13.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

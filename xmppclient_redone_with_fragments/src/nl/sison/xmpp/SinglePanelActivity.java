@@ -1,10 +1,10 @@
 package nl.sison.xmpp;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,7 +15,7 @@ import android.widget.Toast;
  * @author Jasm Sison
  * 
  */
-public class SinglePanelActivity extends Activity implements FragmentLoader {
+public class SinglePanelActivity extends FragmentActivity implements FragmentLoader {
 	private static final String TAG = "SinglePanelActivity";
 
 	@Override
