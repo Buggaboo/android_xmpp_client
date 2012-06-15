@@ -201,7 +201,7 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		DatabaseUtils.createDatabase(this); // nullptr crashes
+//		DatabaseUtils.createDatabase(this); // nullptr crashes
 		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
 			makeToast(getString(R.string.no_network));
 			// TODO implement service with sleep interval, kicks XMPPService
@@ -338,12 +338,11 @@ public class XMPPService extends Service {
 			public void interceptPacket(Packet p) {
 				Message message = (Message) p;
 				String content = message.getBody();
-				makeToast("enter");
 				if (content.equals("@@@destroy")) {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
+					stopSelf();
 				}
-				makeToast("exit");
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
