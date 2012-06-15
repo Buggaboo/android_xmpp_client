@@ -12,7 +12,6 @@ import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
-import nl.sison.xmpp.dao.MessageEntityDao;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -41,6 +40,8 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 
 /**
@@ -201,7 +202,6 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		DatabaseUtils.createDatabase(this); // nullptr crashes
 		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
 			makeToast(getString(R.string.no_network));
 			// TODO implement service with sleep interval, kicks XMPPService
@@ -263,56 +263,68 @@ public class XMPPService extends Service {
 	 * @param cc_id
 	 */
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
-		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
-		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
-				.queryBuilder();
+		DaoSession dao = DatabaseUtils.getWriteableSession(this);
+		BuddyEntityDao wdao = dao.getBuddyEntityDao();
+
 		Roster roster = connection.getRoster();
+
 		if (roster.getEntryCount() == 0) {
 			DatabaseUtils.close();
+			makeToast("No buddies are present in your roster");
+			// TODO - think up a new way of showing this case
 			return;
 		}
-		for (RosterEntry re : roster.getEntries()) {
-			// RosterEntry.getUser returns the full jid
-			String partial_jid = StringUtils.parseBareAddress(re.getUser());
 
-			List<BuddyEntity> query_result = qb.where(
-					Properties.Partial_jid.eq(partial_jid)).list();
+		for (RosterEntry re : roster.getEntries()) {
+			QueryBuilder<BuddyEntity> qb = wdao.queryBuilder();
+			String full_jid = re.getUser();
+			String partial_jid = StringUtils.parseBareAddress(full_jid);
+
+			Query<BuddyEntity> query = qb.where(
+					Properties.Partial_jid.eq(partial_jid)).build();
+
+			BuddyEntity query_result = null;
+			try {
+				query_result = query.unique();
+			} catch (DaoException ex) {
+				ex.printStackTrace();
+			}
 
 			BuddyEntity b;
-			if (query_result.isEmpty()) {
+			if (query_result == null) {
 				b = new BuddyEntity();
 				b.setVibrate(false); // default value
-			} else /* if (query_result.size() >= 1) */{
-				if (query_result.size() > 1)
-					for (int i = 1; i < query_result.size(); ++i) {
-						daoSession.delete(query_result.get(i));
-					} // cleanup hack, since I don't know why buddies are
-						// entered again (n-times buddies in buddylist)
-				b = query_result.get(0);
+			} else {
+				b = query_result;
 			}
 
 			Presence p = roster.getPresence(partial_jid);
-			// TODO - determine whether roster.getPresence(... accepts partial
-			// jids or full jids (i.e. with our without resource)
 
 			setBuddyBasic(b, partial_jid, cc_id);
 			if (p != null) {
-				setBuddyPresence(b, p);
+				String resource = StringUtils.parseResource(full_jid);
+				setBuddyPresence(b, p, resource);
 			}
 
-			daoSession.insertOrReplace(b);
+			wdao.insertOrReplace(b);
 		}
+
+		// clean up
 		DatabaseUtils.close();
 	}
 
-	private void setBuddyPresence(BuddyEntity b, Presence p) {
+	private void setBuddyPresence(BuddyEntity b, Presence p, String resource) {
 		b.setIsAvailable(p.isAvailable());
 		b.setIsAway(p.isAway());
 		b.setPresence_status(p.getStatus());
 		b.setPresence_type(p.getType().toString());
+		if (p.isAvailable()) {
+			b.setLast_seen_online_date(new Date());
+		}
+		b.setLast_seen_resource(resource);
 	}
 
-	private void setBuddyBasic(BuddyEntity b, final String partial_jid,
+	private void setBuddyBasic(BuddyEntity b, String partial_jid,
 			final long cc_id) {
 		b.setPartial_jid(partial_jid);
 		b.setConnectionId(cc_id);
@@ -325,7 +337,7 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		setOutgoingMessageListener(connection); //
+		setOutgoingMessageListener(connection);
 	}
 
 	/**
@@ -341,6 +353,8 @@ public class XMPPService extends Service {
 				if (content.equals("@@@destroy")) {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
+					stopSelf();
+				} else if (content.equals("@@@kill service")) {
 					stopSelf();
 				}
 			}
@@ -384,8 +398,9 @@ public class XMPPService extends Service {
 				.getBuddyEntityDao()
 				.queryBuilder()
 				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
-						.getFrom()))).list().get(0);
+						.getFrom()))).unique();
 
+		buddy.setLast_chat_date(new Date());
 		message.setBuddyEntity(buddy);
 
 		return daoSession.getMessageEntityDao().insert(message);
@@ -393,30 +408,27 @@ public class XMPPService extends Service {
 
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
 		String from = p.getFrom();
+		String partial_jid = StringUtils.parseBareAddress(from);
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
 
 		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
-		List<BuddyEntity> query_result = qb.where(
-				BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
-						.parseBareAddress(p.getFrom()))).list();
+		BuddyEntity query_result = qb.where(
+				BuddyEntityDao.Properties.Partial_jid.eq(partial_jid)).unique();
 
 		// create entity if it doesn't exist yet
 		// otherwise the broadcast will be pointless
 		BuddyEntity b;
-		if (query_result.isEmpty()) {
+		if (query_result == null) {
 			b = new BuddyEntity();
-			setBuddyBasic(b, StringUtils.parseBareAddress(from), cc_id);
-			setBuddyPresence(b, p);
+			setBuddyBasic(b, partial_jid, cc_id);
 		} else {
-			b = query_result.get(0);
+			b = query_result;
 		}
-		b.setLast_seen_resource(StringUtils.parseResource(from));
 
-		if (p.isAvailable()) {
-			b.setLast_seen_online_date(new Date());
-		}
+		String resource = StringUtils.parseResource(from);
+		setBuddyPresence(b, p, resource);
 
 		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
 		sendBroadcast(intent);
