@@ -13,7 +13,7 @@ TODO 08-06-2012
 - use tabbed_single_fragment_layout.xml for tabs
 - Sounds for every intent more or less... make a service for that...
 - implement master password (salted)
-- implement client-side message encryption 
+- implement client-side message encryption (investigate sql cipher)
 
 ...
 

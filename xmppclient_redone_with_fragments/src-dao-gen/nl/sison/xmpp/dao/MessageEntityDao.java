@@ -21,6 +21,10 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
 
     public static final String TABLENAME = "MESSAGE_ENTITY";
 
+    /**
+     * Properties of entity MessageEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Sender_jid = new Property(1, String.class, "sender_jid", false, "SENDER_JID");
@@ -46,7 +50,8 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'MESSAGE_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'MESSAGE_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'SENDER_JID' TEXT NOT NULL ," + // 1: sender_jid
                 "'RECEIVER_JID' TEXT NOT NULL ," + // 2: receiver_jid
@@ -54,8 +59,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
                 "'RECEIVED_DATE' INTEGER NOT NULL ," + // 4: received_date
                 "'DELIVERED' INTEGER," + // 5: delivered
                 "'THREAD' TEXT," + // 6: thread
-                "'BUDDY_ID' INTEGER NOT NULL );"; // 7: buddyId
-        db.execSQL(sql);
+                "'BUDDY_ID' INTEGER NOT NULL );"); // 7: buddyId
     }
 
     /** Drops the underlying database table. */
@@ -131,6 +135,7 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         entity.setBuddyId(cursor.getLong(offset + 7));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(MessageEntity entity, long rowId) {
         entity.setId(rowId);
