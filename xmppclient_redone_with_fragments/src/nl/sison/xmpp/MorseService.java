@@ -156,7 +156,7 @@ public class MorseService extends Service {
 
 		private String getMessage(Context context, long message_id) {
 			DaoSession daoSession = DatabaseUtils
-					.getReadOnlyDatabaseSession(context);
+					.getReadOnlySession(context);
 			MessageEntity msg = daoSession.load(MessageEntity.class,
 					message_id);
 

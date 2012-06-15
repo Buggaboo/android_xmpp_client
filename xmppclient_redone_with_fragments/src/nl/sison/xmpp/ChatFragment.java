@@ -90,7 +90,7 @@ public class ChatFragment extends Fragment {
 			}
 
 			DaoSession daoSession = DatabaseUtils
-					.getReadOnlyDatabaseSession(context);
+					.getReadOnlySession(context);
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
@@ -214,7 +214,7 @@ public class ChatFragment extends Fragment {
 	}
 	
 	private void releaseBuddyForNotification() {
-		DaoSession dao = DatabaseUtils.getWriteableDatabaseSession(getActivity());
+		DaoSession dao = DatabaseUtils.getWriteableSession(getActivity());
 		BuddyEntity b = dao.load(BuddyEntity.class, buddy_id);
 		b.setIsActive(false);
 		dao.insertOrReplace(b);
@@ -222,7 +222,7 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void preventNotificationOfActiveBuddy() {
-		BuddyEntityDao dao = DatabaseUtils.getWriteableDatabaseSession(
+		BuddyEntityDao dao = DatabaseUtils.getWriteableSession(
 				getActivity()).getBuddyEntityDao();
 		List<BuddyEntity> deactivated_buddies = dao.loadAll();
 		for (BuddyEntity buddy : deactivated_buddies) {
@@ -246,7 +246,7 @@ public class ChatFragment extends Fragment {
 
 	private void setupListView() { // TODO broken! fix it!
 		DaoSession daoSession = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity()
+				.getReadOnlySession(getActivity()
 						.getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
