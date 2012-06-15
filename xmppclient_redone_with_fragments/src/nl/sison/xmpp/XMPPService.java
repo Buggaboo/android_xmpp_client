@@ -278,7 +278,7 @@ public class XMPPService extends Service {
 
 		for (RosterEntry re : roster.getEntries()) {
 			// RosterEntry.getUser returns the full jid
-			String partial_jid = StringUtils.parseBareAddress(re.getUser());
+			String partial_jid = StringUtils.parseBareAddress(re.getUser()).trim();
 
 			List<BuddyEntity> query_result = qb.where(
 					Properties.Partial_jid.like(partial_jid)).list();
