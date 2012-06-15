@@ -23,10 +23,10 @@ public class MessageEntity {
     private long buddyId;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private MessageEntityDao myDao;
+    private transient MessageEntityDao myDao;
 
     private BuddyEntity buddyEntity;
     private Long buddyEntity__resolvedKey;
