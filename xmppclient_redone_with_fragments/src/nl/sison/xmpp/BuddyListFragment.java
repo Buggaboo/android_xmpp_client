@@ -35,15 +35,6 @@ public class BuddyListFragment extends ListFragment {
 	private static final String TAG = "BuddyListFragment";
 
 	/**
-	 * TODO - remove useless request code
-	 */
-	/**
-	 * Intent request code
-	 */
-	public static final int RC_CREATE_NEW_THREAD_FROM_JID = 1111;
-	public static final int RC_CONTINUE_OLD_THREAD = 1112;
-
-	/**
 	 * Intent actions
 	 */
 	public static final String ACTION_REQUEST_CHAT = "Oent.p8p39392"; // TODO
@@ -109,7 +100,6 @@ public class BuddyListFragment extends ListFragment {
 						bundle.getLong(XMPPService.KEY_BUDDY_INDEX));
 				fragmentIntent.putExtra(JID, bundle.getString(XMPPService.JID));
 
-				// startActivity(startActivityIntent); // TODO + replace
 				// startActivity with calls for a new Fragment
 				((FragmentLoader) getActivity()).loadFragment(fragmentIntent);
 			}
@@ -185,9 +175,16 @@ public class BuddyListFragment extends ListFragment {
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int i) {
 							if (i == VIBRATE_OPTION) {
-								buddy.setVibrate(!buddy.getVibrate());
-							}
-							if (i == NICKNAME_OPTION) {
+								BuddyEntityDao wdao = DatabaseUtils
+										.getWriteableDatabaseSession(
+												getActivity())
+										.getBuddyEntityDao();
+								BuddyEntity _buddy = wdao.load(buddy.getId());
+								_buddy.setVibrate(!buddy.getVibrate());
+								wdao.insertOrReplace(_buddy);
+								DatabaseUtils.close();
+								return;
+							} else if (i == NICKNAME_OPTION) {
 								AlertDialog.Builder alert = new AlertDialog.Builder(
 										getActivity());
 
@@ -223,6 +220,11 @@ public class BuddyListFragment extends ListFragment {
 												wdao.insertOrReplace(_buddy);
 												DatabaseUtils.close();
 
+												// refresh the list (e.g.
+												// reflect the change in
+												// nickname)
+												refreshList(buddy
+														.getConnectionId());
 											}
 										});
 
@@ -235,15 +237,8 @@ public class BuddyListFragment extends ListFragment {
 												dialog.dismiss();
 											}
 										});
-
 								alert.show();
 							}
-							BuddyEntityDao wdao = DatabaseUtils
-									.getWriteableDatabaseSession(getActivity())
-									.getBuddyEntityDao();
-							wdao.insertOrReplace(buddy);
-							DatabaseUtils.close();
-
 						}
 					});
 			builder.create().show();
@@ -255,7 +250,6 @@ public class BuddyListFragment extends ListFragment {
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		getActivity().unregisterReceiver(receiver);
 	}
@@ -263,23 +257,12 @@ public class BuddyListFragment extends ListFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		setEmptyText(getActivity().getString(R.string.no_buddy_item)); // causes
-																		// crash
-																		// if I
-																		// put
-																		// this
-																		// in
-																		// onCreate
+		setEmptyText(getActivity().getString(R.string.no_buddy_item));
 		getActivity().registerReceiver(receiver, actionFilter);
 		refreshList(getArguments().getLong(
 				ConnectionListFragment.KEY_CONNECTION_INDEX, 0));
 	}
 
-	/**
-	 * TODO reimplement using notifyDataSetChanged
-	 * http://stackoverflow.com/questions
-	 * /3669325/notifydatasetchanged-example/5092426#5092426
-	 */
 	private void refreshList(long cc_id) {
 		// TODO finish context menu for the dialog
 		// TODO consider deleting the buddies, instead of throwing away the
