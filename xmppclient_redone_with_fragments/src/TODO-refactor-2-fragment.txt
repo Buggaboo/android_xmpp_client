@@ -61,6 +61,7 @@ TODO 02-06-12
 
 ROADMAP (aka killer features I'd like to build)
 - swipe and tabs
+- from notification, sendBroadcast, to start a fragment on an existing Activity
 - usage tracking, okay it's gpl, but I want to know who's using it where
 - message encryption: per message (will not vibrate on encrypted messages), or per buddy
 - use image from contacts, match e-mail address, or manually match
