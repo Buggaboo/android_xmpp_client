@@ -57,11 +57,25 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		}
 
 		Context c = getContext();
+
+		String last_seen_online = "TODO last_seen_online";
+		if (buddy.getLast_seen_online_date() != null)
+			last_seen_online = buddy.getLast_seen_online_date().toString();
+
+		String last_chat = "TODO last_chat";
+		if (buddy.getLast_chat_date() != null)
+			last_seen_online = buddy.getLast_chat_date().toString();
+
+		String resource = "TODO resource";
+		if (buddy.getLast_seen_resource() != null)
+			resource = buddy.getLast_seen_resource().toString();
+
+
 		buddy_last_chat_view.setText(c.getString(R.string.last_chat) + " "
-				+ buddy.getLast_chat_date());
+				+ last_chat);
 		buddy_last_seen_view.setText(c.getString(R.string.last_seen) + " "
-				+ buddy.getLast_seen_online_date() + " ("
-				+ buddy.getLast_seen_resource() + ")");
+				+ last_seen_online + " ("
+				+ resource + ")");
 	}
 
 	/**
