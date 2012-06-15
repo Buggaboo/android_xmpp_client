@@ -201,7 +201,6 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		DatabaseUtils.createDatabase(this); // nullptr crashes
 		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
 			makeToast(getString(R.string.no_network));
 			// TODO implement service with sleep interval, kicks XMPPService
@@ -263,45 +262,47 @@ public class XMPPService extends Service {
 	 * @param cc_id
 	 */
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
-		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
-		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
-				.queryBuilder();
+		BuddyEntityDao wdao = DatabaseUtils.getWriteableSession(this)
+				.getBuddyEntityDao();
+		QueryBuilder<BuddyEntity> qb = wdao.queryBuilder();
 		Roster roster = connection.getRoster();
 		if (roster.getEntryCount() == 0) {
 			DatabaseUtils.close();
 			return;
 		}
+
+		for (BuddyEntity buddy : wdao.loadAll()) {
+			if (buddy.getPartial_jid() != null)
+				makeToast("buddy partial jid: " + buddy.getPartial_jid());
+		}
+
 		for (RosterEntry re : roster.getEntries()) {
 			// RosterEntry.getUser returns the full jid
 			String partial_jid = StringUtils.parseBareAddress(re.getUser());
 
 			List<BuddyEntity> query_result = qb.where(
-					Properties.Partial_jid.eq(partial_jid)).list();
+					Properties.Partial_jid.like(partial_jid)).list();
 
 			BuddyEntity b;
 			if (query_result.isEmpty()) {
+				makeToast("Query result isEmpty! WTF! " + partial_jid);
 				b = new BuddyEntity();
 				b.setVibrate(false); // default value
-			} else /* if (query_result.size() >= 1) */{
-				if (query_result.size() > 1)
-					for (int i = 1; i < query_result.size(); ++i) {
-						daoSession.delete(query_result.get(i));
-					} // cleanup hack, since I don't know why buddies are
-						// entered again (n-times buddies in buddylist)
+			} else {
 				b = query_result.get(0);
 			}
 
 			Presence p = roster.getPresence(partial_jid);
-			// TODO - determine whether roster.getPresence(... accepts partial
-			// jids or full jids (i.e. with our without resource)
 
 			setBuddyBasic(b, partial_jid, cc_id);
 			if (p != null) {
 				setBuddyPresence(b, p);
 			}
 
-			daoSession.insertOrReplace(b);
+			wdao.insertOrReplace(b);
 		}
+
+		// clean up
 		DatabaseUtils.close();
 	}
 
@@ -325,7 +326,7 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		setOutgoingMessageListener(connection); //
+		setOutgoingMessageListener(connection);
 	}
 
 	/**
@@ -341,6 +342,8 @@ public class XMPPService extends Service {
 				if (content.equals("@@@destroy")) {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
+					stopSelf();
+				} else if (content.equals("@@@killservice")) {
 					stopSelf();
 				}
 			}
