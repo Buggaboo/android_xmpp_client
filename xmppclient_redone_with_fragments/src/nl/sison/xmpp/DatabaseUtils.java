@@ -15,7 +15,7 @@ public class DatabaseUtils {
 	public static final String XMPP_CLIENT_DATABASE = "xmpp_client_database.db";
 	private static DevOpenHelper helper;
 
-	static public DaoSession getWriteableDatabaseSession(Context context) {
+	static public DaoSession getWriteableSession(Context context) {
 		if (helper == null)
 			helper = new DevOpenHelper(context, XMPP_CLIENT_DATABASE, null);
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -23,12 +23,17 @@ public class DatabaseUtils {
 		return daoMaster.newSession();
 	}
 
-	static public DaoSession getReadOnlyDatabaseSession(Context context) {
+	static public DaoSession getReadOnlySession(Context context) {
 		if (helper == null)
 			helper = new DevOpenHelper(context, XMPP_CLIENT_DATABASE, null);
 		SQLiteDatabase db = helper.getReadableDatabase();
 		DaoMaster daoMaster = new DaoMaster(db);
 		return daoMaster.newSession();
+	}
+	
+	static public void destroyDatabase(Context context)
+	{
+		DaoMaster.dropAllTables(helper.getWritableDatabase(), true);
 	}
 
 	static public void close() {
