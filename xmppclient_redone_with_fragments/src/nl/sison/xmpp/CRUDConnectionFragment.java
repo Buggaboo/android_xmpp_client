@@ -136,7 +136,7 @@ public class CRUDConnectionFragment extends Fragment {
 		conn_config_id = ccid;
 
 		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity()).load(
+				.getReadOnlySession(getActivity()).load(
 						ConnectionConfigurationEntity.class, ccid);
 
 		setTextViewData(list_view, R.id.conn_label, cc.getLabel());
@@ -305,7 +305,7 @@ public class CRUDConnectionFragment extends Fragment {
 	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
 		DaoSession daoSession = DatabaseUtils
-				.getWriteableDatabaseSession(getActivity()
+				.getWriteableSession(getActivity()
 						.getApplicationContext());
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();

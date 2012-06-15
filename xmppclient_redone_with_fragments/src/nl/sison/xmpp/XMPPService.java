@@ -90,7 +90,7 @@ public class XMPPService extends Service {
 				long cc_id = intent.getExtras().getLong(
 						CRUDConnectionFragment.KEY_CONNECTION_INDEX);
 				DaoSession daoSession = DatabaseUtils
-						.getReadOnlyDatabaseSession(context);
+						.getReadOnlySession(context);
 				ConnectionConfigurationEntity cc = daoSession.load(
 						ConnectionConfigurationEntity.class, cc_id);
 				connectAndPopulateBuddyList(cc);
@@ -146,7 +146,7 @@ public class XMPPService extends Service {
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
 			DaoSession daoSession = DatabaseUtils
-					.getWriteableDatabaseSession(context);
+					.getWriteableSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
@@ -160,7 +160,7 @@ public class XMPPService extends Service {
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
 			DaoSession daoSession = DatabaseUtils
-					.getReadOnlyDatabaseSession(context);
+					.getReadOnlySession(context);
 			BuddyEntity buddy = daoSession.load(BuddyEntity.class, id);
 			DatabaseUtils.close();
 			return buddy;
@@ -213,7 +213,7 @@ public class XMPPService extends Service {
 		filter.addAction(ChatFragment.ACTION_REQUEST_DELIVER_MESSAGE);
 		filter.addAction(CRUDConnectionFragment.ACTION_REQUEST_POPULATE_BUDDYLIST);
 		registerReceiver(receiver, filter);
-		
+
 		// start services which rely on this one
 		startService(new Intent(XMPPService.this, XMPPNotificationService.class));
 		startService(new Intent(XMPPService.this, MorseService.class));
@@ -254,29 +254,41 @@ public class XMPPService extends Service {
 		}
 	}
 
+	/**
+	 * TODO eliminate bug: a buddy can be added multiple times in the db.
+	 * 
+	 * @param connection
+	 * @param cc_id
+	 */
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
 		Roster roster = connection.getRoster();
-		if(roster.getEntryCount() == 0)
-		{
+		if (roster.getEntryCount() == 0) {
 			DatabaseUtils.close();
 			return;
 		}
 		for (RosterEntry re : roster.getEntries()) {
+			// RosterEntry.getUser returns the full jid
+			String partial_jid = StringUtils.parseBareAddress(re.getUser());
+
 			List<BuddyEntity> query_result = qb.where(
-					BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
-							.parseBareAddress(re.getUser()))).list();
+					Properties.Partial_jid.eq(partial_jid)).list();
+
 			BuddyEntity b;
 			if (query_result.isEmpty()) {
 				b = new BuddyEntity();
-				b.setVibrate(false);
-			} else {
+				b.setVibrate(false); // default value
+			} else /* if (query_result.size() >= 1) */{
+				if (query_result.size() > 1)
+					for (int i = 1; i < query_result.size(); ++i) {
+						daoSession.delete(query_result.get(i));
+					} // cleanup hack, since I don't know why buddies are
+						// entered again (n-times buddies in buddylist)
 				b = query_result.get(0);
 			}
 
-			String partial_jid = StringUtils.parseBareAddress(re.getUser()); // re.getUser returns the full jid
 			Presence p = roster.getPresence(partial_jid);
 			// TODO - determine whether roster.getPresence(... accepts partial
 			// jids or full jids (i.e. with our without resource)
@@ -311,7 +323,7 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-//		setOutgoingMessageListener(connection);
+		// setOutgoingMessageListener(connection);
 	}
 
 	@Deprecated
@@ -350,7 +362,7 @@ public class XMPPService extends Service {
 	}
 
 	private long storeSmackMessageReturnId(Message m) {
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
 		MessageEntity message = new MessageEntity();
 		message.setContent(m.getBody());
 		message.setReceived_date(new Date());
@@ -373,7 +385,7 @@ public class XMPPService extends Service {
 		String from = p.getFrom();
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
 
-		DaoSession daoSession = DatabaseUtils.getWriteableDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
 		List<BuddyEntity> query_result = qb.where(
@@ -501,7 +513,7 @@ public class XMPPService extends Service {
 	}
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(this);
 		List<ConnectionConfigurationEntity> all = daoSession
 				.getConnectionConfigurationEntityDao().loadAll();
 		DatabaseUtils.close();
@@ -511,8 +523,9 @@ public class XMPPService extends Service {
 	// TODO refactor this away to the the DatabaseUtil, this is the same as
 	// onListItemClick code in ConnectionListFragment
 	private ConnectionConfigurationEntity getConnectionConfiguration(long cc_id) {
-		DaoSession daoSession = DatabaseUtils.getReadOnlyDatabaseSession(this);
-		ConnectionConfigurationEntity cc = daoSession.load(ConnectionConfigurationEntity.class, cc_id);
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(this);
+		ConnectionConfigurationEntity cc = daoSession.load(
+				ConnectionConfigurationEntity.class, cc_id);
 		// TODO there's a lag before the database is written to, so the table
 		// appears to be empty right before it's read
 		DatabaseUtils.close();
@@ -524,7 +537,8 @@ public class XMPPService extends Service {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
 		if (intent.hasExtra(CRUDConnectionFragment.RESTART_CONNECTION)) {
-			// TODO refactor all static bundle keys to base class, in any case out of the fragment
+			// TODO refactor all static bundle keys to base class, in any case
+			// out of the fragment
 			long cc_id = intent.getExtras().getLong(
 					CRUDConnectionFragment.RESTART_CONNECTION);
 			connectToServer(getConnectionConfiguration(cc_id));

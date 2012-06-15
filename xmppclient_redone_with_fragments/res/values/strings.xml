@@ -37,6 +37,9 @@
     <string name="conn_non_available">No connections present</string>
     <string name="no_network">You have no network, at this moment.</string>
     
+    <!-- privacy related stuff -->
+    <string name="destroy_database">Destroy database</string>
+    
     <!-- Chat related stuff -->
     <string name="submit">Send</string>
     <string name="date_literal">date</string>

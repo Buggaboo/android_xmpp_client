@@ -69,7 +69,7 @@ public class BuddyListFragment extends ListFragment {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
 				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
-					BuddyEntity be = DatabaseUtils.getReadOnlyDatabaseSession(
+					BuddyEntity be = DatabaseUtils.getReadOnlySession(
 							context)
 							.load(BuddyEntity.class,
 									intent.getLongExtra(
@@ -147,7 +147,7 @@ public class BuddyListFragment extends ListFragment {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			long buddy_id = getListAdapter().getItemId(info.position);
 			DaoSession rdao = DatabaseUtils
-					.getReadOnlyDatabaseSession(getActivity());
+					.getReadOnlySession(getActivity());
 			final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
 			DatabaseUtils.close();
 
@@ -174,7 +174,7 @@ public class BuddyListFragment extends ListFragment {
 						public void onClick(DialogInterface dialog, int i) {
 							if (i == VIBRATE_OPTION) {
 								BuddyEntityDao wdao = DatabaseUtils
-										.getWriteableDatabaseSession(
+										.getWriteableSession(
 												getActivity())
 										.getBuddyEntityDao();
 								BuddyEntity _buddy = wdao.load(buddy.getId());
@@ -208,7 +208,7 @@ public class BuddyListFragment extends ListFragment {
 													DialogInterface dialog,
 													int button_id) {
 												BuddyEntityDao wdao = DatabaseUtils
-														.getWriteableDatabaseSession(
+														.getWriteableSession(
 																getActivity())
 														.getBuddyEntityDao();
 												BuddyEntity _buddy = wdao
@@ -268,7 +268,7 @@ public class BuddyListFragment extends ListFragment {
 		adapter = null;
 		registerForContextMenu(getListView());
 		DaoSession daoSession = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity()
+				.getReadOnlySession(getActivity()
 						.getApplicationContext());
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
