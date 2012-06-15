@@ -48,14 +48,14 @@ public class ConnectionListFragment extends ListFragment {
 		// getActivity().registerReceiver(receiver, filter)
 		// TODO implement green indicator the connection is online
 		// TODO implement register broadcastreceiver
-		setEmptyText(getActivity().getString(R.string.no_connection_item));		
+		setEmptyText(getActivity().getString(R.string.no_connection_item));
 		refreshList();
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
-		// TODO implement register broadcastreceiver 
+		// TODO implement register broadcastreceiver
 	}
 
 	private void refreshList() {
@@ -76,8 +76,7 @@ public class ConnectionListFragment extends ListFragment {
 
 	private List<ConnectionConfigurationEntity> getAllConnectionConfigurations() {
 		// TODO get connections from database, produce array list
-		DaoSession daoSession = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity());
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity());
 		ConnectionConfigurationEntityDao conn_conf_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
@@ -154,7 +153,7 @@ public class ConnectionListFragment extends ListFragment {
 	private void deleteConnection(final long cc_id) {
 		// makeToast("Deleting " + message);
 		DaoSession daoSession = DatabaseUtils
-				.getWriteableDatabaseSession(getActivity());
+				.getWriteableSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
 				.getConnectionConfigurationEntityDao();
 		ccdao.deleteByKey(cc_id);
@@ -165,7 +164,6 @@ public class ConnectionListFragment extends ListFragment {
 			final String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setMessage(getString(R.string.sure_remove_conn) + message)
-				.setCancelable(false)
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
@@ -183,9 +181,8 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void createCRUDConnectionDialog(final long cc_id) {
-		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity()).load(
-						ConnectionConfigurationEntity.class, cc_id);
+		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlySession(
+				getActivity()).load(ConnectionConfigurationEntity.class, cc_id);
 		final String message = cc.getLabel();
 
 		// TODO @ set presence with dialog per provider, no move that to the
