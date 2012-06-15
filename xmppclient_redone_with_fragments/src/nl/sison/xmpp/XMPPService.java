@@ -12,6 +12,7 @@ import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
+import nl.sison.xmpp.dao.MessageEntityDao;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -145,8 +146,7 @@ public class XMPPService extends Service {
 		private long storeMessageEntityReturnId(Context context,
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
-			DaoSession daoSession = DatabaseUtils
-					.getWriteableSession(context);
+			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
@@ -159,8 +159,7 @@ public class XMPPService extends Service {
 		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 			BuddyEntity buddy = daoSession.load(BuddyEntity.class, id);
 			DatabaseUtils.close();
 			return buddy;
@@ -202,8 +201,11 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+//		DatabaseUtils.createDatabase(this); // nullptr crashes
 		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
 			makeToast(getString(R.string.no_network));
+			// TODO implement service with sleep interval, kicks XMPPService
+			// awake there is a damn connection.
 			stopSelf();
 		}
 		makeConnectionsFromDatabase();
@@ -323,16 +325,24 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		// setOutgoingMessageListener(connection);
+		setOutgoingMessageListener(connection); //
 	}
 
-	@Deprecated
+	/**
+	 * Process special commands to the XMPPService
+	 * 
+	 * @param connection
+	 */
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
-				// storeMessage((Message) p);
-				// NOTE: this must be done in the broadcastreceiver, otherwise
-				// the ChatFragment's adapter can't be updated, via the intent
+				Message message = (Message) p;
+				String content = message.getBody();
+				if (content.equals("@@@destroy")) {
+					DatabaseUtils.destroyDatabase(XMPPService.this);
+					makeToast("Destroyed database.");
+					stopSelf();
+				}
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {

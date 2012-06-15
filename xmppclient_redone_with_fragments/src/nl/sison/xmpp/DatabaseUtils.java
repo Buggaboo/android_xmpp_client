@@ -2,9 +2,11 @@ package nl.sison.xmpp;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.DaoMaster;
 import nl.sison.xmpp.dao.DaoMaster.DevOpenHelper;
 import nl.sison.xmpp.dao.DaoSession;
+import nl.sison.xmpp.dao.MessageEntityDao;
 
 /**
  * 
@@ -30,10 +32,25 @@ public class DatabaseUtils {
 		DaoMaster daoMaster = new DaoMaster(db);
 		return daoMaster.newSession();
 	}
-	
-	static public void destroyDatabase(Context context)
-	{
-		DaoMaster.dropAllTables(helper.getWritableDatabase(), true);
+
+	static public void destroyDatabase(Context context) {
+		SQLiteDatabase session = helper.getWritableDatabase();
+		BuddyEntityDao.dropTable(session, true);
+		BuddyEntityDao.createTable(session, true);
+		MessageEntityDao.dropTable(session, true);
+		MessageEntityDao.createTable(session, true);
+		// retain the connections
+		close();
+	}
+
+	/**
+	 * TODO determine why this causes nullptr crashes
+	 * @param context
+	 */
+	static public void createDatabase(Context context) {
+		SQLiteDatabase session = helper.getWritableDatabase();
+		DaoMaster.createAllTables(session, true);
+		close();
 	}
 
 	static public void close() {
@@ -41,13 +58,15 @@ public class DatabaseUtils {
 			helper.close();
 		}
 	}
-	
+
 	/**
-	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static class TypeConversionUtils
+	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static
+	 * class TypeConversionUtils
+	 * 
 	 * @param l
 	 * @return
 	 */
 	public static int safeLongToInt(final long l) {
-	    return (int) Math.min(Integer.MAX_VALUE, l);
-	}	
+		return (int) Math.min(Integer.MAX_VALUE, l);
+	}
 }
