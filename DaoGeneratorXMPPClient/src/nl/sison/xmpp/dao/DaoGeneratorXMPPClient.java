@@ -25,7 +25,7 @@ public class DaoGeneratorXMPPClient {
 	}
 
 	private static Schema getSchema() {
-		Schema schema = new Schema(27, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(28, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
