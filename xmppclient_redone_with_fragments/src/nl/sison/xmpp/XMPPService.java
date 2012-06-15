@@ -12,6 +12,7 @@ import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
+import nl.sison.xmpp.dao.MessageEntityDao;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -323,16 +324,22 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		// setOutgoingMessageListener(connection);
+		setOutgoingMessageListener(connection); // 
 	}
 
-	@Deprecated
+	/**
+	 * Process special commands to the XMPPService
+	 * @param connection
+	 */
 	private void setOutgoingMessageListener(XMPPConnection connection) {
 		connection.addPacketInterceptor(new PacketInterceptor() {
 			public void interceptPacket(Packet p) {
-				// storeMessage((Message) p);
-				// NOTE: this must be done in the broadcastreceiver, otherwise
-				// the ChatFragment's adapter can't be updated, via the intent
+				Message message = (Message) p;
+				String content = message.getBody();
+				if (content == "@@@destroy")
+				{
+					DatabaseUtils.destroyDatabase(XMPPService.this);					
+				}
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
