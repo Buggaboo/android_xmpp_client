@@ -263,8 +263,8 @@ public class XMPPService extends Service {
 	 * @param cc_id
 	 */
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
-		BuddyEntityDao wdao = DatabaseUtils.getWriteableSession(this)
-				.getBuddyEntityDao();
+		DaoSession dao = DatabaseUtils.getWriteableSession(this);
+		BuddyEntityDao wdao = dao.getBuddyEntityDao();
 
 		Roster roster = connection.getRoster();
 
@@ -316,6 +316,9 @@ public class XMPPService extends Service {
 		b.setIsAway(p.isAway());
 		b.setPresence_status(p.getStatus());
 		b.setPresence_type(p.getType().toString());
+		if (p.isAvailable()) {
+			b.setLast_seen_online_date(new Date());
+		}
 	}
 
 	private void setBuddyBasic(BuddyEntity b, String partial_jid,
@@ -392,8 +395,9 @@ public class XMPPService extends Service {
 				.getBuddyEntityDao()
 				.queryBuilder()
 				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
-						.getFrom()))).list().get(0);
-
+						.getFrom()))).unique();
+		
+		buddy.setLast_chat_date(new Date());
 		message.setBuddyEntity(buddy);
 
 		return daoSession.getMessageEntityDao().insert(message);
