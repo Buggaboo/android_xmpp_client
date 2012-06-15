@@ -9,8 +9,8 @@ TODO 08-06-2012
     => not interested anymore.
 - use tabbed_single_fragment_layout.xml for tabs
 - Sounds for every intent more or less... make a service for that...
-- implement master password (salted)
-- implement client-side message encryption (investigate sql cipher)
+- implement master password (salted), encrypt with master password
+@ implement client-side message encryption (investigate sql cipher) -> it seems very complex to install
 
 ...
 
@@ -61,6 +61,7 @@ TODO 02-06-12
 
 ROADMAP (aka killer features I'd like to build)
 - swipe and tabs
+- usage tracking, okay it's gpl, but I want to know who's using it where
 - message encryption: per message (will not vibrate on encrypted messages), or per buddy
 - use image from contacts, match e-mail address, or manually match
 - read aloud messages (huge undertaking), leverage web 2.0
