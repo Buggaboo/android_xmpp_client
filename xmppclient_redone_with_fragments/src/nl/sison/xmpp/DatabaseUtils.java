@@ -32,11 +32,24 @@ public class DatabaseUtils {
 		DaoMaster daoMaster = new DaoMaster(db);
 		return daoMaster.newSession();
 	}
-	
-	static public void destroyDatabase(Context context)
-	{
-		BuddyEntityDao.dropTable(helper.getWritableDatabase(), true);
-		MessageEntityDao.dropTable(helper.getWritableDatabase(), true);
+
+	static public void destroyDatabase(Context context) {
+		SQLiteDatabase session = helper.getWritableDatabase();
+		BuddyEntityDao.dropTable(session, true);
+		BuddyEntityDao.createTable(session, true);
+		MessageEntityDao.dropTable(session, true);
+		MessageEntityDao.createTable(session, true);
+		// retain the connections
+		close();
+	}
+
+	/**
+	 * TODO determine why this causes nullptr crashes
+	 * @param context
+	 */
+	static public void createDatabase(Context context) {
+		SQLiteDatabase session = helper.getWritableDatabase();
+		DaoMaster.createAllTables(session, true);
 		close();
 	}
 
@@ -45,13 +58,15 @@ public class DatabaseUtils {
 			helper.close();
 		}
 	}
-	
+
 	/**
-	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static class TypeConversionUtils
+	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static
+	 * class TypeConversionUtils
+	 * 
 	 * @param l
 	 * @return
 	 */
 	public static int safeLongToInt(final long l) {
-	    return (int) Math.min(Integer.MAX_VALUE, l);
-	}	
+		return (int) Math.min(Integer.MAX_VALUE, l);
+	}
 }

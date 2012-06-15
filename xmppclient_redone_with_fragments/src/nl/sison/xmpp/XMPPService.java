@@ -146,8 +146,7 @@ public class XMPPService extends Service {
 		private long storeMessageEntityReturnId(Context context,
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
-			DaoSession daoSession = DatabaseUtils
-					.getWriteableSession(context);
+			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
@@ -160,8 +159,7 @@ public class XMPPService extends Service {
 		}
 
 		private BuddyEntity getBuddyEntityFromId(Context context, final long id) {
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 			BuddyEntity buddy = daoSession.load(BuddyEntity.class, id);
 			DatabaseUtils.close();
 			return buddy;
@@ -203,8 +201,11 @@ public class XMPPService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		DatabaseUtils.createDatabase(this); // nullptr crashes
 		if (ConnectionUtils.hasNoConnectivity(getApplication())) {
 			makeToast(getString(R.string.no_network));
+			// TODO implement service with sleep interval, kicks XMPPService
+			// awake there is a damn connection.
 			stopSelf();
 		}
 		makeConnectionsFromDatabase();
@@ -324,11 +325,12 @@ public class XMPPService extends Service {
 		setConnectionListeners(connection, cc_id);
 		setRosterListeners(connection, cc_id);
 		setIncomingMessageListener(connection);
-		setOutgoingMessageListener(connection); // 
+		setOutgoingMessageListener(connection); //
 	}
 
 	/**
 	 * Process special commands to the XMPPService
+	 * 
 	 * @param connection
 	 */
 	private void setOutgoingMessageListener(XMPPConnection connection) {
@@ -336,10 +338,12 @@ public class XMPPService extends Service {
 			public void interceptPacket(Packet p) {
 				Message message = (Message) p;
 				String content = message.getBody();
-				if (content == "@@@destroy")
-				{
-					DatabaseUtils.destroyDatabase(XMPPService.this);					
+				makeToast("enter");
+				if (content.equals("@@@destroy")) {
+					DatabaseUtils.destroyDatabase(XMPPService.this);
+					makeToast("Destroyed database.");
 				}
+				makeToast("exit");
 			}
 		}, new PacketFilter() {
 			public boolean accept(Packet p) {
