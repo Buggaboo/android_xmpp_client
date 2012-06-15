@@ -12,7 +12,6 @@ import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
-import nl.sison.xmpp.dao.MessageEntityDao;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -41,6 +40,8 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
+import de.greenrobot.dao.DaoException;
+import de.greenrobot.dao.Query;
 import de.greenrobot.dao.QueryBuilder;
 
 /**
@@ -264,32 +265,36 @@ public class XMPPService extends Service {
 	private void populateBuddyLists(XMPPConnection connection, final long cc_id) {
 		BuddyEntityDao wdao = DatabaseUtils.getWriteableSession(this)
 				.getBuddyEntityDao();
-		QueryBuilder<BuddyEntity> qb = wdao.queryBuilder();
+
 		Roster roster = connection.getRoster();
+
 		if (roster.getEntryCount() == 0) {
 			DatabaseUtils.close();
+			makeToast("No buddies are present in your roster");
+			// TODO - think up a new way of showing this case
 			return;
 		}
 
-		for (BuddyEntity buddy : wdao.loadAll()) {
-			if (buddy.getPartial_jid() != null)
-				makeToast("buddy partial jid: " + buddy.getPartial_jid());
-		}
-
 		for (RosterEntry re : roster.getEntries()) {
-			// RosterEntry.getUser returns the full jid
-			String partial_jid = StringUtils.parseBareAddress(re.getUser()).trim();
+			QueryBuilder<BuddyEntity> qb = wdao.queryBuilder();
+			String partial_jid = StringUtils.parseBareAddress(re.getUser());
 
-			List<BuddyEntity> query_result = qb.where(
-					Properties.Partial_jid.like(partial_jid)).list();
+			Query<BuddyEntity> query = qb.where(
+					Properties.Partial_jid.eq(partial_jid)).build();
+
+			BuddyEntity query_result = null;
+			try {
+				query_result = query.unique();
+			} catch (DaoException ex) {
+				ex.printStackTrace();
+			}
 
 			BuddyEntity b;
-			if (query_result.isEmpty()) {
-				makeToast("Query result isEmpty! WTF! " + partial_jid);
+			if (query_result == null) {
 				b = new BuddyEntity();
 				b.setVibrate(false); // default value
 			} else {
-				b = query_result.get(0);
+				b = query_result;
 			}
 
 			Presence p = roster.getPresence(partial_jid);
@@ -313,7 +318,7 @@ public class XMPPService extends Service {
 		b.setPresence_type(p.getType().toString());
 	}
 
-	private void setBuddyBasic(BuddyEntity b, final String partial_jid,
+	private void setBuddyBasic(BuddyEntity b, String partial_jid,
 			final long cc_id) {
 		b.setPartial_jid(partial_jid);
 		b.setConnectionId(cc_id);
@@ -343,7 +348,7 @@ public class XMPPService extends Service {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
 					stopSelf();
-				} else if (content.equals("@@@killservice")) {
+				} else if (content.equals("@@@kill service")) {
 					stopSelf();
 				}
 			}
