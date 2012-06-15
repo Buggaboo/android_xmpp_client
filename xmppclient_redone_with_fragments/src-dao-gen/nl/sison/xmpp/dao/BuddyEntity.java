@@ -26,10 +26,10 @@ public class BuddyEntity {
     private long connectionId;
 
     /** Used to resolve relations */
-    private DaoSession daoSession;
+    private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    private BuddyEntityDao myDao;
+    private transient BuddyEntityDao myDao;
 
     private ConnectionConfigurationEntity connectionConfigurationEntity;
     private Long connectionConfigurationEntity__resolvedKey;
