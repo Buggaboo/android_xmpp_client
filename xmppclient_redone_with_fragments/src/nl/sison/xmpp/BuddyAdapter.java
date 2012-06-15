@@ -46,16 +46,22 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		TextView buddy_nickname_view = (TextView) parent
 				.findViewById(R.id.buddy_item_nickname);
 		
-		buddy_jid_view.setText(buddy.getPartial_jid() + "c TODO remove");
+		buddy_jid_view.setText(buddy.getPartial_jid());
 		
 		if (buddy.getNickname() == null || buddy.getNickname().isEmpty()) {
-			buddy_nickname_view.setText(buddy.getPartial_jid() + "a TODO remove");
+			buddy_nickname_view.setText(buddy.getPartial_jid());
 		} else {
-			buddy_nickname_view.setText(buddy.getNickname() + "b TODO remove");
+			buddy_nickname_view.setText(buddy.getNickname());
 		}
 
 	}
 
+	/**
+	 * TODO - also set away message
+	 * 
+	 * @param parent
+	 * @param buddy
+	 */
 	private void setPresenceView(ViewGroup parent, BuddyEntity buddy) {
 		TextView buddy_presence_view = (TextView) parent
 				.findViewById(R.id.buddy_presence);
