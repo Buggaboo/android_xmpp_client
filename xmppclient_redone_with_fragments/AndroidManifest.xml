@@ -31,20 +31,24 @@
             android:icon="@drawable/ic_launcher" >
         </service>
         <!-- TODO replace .SinglePanelActivity with other activity that checks the orientation & screen estate -->
-        <activity
-            android:name=".SinglePanelActivity"
-            android:label="@string/app_name" >
+        <activity android:name=".SinglePanelActivity" >
         </activity>
         <activity
             android:name=".XMPPMainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
         </activity>
+        <receiver
+            android:name=".StartXMPPServiceReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
