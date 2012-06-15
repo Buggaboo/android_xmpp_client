@@ -271,7 +271,7 @@ public class ChatFragment extends Fragment {
 				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
-
+/*
 	@Override
 	public void onDestroy() {
 		FragmentLoader fl = (FragmentLoader) getActivity();
@@ -285,4 +285,6 @@ public class ChatFragment extends Fragment {
 		}
 		super.onDestroy();
 	}
+//	Bad design!
+*/
 }

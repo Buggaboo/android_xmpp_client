@@ -298,7 +298,7 @@ public class BuddyListFragment extends ListFragment {
 				message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
-	
+/*	
 	@Override
 	public void onDestroy() {
 		FragmentLoader fl = (FragmentLoader) getActivity();
@@ -308,4 +308,6 @@ public class BuddyListFragment extends ListFragment {
 		}
 		super.onDestroy();
 	}
+//	Bad design!
+*/	
 }
