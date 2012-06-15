@@ -277,7 +277,8 @@ public class XMPPService extends Service {
 
 		for (RosterEntry re : roster.getEntries()) {
 			QueryBuilder<BuddyEntity> qb = wdao.queryBuilder();
-			String partial_jid = StringUtils.parseBareAddress(re.getUser());
+			String full_jid = re.getUser();
+			String partial_jid = StringUtils.parseBareAddress(full_jid);
 
 			Query<BuddyEntity> query = qb.where(
 					Properties.Partial_jid.eq(partial_jid)).build();
@@ -301,7 +302,8 @@ public class XMPPService extends Service {
 
 			setBuddyBasic(b, partial_jid, cc_id);
 			if (p != null) {
-				setBuddyPresence(b, p);
+				String resource = StringUtils.parseResource(full_jid);
+				setBuddyPresence(b, p, resource);
 			}
 
 			wdao.insertOrReplace(b);
@@ -311,7 +313,7 @@ public class XMPPService extends Service {
 		DatabaseUtils.close();
 	}
 
-	private void setBuddyPresence(BuddyEntity b, Presence p) {
+	private void setBuddyPresence(BuddyEntity b, Presence p, String resource) {
 		b.setIsAvailable(p.isAvailable());
 		b.setIsAway(p.isAway());
 		b.setPresence_status(p.getStatus());
@@ -319,6 +321,7 @@ public class XMPPService extends Service {
 		if (p.isAvailable()) {
 			b.setLast_seen_online_date(new Date());
 		}
+		b.setLast_seen_resource(resource);
 	}
 
 	private void setBuddyBasic(BuddyEntity b, String partial_jid,
@@ -396,7 +399,7 @@ public class XMPPService extends Service {
 				.queryBuilder()
 				.where(Properties.Partial_jid.eq(StringUtils.parseBareAddress(m
 						.getFrom()))).unique();
-		
+
 		buddy.setLast_chat_date(new Date());
 		message.setBuddyEntity(buddy);
 
@@ -405,30 +408,27 @@ public class XMPPService extends Service {
 
 	private void broadcastPresenceUpdate(Presence p, long cc_id) {
 		String from = p.getFrom();
+		String partial_jid = StringUtils.parseBareAddress(from);
 		Intent intent = new Intent(ACTION_BUDDY_PRESENCE_UPDATE);
 
 		DaoSession daoSession = DatabaseUtils.getWriteableSession(this);
 		QueryBuilder<BuddyEntity> qb = daoSession.getBuddyEntityDao()
 				.queryBuilder();
-		List<BuddyEntity> query_result = qb.where(
-				BuddyEntityDao.Properties.Partial_jid.eq(StringUtils
-						.parseBareAddress(p.getFrom()))).list();
+		BuddyEntity query_result = qb.where(
+				BuddyEntityDao.Properties.Partial_jid.eq(partial_jid)).unique();
 
 		// create entity if it doesn't exist yet
 		// otherwise the broadcast will be pointless
 		BuddyEntity b;
-		if (query_result.isEmpty()) {
+		if (query_result == null) {
 			b = new BuddyEntity();
-			setBuddyBasic(b, StringUtils.parseBareAddress(from), cc_id);
-			setBuddyPresence(b, p);
+			setBuddyBasic(b, partial_jid, cc_id);
 		} else {
-			b = query_result.get(0);
+			b = query_result;
 		}
-		b.setLast_seen_resource(StringUtils.parseResource(from));
 
-		if (p.isAvailable()) {
-			b.setLast_seen_online_date(new Date());
-		}
+		String resource = StringUtils.parseResource(from);
+		setBuddyPresence(b, p, resource);
 
 		intent.putExtra(KEY_BUDDY_INDEX, daoSession.insertOrReplace(b));
 		sendBroadcast(intent);
