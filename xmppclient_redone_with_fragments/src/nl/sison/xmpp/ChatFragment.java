@@ -88,8 +88,7 @@ public class ChatFragment extends Fragment {
 				message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
 			}
 
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
@@ -211,7 +210,7 @@ public class ChatFragment extends Fragment {
 		getActivity().unregisterReceiver(receiver);
 		releaseBuddyForNotification();
 	}
-	
+
 	private void releaseBuddyForNotification() {
 		DaoSession dao = DatabaseUtils.getWriteableSession(getActivity());
 		BuddyEntity b = dao.load(BuddyEntity.class, buddy_id);
@@ -221,8 +220,8 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void preventNotificationOfActiveBuddy() {
-		BuddyEntityDao dao = DatabaseUtils.getWriteableSession(
-				getActivity()).getBuddyEntityDao();
+		BuddyEntityDao dao = DatabaseUtils.getWriteableSession(getActivity())
+				.getBuddyEntityDao();
 		List<BuddyEntity> deactivated_buddies = dao.loadAll();
 		for (BuddyEntity buddy : deactivated_buddies) {
 			buddy.setIsActive(false);
@@ -244,9 +243,8 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		DaoSession daoSession = DatabaseUtils
-				.getReadOnlySession(getActivity()
-						.getApplicationContext());
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity()
+				.getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
@@ -272,5 +270,19 @@ public class ChatFragment extends Fragment {
 		Toast toast = Toast
 				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
+	}
+
+	@Override
+	public void onDestroy() {
+		FragmentLoader fl = (FragmentLoader) getActivity();
+		if (fl.lastFragment()) {
+			BuddyEntity buddy = DatabaseUtils.getReadOnlySession(getActivity()).getBuddyEntityDao().load(buddy_id);
+			long cc_id = buddy.getConnectionId();
+			DatabaseUtils.close();
+			Intent intent = new Intent(getActivity(), BuddyListFragment.class);
+			intent.putExtra(ConnectionListFragment.KEY_CONNECTION_INDEX, cc_id);
+			fl.loadFragment(intent);
+		}
+		super.onDestroy();
 	}
 }

@@ -12,16 +12,23 @@ public interface FragmentLoader {
 	 * @param intent
 	 * @throws NullPointerException
 	 */
-	public void loadFragment(Intent intent) throws NullPointerException;
-	
+	public void loadFragment(Intent intent);
+
 	/**
 	 * 
-	 * Depending on layout type (e.g. single, double, triple) panels
-	 * The swipe goes to the previous state?
+	 * Depending on layout type (e.g. single, double, triple) panels The swipe
+	 * goes to the previous state?
 	 * 
 	 * @param intent
 	 * @throws NullPointerException
 	 */
-	public void swipeToFragment(Intent intent) throws NullPointerException;
+	public void swipeToFragment(Intent intent);
 
+	/**
+	 * A fragment uses this to check if a fragment is the last fragment on the
+	 * stack
+	 * 
+	 * @return
+	 */
+	public boolean lastFragment();
 }

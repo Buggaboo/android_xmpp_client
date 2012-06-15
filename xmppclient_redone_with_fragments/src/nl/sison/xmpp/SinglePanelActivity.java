@@ -34,30 +34,32 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 		setContentView(R.layout.tabbed_single_fragment_layout);
 
 		Intent intent = getIntent();
-		
-		
+
 		// launched by NotificationService
-		Fragment fragment;
-		if (intent != null
-				&& intent.hasExtra(XMPPNotificationService.KEY_BUDDY_INDEX)) {
-			fragment = new ChatFragment();
+		Intent fragmentIntent;
+		String key_buddy_index = XMPPNotificationService.KEY_BUDDY_INDEX;
+		if (intent != null && intent.hasExtra(key_buddy_index)) {
+			String key_own_jid = XMPPNotificationService.JID;
+			fragmentIntent = new Intent(this, ChatFragment.class);
+			fragmentIntent.putExtra(key_buddy_index,
+					intent.getLongExtra(key_buddy_index, 0));
+			fragmentIntent.putExtra(key_own_jid,
+					intent.getStringExtra(key_own_jid));
 		} else {
-			fragment = new ConnectionListFragment();
+			fragmentIntent = new Intent(this, ConnectionListFragment.class);
 		}
-		fragment.setArguments(getIntent().getExtras());
-		getFragmentManager().beginTransaction()
-				.add(R.id.single_panel_1, fragment).commit();
+		loadFragment(fragmentIntent);
 	}
 
 	/**
 	 * 
-	 * After clicking a damn on an ListItem. Load a new fragment and put
+	 * After clicking on an ListItem. Load a new fragment and put
 	 * previous fragment on the backstack
 	 * 
 	 * @param intent
 	 */
 	@Override
-	public void loadFragment(Intent intent) throws NullPointerException {
+	public void loadFragment(Intent intent) {
 		String className;
 		className = intent.getComponent().getClassName();
 		Fragment fragment;
@@ -105,8 +107,13 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 	}
 
 	@Override
-	public void swipeToFragment(Intent intent) throws NullPointerException {
+	public void swipeToFragment(Intent intent) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean lastFragment() {
+		return getFragmentManager().getBackStackEntryCount() == 1;
 	}
 }
