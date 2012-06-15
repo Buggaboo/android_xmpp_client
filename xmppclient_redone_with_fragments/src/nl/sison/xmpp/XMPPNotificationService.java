@@ -93,7 +93,7 @@ public class XMPPNotificationService extends Service {
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
-					intent, BIND_AUTO_CREATE);
+					intent, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 			StringBuilder str_builder = new StringBuilder();
 			String notify_ticker = str_builder
