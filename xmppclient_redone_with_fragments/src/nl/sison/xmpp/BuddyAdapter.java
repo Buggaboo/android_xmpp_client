@@ -19,7 +19,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		this.setNotifyOnChange(true);
 		this.addAll(buddies);
 	}
-	
+
 	@Override
 	public long getItemId(int position) {
 		return super.getItem(position).getId();
@@ -27,7 +27,8 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(
-				getContext()).inflate(R.layout.buddy_item_layout, parent, false);
+				getContext())
+				.inflate(R.layout.buddy_item_layout, parent, false);
 
 		BuddyEntity buddy = getItem(position);
 
@@ -36,21 +37,31 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
 		return itemLayout;
 	}
-	
+
 	private void setBuddyIdentifierText(ViewGroup parent, BuddyEntity buddy) {
 		TextView buddy_jid_view = (TextView) parent
 				.findViewById(R.id.buddy_item_jid);
 		TextView buddy_nickname_view = (TextView) parent
 				.findViewById(R.id.buddy_item_nickname);
-		
+		TextView buddy_last_chat_view = (TextView) parent
+				.findViewById(R.id.buddy_item_last_chat);
+		TextView buddy_last_seen_view = (TextView) parent
+				.findViewById(R.id.buddy_item_last_chat);
+
 		buddy_jid_view.setText(buddy.getPartial_jid());
-		
+
 		if (buddy.getNickname() == null || buddy.getNickname().isEmpty()) {
 			buddy_nickname_view.setText(buddy.getPartial_jid());
 		} else {
 			buddy_nickname_view.setText(buddy.getNickname());
 		}
 
+		Context c = getContext();
+		buddy_last_chat_view.setText(c.getString(R.string.last_chat) + " "
+				+ buddy.getLast_chat_date());
+		buddy_last_seen_view.setText(c.getString(R.string.last_seen) + " "
+				+ buddy.getLast_seen_online_date() + " ("
+				+ buddy.getLast_seen_resource() + ")");
 	}
 
 	/**
@@ -64,7 +75,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 				.findViewById(R.id.buddy_presence);
 		if (buddy.getIsAvailable()) {
 			buddy_presence_view.setBackgroundColor(Color.GREEN);
-		}else if (buddy.getIsAway()) {
+		} else if (buddy.getIsAway()) {
 			buddy_presence_view.setBackgroundColor(Color.MAGENTA);
 		} else {
 			buddy_presence_view.setBackgroundColor(Color.RED);

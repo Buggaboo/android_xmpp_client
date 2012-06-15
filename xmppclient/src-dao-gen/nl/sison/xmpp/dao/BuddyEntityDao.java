@@ -21,6 +21,10 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
 
     public static final String TABLENAME = "BUDDY_ENTITY";
 
+    /**
+     * Properties of entity BuddyEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Partial_jid = new Property(1, String.class, "partial_jid", false, "PARTIAL_JID");
@@ -52,7 +56,8 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'BUDDY_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'BUDDY_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'PARTIAL_JID' TEXT NOT NULL ," + // 1: partial_jid
                 "'LAST_SEEN_RESOURCE' TEXT," + // 2: last_seen_resource
@@ -66,8 +71,7 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
                 "'IS_AVAILABLE' INTEGER," + // 10: isAvailable
                 "'IS_AWAY' INTEGER," + // 11: isAway
                 "'IS_ACTIVE' INTEGER," + // 12: isActive
-                "'CONNECTION_ID' INTEGER NOT NULL );"; // 13: connectionId
-        db.execSQL(sql);
+                "'CONNECTION_ID' INTEGER NOT NULL );"); // 13: connectionId
     }
 
     /** Drops the underlying database table. */
@@ -197,6 +201,7 @@ public class BuddyEntityDao extends AbstractDao<BuddyEntity, Long> {
         entity.setConnectionId(cursor.getLong(offset + 13));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(BuddyEntity entity, long rowId) {
         entity.setId(rowId);

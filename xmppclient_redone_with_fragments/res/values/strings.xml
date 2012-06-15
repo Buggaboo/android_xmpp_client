@@ -44,6 +44,8 @@
     <string name="submit">Send</string>
     <string name="date_literal">date</string>
     <string name="text_literal">text</string>
+    <string name="last_chat">Last chat </string>
+    <string name="last_seen">Last seen available </string>
     
     <!-- Notification related stuff -->
     <string name="says"> says </string>

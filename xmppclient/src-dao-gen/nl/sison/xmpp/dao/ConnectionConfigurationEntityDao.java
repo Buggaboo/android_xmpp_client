@@ -18,6 +18,10 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
 
     public static final String TABLENAME = "CONNECTION_CONFIGURATION_ENTITY";
 
+    /**
+     * Properties of entity ConnectionConfigurationEntity.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Label = new Property(1, String.class, "label", false, "LABEL");
@@ -44,7 +48,8 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
 
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String sql = "CREATE TABLE " + (ifNotExists? "IF NOT EXISTS ": "") + "'CONNECTION_CONFIGURATION_ENTITY' (" + //
+        String constraint = ifNotExists? "IF NOT EXISTS ": "";
+        db.execSQL("CREATE TABLE " + constraint + "'CONNECTION_CONFIGURATION_ENTITY' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'LABEL' TEXT NOT NULL UNIQUE ," + // 1: label
                 "'PORT' TEXT NOT NULL ," + // 2: port
@@ -56,8 +61,7 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
                 "'ENCRYPTED' INTEGER NOT NULL ," + // 8: encrypted
                 "'COMPRESSED' INTEGER NOT NULL ," + // 9: compressed
                 "'SASLAUTHENTICATED' INTEGER NOT NULL ," + // 10: saslauthenticated
-                "'CONNECTION_SUCCESS' INTEGER NOT NULL );"; // 11: connection_success
-        db.execSQL(sql);
+                "'CONNECTION_SUCCESS' INTEGER NOT NULL );"); // 11: connection_success
     }
 
     /** Drops the underlying database table. */
@@ -135,6 +139,7 @@ public class ConnectionConfigurationEntityDao extends AbstractDao<ConnectionConf
         entity.setConnection_success(cursor.getInt(offset + 11));
      }
     
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ConnectionConfigurationEntity entity, long rowId) {
         entity.setId(rowId);
