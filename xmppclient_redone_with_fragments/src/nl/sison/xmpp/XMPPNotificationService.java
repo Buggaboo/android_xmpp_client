@@ -60,7 +60,7 @@ public class XMPPNotificationService extends Service {
 
 		private void createAndShowNotification(Context context, long message_id) {
 			DaoSession daoSession = DatabaseUtils
-					.getReadOnlyDatabaseSession(context);
+					.getReadOnlySession(context);
 			MessageEntity msg = daoSession
 					.load(MessageEntity.class, message_id);
 
@@ -144,7 +144,7 @@ public class XMPPNotificationService extends Service {
 			long buddy_id = intent
 					.getLongExtra(ChatFragment.KEY_BUDDY_INDEX, 0);
 			DaoSession daoSession = DatabaseUtils
-					.getReadOnlyDatabaseSession(context);
+					.getReadOnlySession(context);
 
 			QueryBuilder<MessageEntity> qb = daoSession
 					.queryBuilder(MessageEntity.class);

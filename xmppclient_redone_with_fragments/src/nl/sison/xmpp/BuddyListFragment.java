@@ -71,8 +71,7 @@ public class BuddyListFragment extends ListFragment {
 			if (intent.getAction().equals(
 					XMPPService.ACTION_BUDDY_PRESENCE_UPDATE)) {
 				if (intent.hasExtra(XMPPService.KEY_BUDDY_INDEX)) {
-					BuddyEntity be = DatabaseUtils.getReadOnlyDatabaseSession(
-							context)
+					BuddyEntity be = DatabaseUtils.getReadOnlySession(context)
 							.load(BuddyEntity.class,
 									intent.getLongExtra(
 											XMPPService.KEY_BUDDY_INDEX, 0));
@@ -148,8 +147,7 @@ public class BuddyListFragment extends ListFragment {
 		try {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			long buddy_id = getListAdapter().getItemId(info.position);
-			DaoSession rdao = DatabaseUtils
-					.getReadOnlyDatabaseSession(getActivity());
+			DaoSession rdao = DatabaseUtils.getReadOnlySession(getActivity());
 			final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
 			DatabaseUtils.close();
 
@@ -159,6 +157,12 @@ public class BuddyListFragment extends ListFragment {
 
 			final int NICKNAME_OPTION = 0;
 			final int VIBRATE_OPTION = 1;
+			final int SET_MASTER_PASSWORD_OPTION = 2;
+			final int ENCRYPT_MESSAGES_BY_BUDDY = 3;
+			// TODO use the master password to encrypt the messages by a
+			// buddy, but store the password in a salted hashed form on the
+			// device
+
 			buddy_setup_action[NICKNAME_OPTION] = getActivity().getString(
 					R.string.change_nickname);
 			if (buddy.getVibrate()) {
@@ -176,8 +180,7 @@ public class BuddyListFragment extends ListFragment {
 						public void onClick(DialogInterface dialog, int i) {
 							if (i == VIBRATE_OPTION) {
 								BuddyEntityDao wdao = DatabaseUtils
-										.getWriteableDatabaseSession(
-												getActivity())
+										.getWriteableSession(getActivity())
 										.getBuddyEntityDao();
 								BuddyEntity _buddy = wdao.load(buddy.getId());
 								_buddy.setVibrate(!buddy.getVibrate());
@@ -210,7 +213,7 @@ public class BuddyListFragment extends ListFragment {
 													DialogInterface dialog,
 													int button_id) {
 												BuddyEntityDao wdao = DatabaseUtils
-														.getWriteableDatabaseSession(
+														.getWriteableSession(
 																getActivity())
 														.getBuddyEntityDao();
 												BuddyEntity _buddy = wdao
@@ -269,9 +272,8 @@ public class BuddyListFragment extends ListFragment {
 		// whole adapter, if this turns out to be a memory hog
 		adapter = null;
 		registerForContextMenu(getListView());
-		DaoSession daoSession = DatabaseUtils
-				.getReadOnlyDatabaseSession(getActivity()
-						.getApplicationContext());
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity()
+				.getApplicationContext());
 		List<BuddyEntity> buddies = daoSession.getBuddyEntityDao()
 				.queryBuilder().where(Properties.ConnectionId.eq(cc_id)).list();
 
