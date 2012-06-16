@@ -36,8 +36,8 @@ public class XMPPNotificationService extends Service {
 
 	private Random random;
 
-	public static final String KEY_BUDDY_INDEX = "438unkn,.rc";
-	public static final String THREAD = "e(*&";
+	public static final String KEY_BUDDY_INDEX = "438,.rc";
+	public static final String THREAD = "e(abcdefghi*&";
 	public static final String JID = "@$(&";
 
 	class ServiceReceiver extends BroadcastReceiver {
@@ -84,32 +84,31 @@ public class XMPPNotificationService extends Service {
 
 			Intent intent = new Intent(XMPPNotificationService.this,
 					XMPPFragmentActivity.class);
-			
+
 			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 
-			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
-					intent, 0);
-			// do not set flags in the PendingIntent, set it in the payload Intent
+			PendingIntent pendintIntent = PendingIntent.getActivity(context, 0,
+					intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			// do not set flags in the PendingIntent, set it in the payload
+			// Intent
 
 			StringBuilder str_builder = new StringBuilder();
 			String notify_ticker = str_builder
 					.append(getNicknameIfAvailable(buddy)).append(" ")
 					.append(getString(R.string.says)).append(" \"")
 					.append(msg.getContent()).append("\"").toString();
-			// TODO truncate if longer than ...
-
-			getNicknameIfAvailable(buddy);
+			// TODO truncate message if longer than ...
 
 			// TODO change the -ing icon
 			Notification.Builder builder = new Notification.Builder(context)
 					.setSmallIcon(R.drawable.ic_launcher).setAutoCancel(true)
 					.setTicker(notify_ticker).setContentText(msg.getContent())
 					.setContentTitle(getNicknameIfAvailable(buddy))
-					.setContentIntent(p_intent).setWhen(new Date().getTime());
+					.setContentIntent(pendintIntent).setWhen(new Date().getTime());
 			// TODO truncate msg.getContent if longer than...
 
 			Notification notification = builder.getNotification();
@@ -159,6 +158,9 @@ public class XMPPNotificationService extends Service {
 					.queryBuilder(MessageEntity.class);
 			qb.where(Properties.BuddyId.eq(buddy_id))
 					.orderDesc(Properties.Received_date).limit(10);
+			// remove the last 10 messages
+			// TODO - find a way to get the intersection of notification ids and
+			// the message ids by a buddy
 
 			List<MessageEntity> messages = qb.list();
 

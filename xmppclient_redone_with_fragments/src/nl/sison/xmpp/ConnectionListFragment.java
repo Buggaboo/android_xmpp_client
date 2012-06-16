@@ -35,12 +35,7 @@ public class ConnectionListFragment extends ListFragment {
 	public final static int RQ_MODIFY_CONN = 1;
 	public final static int RQ_DELETE_CONN = 2;
 
-	public final static String KEY_CONNECTION_INDEX = "H#@$$**&*UAONETUH";
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+	public final static String KEY_CONNECTION_INDEX = "@#@@$$H#@$$**&*UAON";
 
 	@Override
 	public void onResume() {
@@ -82,16 +77,6 @@ public class ConnectionListFragment extends ListFragment {
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
 		DatabaseUtils.close();
 		return all_conns;
-	}
-
-	@Deprecated
-	private void makeToast(String message) {
-		if (!BuildConfig.DEBUG)
-			return;
-		Log.i(TAG, message);
-		Toast toast = Toast
-				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
-		toast.show();
 	}
 
 	@Override
@@ -149,7 +134,6 @@ public class ConnectionListFragment extends ListFragment {
 	}
 
 	private void deleteConnection(final long cc_id) {
-		// makeToast("Deleting " + message);
 		DaoSession daoSession = DatabaseUtils
 				.getWriteableSession(getActivity());
 		ConnectionConfigurationEntityDao ccdao = daoSession
@@ -165,7 +149,6 @@ public class ConnectionListFragment extends ListFragment {
 				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								// makeToast("yes, delete connection");
 								deleteConnection(cc_id);
 								refreshList();
 							}
@@ -191,7 +174,6 @@ public class ConnectionListFragment extends ListFragment {
 				.setPositiveButton(R.string.create_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								// makeToast("create connection");
 								createNewConnection();
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -200,7 +182,6 @@ public class ConnectionListFragment extends ListFragment {
 				.setNegativeButton(R.string.remove_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								// makeToast("delete connection");
 								createDialogDeleteConnection(cc_id, message);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
@@ -210,12 +191,21 @@ public class ConnectionListFragment extends ListFragment {
 				.setNeutralButton(R.string.modify_connection,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								// makeToast("update connection");
 								modifyConnection(cc_id);
 								// TODO - send Intent to service for reconnect,
 								// (easiest way: restart service)
 							}
 						});
 		crudConnectionDialog = builder.create();
+	}
+	
+	@Deprecated
+	private void makeToast(String message) {
+		if (!BuildConfig.DEBUG)
+			return;
+		Log.i(TAG, message);
+		Toast toast = Toast
+				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 }
