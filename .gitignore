@@ -1,6 +1,5 @@
 update-github.sh
 *.class
-*.apk
 *.ap_
 *.dex
 */bin/*
