@@ -88,8 +88,7 @@ public class ChatFragment extends Fragment {
 				message_id = bundle.getLong(XMPPService.KEY_MESSAGE_INDEX);
 			}
 
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
@@ -211,7 +210,7 @@ public class ChatFragment extends Fragment {
 		getActivity().unregisterReceiver(receiver);
 		releaseBuddyForNotification();
 	}
-	
+
 	private void releaseBuddyForNotification() {
 		DaoSession dao = DatabaseUtils.getWriteableSession(getActivity());
 		BuddyEntity b = dao.load(BuddyEntity.class, buddy_id);
@@ -221,8 +220,8 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void preventNotificationOfActiveBuddy() {
-		BuddyEntityDao dao = DatabaseUtils.getWriteableSession(
-				getActivity()).getBuddyEntityDao();
+		BuddyEntityDao dao = DatabaseUtils.getWriteableSession(getActivity())
+				.getBuddyEntityDao();
 		List<BuddyEntity> deactivated_buddies = dao.loadAll();
 		for (BuddyEntity buddy : deactivated_buddies) {
 			buddy.setIsActive(false);
@@ -244,9 +243,8 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void setupListView() { // TODO broken! fix it!
-		DaoSession daoSession = DatabaseUtils
-				.getReadOnlySession(getActivity()
-						.getApplicationContext());
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity()
+				.getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();

@@ -87,9 +87,7 @@ public class ConnectionListFragment extends ListFragment {
 		super.onListItemClick(l, v, position, cc_id);
 		Intent intent = new Intent(getActivity(), BuddyListFragment.class);
 		intent.putExtra(KEY_CONNECTION_INDEX, cc_id);
-		// startActivity(intent); // deprecated
-		((SinglePanelActivity) getActivity()).loadFragment(intent);
-		// TODO depending on the layout, load the fragment
+		((FragmentLoader) getActivity()).loadFragment(intent);
 	}
 
 	@Override

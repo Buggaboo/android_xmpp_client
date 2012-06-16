@@ -58,15 +58,4 @@ public class DatabaseUtils {
 			helper.close();
 		}
 	}
-
-	/**
-	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static
-	 * class TypeConversionUtils
-	 * 
-	 * @param l
-	 * @return
-	 */
-	public static int safeLongToInt(final long l) {
-		return (int) Math.min(Integer.MAX_VALUE, l);
-	}
 }
