@@ -75,6 +75,7 @@ public class XMPPFragmentActivity extends FragmentActivity implements FragmentLo
 			DaoSession session = DatabaseUtils.getReadOnlySession(this);
 			BuddyEntity buddy = session.getBuddyEntityDao().load(
 					intent.getLongExtra(key_buddy_index, 0));
+			DatabaseUtils.close();
 			Intent fragmentIntent = new Intent(this, BuddyListFragment.class);
 			fragmentIntent.putExtra(
 					ConnectionListFragment.KEY_CONNECTION_INDEX,
