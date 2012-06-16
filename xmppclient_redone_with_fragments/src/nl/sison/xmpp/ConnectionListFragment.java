@@ -38,11 +38,6 @@ public class ConnectionListFragment extends ListFragment {
 	public final static String KEY_CONNECTION_INDEX = "H#@$$**&*UAONETUH";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		// getActivity().registerReceiver(receiver, filter)
@@ -82,16 +77,6 @@ public class ConnectionListFragment extends ListFragment {
 		List<ConnectionConfigurationEntity> all_conns = conn_conf_dao.loadAll();
 		DatabaseUtils.close();
 		return all_conns;
-	}
-
-	@Deprecated
-	private void makeToast(String message) {
-		if (!BuildConfig.DEBUG)
-			return;
-		Log.i(TAG, message);
-		Toast toast = Toast
-				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
-		toast.show();
 	}
 
 	@Override
@@ -217,5 +202,15 @@ public class ConnectionListFragment extends ListFragment {
 							}
 						});
 		crudConnectionDialog = builder.create();
+	}
+	
+	@Deprecated
+	private void makeToast(String message) {
+		if (!BuildConfig.DEBUG)
+			return;
+		Log.i(TAG, message);
+		Toast toast = Toast
+				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 }
