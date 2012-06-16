@@ -91,7 +91,6 @@ public class XMPPFragmentActivity extends FragmentActivity implements FragmentLo
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-//		makeToast("onNewIntent");
 		loadChatIfCorrectIntent(intent);
 	}
 
