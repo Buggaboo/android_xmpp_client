@@ -79,7 +79,9 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 		text_date.setTextColor(Color.WHITE);
 		text_message.setTextColor(Color.WHITE);
 
-		if (own_jid.equals(StringUtils.parseBareAddress(msg.getSender_jid()))) {
+		String sender_partial_jid = StringUtils.parseBareAddress(msg
+				.getSender_jid());
+		if (own_jid.equals(sender_partial_jid)) {
 			text_date.setBackgroundColor(Color.GRAY);
 			text_message.setBackgroundColor(Color.GRAY);
 		} else {

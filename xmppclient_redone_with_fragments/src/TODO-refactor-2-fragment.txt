@@ -1,4 +1,6 @@
 TODO 08-06-2012
+- fix fragment based notification
+- if chat is the last fragment, hijack back button to load buddylist then hijack back button again (same condition) to load connections 
 - implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
 	+ fix by adding empty_list_item (Fragment.setEmptyText) (I shouldn't have added it to onResume... fuck it... it breaks if I put it before onCreateView)
@@ -61,7 +63,7 @@ TODO 02-06-12
 
 ROADMAP (aka killer features I'd like to build)
 - swipe and tabs
-- from notification, sendBroadcast, to start a fragment on an existing Activity
+- from notification, sendBroadcast, to start a fragment on an existing Activity -> unresolved, because we're dealing with fragments.
 - usage tracking, okay it's gpl, but I want to know who's using it where
 - message encryption: per message (will not vibrate on encrypted messages), or per buddy
 - use image from contacts, match e-mail address, or manually match
