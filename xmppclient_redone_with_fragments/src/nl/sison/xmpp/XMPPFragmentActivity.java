@@ -80,7 +80,6 @@ public class XMPPFragmentActivity extends Activity implements FragmentLoader {
 			fragmentIntent.putExtra(
 					ConnectionListFragment.KEY_CONNECTION_INDEX,
 					buddy.getConnectionId());
-			makeToast("connection id: " + buddy.getConnectionId());
 			loadFragment(fragmentIntent);
 		}
 	}
@@ -92,11 +91,12 @@ public class XMPPFragmentActivity extends Activity implements FragmentLoader {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		makeToast("onNewIntent");
 		// TODO - determine if issue is relevant:
 		// http://code.google.com/p/android/issues/detail?id=17137
 		loadChatIfCorrectIntent(intent);
-		intent = null;
+		// setIntent(intent); // TODO + setting the intent, due to leftovers
+		// that
+		// might hardcode the buddy id to 1 -> no it does nothing to help
 	}
 
 	private void loadChatIfCorrectIntent(Intent intent) {
@@ -109,8 +109,6 @@ public class XMPPFragmentActivity extends Activity implements FragmentLoader {
 					intent.getLongExtra(key_buddy_index, 0));
 			fragmentIntent.putExtra(key_own_jid,
 					intent.getStringExtra(key_own_jid));
-			makeToast("buddy id: " + intent.getLongExtra(key_buddy_index, 0)
-					+ "\nown jid: " + intent.getStringExtra(key_own_jid));
 			loadFragment(fragmentIntent);
 			// TODO implement strategy for loadFragment
 			// for different layouts

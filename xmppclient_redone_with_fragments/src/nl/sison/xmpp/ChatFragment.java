@@ -73,6 +73,7 @@ public class ChatFragment extends Fragment {
 
 			if (intent.getAction().equals(XMPPService.ACTION_MESSAGE_ERROR)) {
 				makeToast("An error occurred when attempting to deliver this message bla");
+				// TODO - refactor this to a resource string
 				return;
 			}
 

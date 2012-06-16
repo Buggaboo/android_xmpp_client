@@ -272,6 +272,7 @@ public class XMPPService extends Service {
 			DatabaseUtils.close();
 			makeToast("No buddies are present in your roster");
 			// TODO - think up a new way of showing this case
+			// TODO - refactor to a string resource
 			return;
 		}
 
