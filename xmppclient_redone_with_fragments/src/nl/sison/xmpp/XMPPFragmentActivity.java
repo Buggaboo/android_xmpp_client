@@ -9,52 +9,71 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * NOTE: before 4.* (api level 15) this was FragmentActivity, using the Fragment
- * from the compatibility shizzle
- * 
- * @author Jasm Sison
- * 
+ * TODO rename this class to XMPPActivity
  */
-public class SinglePanelActivity extends Activity implements FragmentLoader {
-	private static final String TAG = "SinglePanelActivity";
+
+/**
+ * TODO design: to determine screen size etc. i.e. startActivityForResult
+ */
+
+/** 
+ * TODO design: use a behavioural pattern (strategy), to control the Fragments  
+ */
+
+/**
+ * @author Jasm Sison
+ */
+public class XMPPFragmentActivity extends Activity implements FragmentLoader {
+	private static final String TAG = "XMPPFragmentActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/*
-		 * if (getResources().getConfiguration().orientation ==
-		 * Configuration.ORIENTATION_LANDSCAPE) { // If the screen is now in
-		 * landscape mode, we can show the // dialog in-line with the list so we
-		 * don't need this activity. finish(); return; }
-		 */
-		// setContentView(R.layout.main_layout); // NOTE: this does not add
-		// anything to the container
-		// object in onCreateView
-
 		setContentView(R.layout.tabbed_single_fragment_layout);
 
-		Intent intent = getIntent();
+		// just in case
+		startService(new Intent(this, XMPPService.class));
 
-		// launched by NotificationService
-		Intent fragmentIntent;
-		String key_buddy_index = XMPPNotificationService.KEY_BUDDY_INDEX;
-		if (intent != null && intent.hasExtra(key_buddy_index)) {
-			String key_own_jid = XMPPNotificationService.JID;
-			fragmentIntent = new Intent(this, ChatFragment.class);
-			fragmentIntent.putExtra(key_buddy_index,
-					intent.getLongExtra(key_buddy_index, 0));
-			fragmentIntent.putExtra(key_own_jid,
-					intent.getStringExtra(key_own_jid));
-		} else {
-			fragmentIntent = new Intent(this, ConnectionListFragment.class);
-		}
+		// TODO refactor setContentView away in a strategy
+		Intent fragmentIntent = new Intent(this, ConnectionListFragment.class);
 		loadFragment(fragmentIntent);
 	}
 
 	/**
+	 * This function should react to calls from Notification to start a new chat
+	 * screen
+	 */
+	@Override
+	protected void onNewIntent(Intent _intent) {
+		super.onNewIntent(_intent);
+		// TODO - determine if issue is relevant:
+		// http://code.google.com/p/android/issues/detail?id=17137
+		makeToast("onNewIntent");
+		Intent fragmentIntent;
+		String key_buddy_index = XMPPNotificationService.KEY_BUDDY_INDEX;
+		if (_intent != null && _intent.hasExtra(key_buddy_index)) {
+			String key_own_jid = XMPPNotificationService.JID;
+			fragmentIntent = new Intent(this, ChatFragment.class);
+			fragmentIntent.putExtra(key_buddy_index,
+					_intent.getLongExtra(key_buddy_index, 0));
+			fragmentIntent.putExtra(key_own_jid,
+					_intent.getStringExtra(key_own_jid));
+			loadFragment(fragmentIntent);
+			// TODO implement strategy for loadFragment
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// TODO in the class to be called, call setResult to push back an int to
+		// this function
+	}
+
+	/**
 	 * 
-	 * After clicking on an ListItem. Load a new fragment and put
-	 * previous fragment on the backstack
+	 * After clicking on an ListItem. Load a new fragment and put previous
+	 * fragment on the backstack
 	 * 
 	 * @param intent
 	 */
@@ -74,28 +93,14 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 														// tab?
 			transaction.commit();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // new java 7: catch (Exception1 e1 | Exception2 e2 | Exception e3 ...
 
 	}
-
-	/**
-	 * TODO - use this to detect the screen size WindowManager wm =
-	 * (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE); Display
-	 * display = wm.getDefaultDisplay();
-	 */
-
-	/**
-	 * TODO - use this to detect the screen size Configuration conf =
-	 * getResources().getConfiguration();
-	 */
 
 	@Deprecated
 	private void makeToast(String message) {
