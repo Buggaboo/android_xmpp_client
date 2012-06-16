@@ -90,6 +90,8 @@ public class XMPPNotificationService extends Service {
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
+			
+			makeToast("buddy id: " + buddy_id);
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
 					intent, 0);
