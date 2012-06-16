@@ -83,17 +83,17 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			Intent intent = new Intent(XMPPNotificationService.this,
-					XMPPFragmentActivity.class); // NOTE: main detects the screen
-												// size and launches the correct
-												// Activity
+					XMPPFragmentActivity.class);
+			
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
-					intent, Intent.FLAG_ACTIVITY_CLEAR_TOP
-							| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					intent, 0);
+			// do not set flags in the PendingIntent, set it in the payload Intent
 
 			StringBuilder str_builder = new StringBuilder();
 			String notify_ticker = str_builder
