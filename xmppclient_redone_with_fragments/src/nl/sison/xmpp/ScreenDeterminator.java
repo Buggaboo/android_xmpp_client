@@ -7,9 +7,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-public class XMPPMainActivity extends Activity {
+public class ScreenDeterminator extends Activity {
 
-	private static final String TAG = "XMPPMainActivity";
+	private static final String TAG = "ScreenDeterminator";
+
+	/**
+	 * if (getResources().getConfiguration().orientation ==
+	 * Configuration.ORIENTATION_LANDSCAPE) { // If the screen is now in
+	 * landscape mode, we can show the // dialog in-line with the list so we
+	 * don't need this activity. finish(); return; }
+	 */
+
+	/**
+	 * TODO - use this to detect the screen size WindowManager wm =
+	 * (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE); Display
+	 * display = wm.getDefaultDisplay();
+	 */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,31 +42,14 @@ public class XMPPMainActivity extends Activity {
 			makeToast("SCREENLAYOUT_SIZE_UNDEFINED");
 		}
 
-		// TODO - test and implement if small screen etc. otherwise,
-		// DoublePanel... TriplePanel, combine the screen size detection
-		// TODO - determine a faster way to pass on the extras
-		Intent intent = new Intent(this, SinglePanelActivity.class);
-		Bundle bundle = getIntent().getExtras();
-		if (bundle != null && !bundle.isEmpty()) { // started by a notification service
-			intent.putExtra(XMPPNotificationService.JID,
-					bundle.getString(XMPPNotificationService.JID));
-			intent.putExtra(XMPPNotificationService.KEY_BUDDY_INDEX,
-					bundle.getLong(XMPPNotificationService.KEY_BUDDY_INDEX));
-			intent.putExtra(XMPPNotificationService.THREAD,
-					bundle.getString(XMPPNotificationService.THREAD));
-		} else { // not started by a notification service
-			// start service just in case
-			startService(new Intent(this, XMPPService.class));
-		}
-		startActivityForResult(intent, 0);
-	}
+		/*
+		 * // TODO - test and implement if small screen etc. otherwise, //
+		 * DoublePanel... TriplePanel, combine the screen size detection // TODO
+		 * - determine a faster way to pass on the extras
+		 */
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		finish();
 	}
-
+	
 	@Deprecated
 	private void makeToast(String message) {
 		if (!BuildConfig.DEBUG)

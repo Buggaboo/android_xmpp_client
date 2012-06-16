@@ -59,8 +59,7 @@ public class XMPPNotificationService extends Service {
 		}
 
 		private void createAndShowNotification(Context context, long message_id) {
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 			MessageEntity msg = daoSession
 					.load(MessageEntity.class, message_id);
 
@@ -84,16 +83,17 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			Intent intent = new Intent(XMPPNotificationService.this,
-					XMPPMainActivity.class); // NOTE: main detects the screen
-												// size and launches the correct
-												// Activity
+					XMPPFragmentActivity.class);
+			
+			intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
-					intent, Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					intent, 0);
+			// do not set flags in the PendingIntent, set it in the payload Intent
 
 			StringBuilder str_builder = new StringBuilder();
 			String notify_ticker = str_builder
@@ -114,8 +114,7 @@ public class XMPPNotificationService extends Service {
 
 			Notification notification = builder.getNotification();
 			// notification.sound() // TODO create sounds on notification
-			notificationManager.notify(DatabaseUtils.safeLongToInt(message_id),
-					notification);
+			notificationManager.notify(safeLongToInt(message_id), notification);
 		}
 
 		private String getNicknameIfAvailable(BuddyEntity buddy) {
@@ -126,6 +125,17 @@ public class XMPPNotificationService extends Service {
 				return buddy_nickname;
 			}
 		}
+	}
+
+	/**
+	 * I know this doesn't belong here. TODO - refactor elsewhere: e.g. static
+	 * class TypeConversionUtils
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static int safeLongToInt(final long l) {
+		return (int) Math.min(Integer.MAX_VALUE, l);
 	}
 
 	class RemoveNotificationReceiver extends BroadcastReceiver {
@@ -143,8 +153,7 @@ public class XMPPNotificationService extends Service {
 
 			long buddy_id = intent
 					.getLongExtra(ChatFragment.KEY_BUDDY_INDEX, 0);
-			DaoSession daoSession = DatabaseUtils
-					.getReadOnlySession(context);
+			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
 
 			QueryBuilder<MessageEntity> qb = daoSession
 					.queryBuilder(MessageEntity.class);
@@ -156,7 +165,7 @@ public class XMPPNotificationService extends Service {
 			DatabaseUtils.close();
 
 			for (MessageEntity msg : messages) {
-				cancelNotification(DatabaseUtils.safeLongToInt(msg.getId()));
+				cancelNotification(safeLongToInt(msg.getId()));
 			}
 		}
 
