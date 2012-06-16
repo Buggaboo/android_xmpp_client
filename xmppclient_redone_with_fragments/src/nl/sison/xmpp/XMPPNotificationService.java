@@ -19,6 +19,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
 import de.greenrobot.dao.QueryBuilder;
 
 public class XMPPNotificationService extends Service {
@@ -87,6 +89,8 @@ public class XMPPNotificationService extends Service {
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
+			
+			makeToast("own_jid: " + own_jid + "\n" + "buddy_id: " + buddy_id);
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
 					intent, 0);
@@ -202,4 +206,13 @@ public class XMPPNotificationService extends Service {
 		unregisterReceiver(message_receiver);
 		unregisterReceiver(remove_notification_receiver);
 	}
+	
+	@Deprecated
+	private void makeToast(String message) {
+		if (!BuildConfig.DEBUG)
+			return;
+		Log.i(TAG, message);
+		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		toast.show();
+	}	
 }

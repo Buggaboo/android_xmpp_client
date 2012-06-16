@@ -90,21 +90,20 @@ public class XMPPFragmentActivity extends FragmentActivity implements FragmentLo
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		// TODO - determine if issue is relevant:
-		// http://code.google.com/p/android/issues/detail?id=17137
+//		makeToast("onNewIntent");
 		loadChatIfCorrectIntent(intent);
 	}
 
-	private void loadChatIfCorrectIntent(Intent _intent) {
+	private void loadChatIfCorrectIntent(Intent intent) {
 		Intent fragmentIntent;
 		String key_buddy_index = XMPPNotificationService.KEY_BUDDY_INDEX;
-		if (_intent != null && _intent.hasExtra(key_buddy_index)) {
+		if (intent != null && intent.hasExtra(key_buddy_index)) {
 			String key_own_jid = XMPPNotificationService.JID;
 			fragmentIntent = new Intent(this, ChatFragment.class);
 			fragmentIntent.putExtra(key_buddy_index,
-					_intent.getLongExtra(key_buddy_index, 0));
+					intent.getLongExtra(key_buddy_index, 0));
 			fragmentIntent.putExtra(key_own_jid,
-					_intent.getStringExtra(key_own_jid));
+					intent.getStringExtra(key_own_jid));
 			loadFragment(fragmentIntent);
 			// TODO implement strategy for loadFragment
 			// for different layouts
