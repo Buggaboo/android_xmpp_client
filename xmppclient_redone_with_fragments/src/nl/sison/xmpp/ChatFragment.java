@@ -271,20 +271,4 @@ public class ChatFragment extends Fragment {
 				.makeText(getActivity(), message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
-/*
-	@Override
-	public void onDestroy() {
-		FragmentLoader fl = (FragmentLoader) getActivity();
-		if (fl.lastFragment()) {
-			BuddyEntity buddy = DatabaseUtils.getReadOnlySession(getActivity()).getBuddyEntityDao().load(buddy_id);
-			long cc_id = buddy.getConnectionId();
-			DatabaseUtils.close();
-			Intent intent = new Intent(getActivity(), BuddyListFragment.class);
-			intent.putExtra(ConnectionListFragment.KEY_CONNECTION_INDEX, cc_id);
-			fl.loadFragment(intent);
-		}
-		super.onDestroy();
-	}
-//	Bad design!
-*/
 }

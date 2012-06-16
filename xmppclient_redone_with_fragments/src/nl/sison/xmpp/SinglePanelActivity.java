@@ -105,15 +105,4 @@ public class SinglePanelActivity extends Activity implements FragmentLoader {
 		Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
-
-	@Override
-	public void swipeToFragment(Intent intent) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean lastFragment() {
-		return getFragmentManager().getBackStackEntryCount() == 1;
-	}
 }

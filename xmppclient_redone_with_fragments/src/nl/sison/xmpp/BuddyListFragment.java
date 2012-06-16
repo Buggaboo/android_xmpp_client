@@ -298,16 +298,4 @@ public class BuddyListFragment extends ListFragment {
 				message, Toast.LENGTH_SHORT);
 		toast.show();
 	}
-/*	
-	@Override
-	public void onDestroy() {
-		FragmentLoader fl = (FragmentLoader) getActivity();
-		if (fl.lastFragment()) {
-			Intent intent = new Intent(getActivity(), ConnectionListFragment.class);
-			fl.loadFragment(intent);
-		}
-		super.onDestroy();
-	}
-//	Bad design!
-*/	
 }

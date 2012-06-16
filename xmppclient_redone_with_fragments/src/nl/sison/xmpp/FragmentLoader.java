@@ -22,7 +22,7 @@ public interface FragmentLoader {
 	 * @param intent
 	 * @throws NullPointerException
 	 */
-	public void swipeToFragment(Intent intent);
+//	public void swipeToFragment(Intent intent);
 
 	/**
 	 * A fragment uses this to check if a fragment is the last fragment on the
@@ -30,5 +30,5 @@ public interface FragmentLoader {
 	 * 
 	 * @return
 	 */
-	public boolean lastFragment();
+//	public boolean lastFragment();
 }
