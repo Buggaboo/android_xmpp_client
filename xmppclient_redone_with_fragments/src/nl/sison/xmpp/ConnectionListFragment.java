@@ -35,7 +35,7 @@ public class ConnectionListFragment extends ListFragment {
 	public final static int RQ_MODIFY_CONN = 1;
 	public final static int RQ_DELETE_CONN = 2;
 
-	public final static String KEY_CONNECTION_INDEX = "H#@$$**&*UAONETUH";
+	public final static String KEY_CONNECTION_INDEX = "@#@@$$H#@$$**&*UAON";
 
 	@Override
 	public void onResume() {

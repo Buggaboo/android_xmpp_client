@@ -36,8 +36,8 @@ public class XMPPNotificationService extends Service {
 
 	private Random random;
 
-	public static final String KEY_BUDDY_INDEX = "438unkn,.rc";
-	public static final String THREAD = "e(*&";
+	public static final String KEY_BUDDY_INDEX = "438zyxwuwvunkn,.rc";
+	public static final String THREAD = "e(abcdefghi*&";
 	public static final String JID = "@$(&";
 
 	class ServiceReceiver extends BroadcastReceiver {
@@ -91,7 +91,7 @@ public class XMPPNotificationService extends Service {
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
 			
-			makeToast("buddy id: " + buddy_id);
+			makeToast("buddy id: " + intent.getLongExtra(KEY_BUDDY_INDEX, 0));
 
 			PendingIntent p_intent = PendingIntent.getActivity(context, 0,
 					intent, 0);
@@ -102,9 +102,7 @@ public class XMPPNotificationService extends Service {
 					.append(getNicknameIfAvailable(buddy)).append(" ")
 					.append(getString(R.string.says)).append(" \"")
 					.append(msg.getContent()).append("\"").toString();
-			// TODO truncate if longer than ...
-
-			getNicknameIfAvailable(buddy);
+			// TODO truncate message if longer than ...
 
 			// TODO change the -ing icon
 			Notification.Builder builder = new Notification.Builder(context)

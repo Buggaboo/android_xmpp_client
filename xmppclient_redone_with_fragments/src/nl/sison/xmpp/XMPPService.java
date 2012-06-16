@@ -183,21 +183,21 @@ public class XMPPService extends Service {
 	 * Intent extras
 	 */
 	// connection
-	public static final String KEY_CONNECTION_INDEX = "USTHUAS34027334H"; // long
+	public static final String KEY_CONNECTION_INDEX = "USTHUASIIIIII34H"; // long
 
 	// presence
-	public static final String KEY_BUDDY_INDEX = "UST32UAS340273#@H"; // long
+	public static final String KEY_BUDDY_INDEX = "U(*&UAS340273#@H"; // long
 
 	// message
-	public static final String KEY_MESSAGE_INDEX = "UST32323HU027334H"; // long
+	public static final String KEY_MESSAGE_INDEX = "UST3$##@027334H"; // long
 
 	// everybody can use these two
-	public static final String JID = "239eunheun34808"; // String
-	public static final String MANY_JID = "239443342eunheun34808"; // Arraylist<String>
+	public static final String JID = "23eu*&n34808"; // String
+	public static final String MANY_JID = "23n)(("; // Arraylist<String>
 
 	// incoming message
-	public static final String MESSAGE = "239e#$%unheun34808"; // String
-	public static final String FROM_JID = "23heun348$%$#&08"; // String
+	public static final String MESSAGE = "239e#$%"; // String
+	public static final String FROM_JID = "&&&&&08"; // String
 
 	@Override
 	public void onCreate() {

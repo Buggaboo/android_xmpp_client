@@ -41,8 +41,8 @@ public class ChatFragment extends Fragment {
 	/**
 	 * Intent extras
 	 */
-	public static final String MESSAGE = "23yidxb3@#$%444";
-	public static final String KEY_BUDDY_INDEX = "23yidb3@#$Z44";
+	public static final String MESSAGE = "dxb3@#$%444";
+	public static final String KEY_BUDDY_INDEX = "23yidb3@#$s";
 
 	private boolean top_orientation = false; // TODO create dialog
 	private ListView chat_list;
