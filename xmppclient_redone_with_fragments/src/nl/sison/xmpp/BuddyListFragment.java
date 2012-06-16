@@ -155,8 +155,8 @@ public class BuddyListFragment extends ListFragment {
 
 			final int NICKNAME_OPTION = 0;
 			final int VIBRATE_OPTION = 1;
-			final int SET_MASTER_PASSWORD_OPTION = 2;
-			final int ENCRYPT_MESSAGES_BY_BUDDY = 3;
+//			final int SET_MASTER_PASSWORD_OPTION = 2;
+//			final int ENCRYPT_MESSAGES_BY_BUDDY = 3;
 			// TODO use the master password to encrypt the messages by a
 			// buddy, but store the password in a salted hashed form on the
 			// device
