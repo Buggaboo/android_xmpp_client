@@ -36,7 +36,7 @@ public class XMPPNotificationService extends Service {
 
 	private Random random;
 
-	public static final String KEY_BUDDY_INDEX = "438zyxwuwvunkn,.rc";
+	public static final String KEY_BUDDY_INDEX = "438,.rc";
 	public static final String THREAD = "e(abcdefghi*&";
 	public static final String JID = "@$(&";
 
