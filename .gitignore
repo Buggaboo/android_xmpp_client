@@ -1,5 +1,5 @@
+
 *.class
-*.apk
 *.ap_
 *.dex
 */bin/*
