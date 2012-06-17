@@ -55,7 +55,7 @@ public class CRUDConnectionFragment extends Fragment {
 			createHintPrefixDialog(list_view).show();
 		}
 		setButtons(list_view);
-		return list_view;		
+		return list_view;
 	}
 
 	private AlertDialog createHintPrefixDialog(final View list_view) {
@@ -136,9 +136,8 @@ public class CRUDConnectionFragment extends Fragment {
 
 		conn_config_id = ccid;
 
-		ConnectionConfigurationEntity cc = DatabaseUtils
-				.getReadOnlySession(getActivity()).load(
-						ConnectionConfigurationEntity.class, ccid);
+		ConnectionConfigurationEntity cc = DatabaseUtils.getReadOnlySession(
+				getActivity()).load(ConnectionConfigurationEntity.class, ccid);
 
 		setTextViewData(list_view, R.id.conn_label, cc.getLabel());
 		setTextViewData(list_view, R.id.conn_port, cc.getPort());
@@ -178,12 +177,12 @@ public class CRUDConnectionFragment extends Fragment {
 		setButtonListener(parent, R.id.conn_compressed,
 				new View.OnClickListener() {
 					public void onClick(View v) {
-						ToggleButton tb = (ToggleButton) v;
-						if (tb.isChecked()) {
-							// makeToast("connection will be compressed");
-						} else {
-							// makeToast("connection will NOT be compressed");
-						}
+						// ToggleButton tb = (ToggleButton) v;
+						// if (tb.isChecked()) {
+						// makeToast("connection will be compressed");
+						// } else {
+						// makeToast("connection will NOT be compressed");
+						// }
 					}
 				});
 		setButtonListener(parent, R.id.conn_sasl_authenticated,
@@ -191,22 +190,21 @@ public class CRUDConnectionFragment extends Fragment {
 					public void onClick(View v) {
 						ToggleButton tb = (ToggleButton) v;
 						if (tb.isChecked()) {
-							// makeToast("connection will be sasl_authenticated");
-						} else {
-							// makeToast("connection will NOT be sasl_authenticated");
+							makeToast("Warning: SASL authentication on this version of smack lib is broken.\nIt is disabled.");
 						}
 					}
 				});
 		setButtonListener(parent, R.id.conn_encrypted,
 				new View.OnClickListener() {
 					public void onClick(View v) {
-						ToggleButton tb = (ToggleButton) v;
-						if (tb.isChecked()) {
-							// makeToast("connection will be encrypted");
-							makeToast("Warning: encryption on this version of smack lib is most likely broken.");
-						} else {
-							// makeToast("connection will NOT be encrypted");
-						}
+						// ToggleButton tb = (ToggleButton) v;
+						// if (tb.isChecked()) {
+						// makeToast("connection will be encrypted");
+						// makeToast("Warning: encryption on this version of smack lib is most likely broken.");
+						// apparently it's working fine
+						// } else {
+						// makeToast("connection will NOT be encrypted");
+						// }
 					}
 				});
 
@@ -220,8 +218,7 @@ public class CRUDConnectionFragment extends Fragment {
 							long cc_id = storeConnectionConfiguration(conn_conf);
 							DatabaseUtils.close();
 							Intent restartConnectionOnService = new Intent(
-									getActivity(),
-									XMPPService.class);
+									getActivity(), XMPPService.class);
 							restartConnectionOnService.putExtra(
 									RESTART_CONNECTION, conn_config_id);
 							connection.disconnect();
@@ -305,9 +302,8 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private long storeConnectionConfiguration(
 			ConnectionConfigurationEntity conn_config) {
-		DaoSession daoSession = DatabaseUtils
-				.getWriteableSession(getActivity()
-						.getApplicationContext());
+		DaoSession daoSession = DatabaseUtils.getWriteableSession(getActivity()
+				.getApplicationContext());
 		ConnectionConfigurationEntityDao conn_config_dao = daoSession
 				.getConnectionConfigurationEntityDao();
 		return conn_config_dao.insertOrReplace(conn_config);
@@ -323,7 +319,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 		ToggleButton tb = (ToggleButton) parent
 				.findViewById(R.id.conn_sasl_authenticated);
-		conn_config.setSaslauthenticated(tb.isChecked());
+		conn_config.setSaslauthenticated(false/* tb.isChecked() */);
 
 		tb = (ToggleButton) parent.findViewById(R.id.conn_compressed);
 		conn_config.setCompressed(tb.isChecked());
