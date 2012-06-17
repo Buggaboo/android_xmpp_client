@@ -46,7 +46,7 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 		TextView buddy_last_chat_view = (TextView) parent
 				.findViewById(R.id.buddy_item_last_chat);
 		TextView buddy_last_seen_view = (TextView) parent
-				.findViewById(R.id.buddy_item_last_chat);
+				.findViewById(R.id.buddy_item_last_seen);
 
 		buddy_jid_view.setText(buddy.getPartial_jid());
 
@@ -58,24 +58,22 @@ public class BuddyAdapter extends ArrayAdapter<BuddyEntity> {
 
 		Context c = getContext();
 
-		String last_seen_online = "TODO last_seen_online";
-		if (buddy.getLast_seen_online_date() != null)
+		String last_seen_online = ""; // "TODO last_seen_online";
+		if (buddy.getLast_seen_online_date() != null) {
 			last_seen_online = buddy.getLast_seen_online_date().toString();
+			String resource = buddy.getLast_seen_resource(); // "TODO resource";
+			if (resource != null && !resource.isEmpty()) {
+				buddy_last_seen_view.setText(c.getString(R.string.last_seen)
+						+ " " + last_seen_online + " (" + resource + ")");
+			}
+		}
 
-		String last_chat = "TODO last_chat";
-		if (buddy.getLast_chat_date() != null)
-			last_seen_online = buddy.getLast_chat_date().toString();
-
-		String resource = "TODO resource";
-		if (buddy.getLast_seen_resource() != null)
-			resource = buddy.getLast_seen_resource().toString();
-
-
-		buddy_last_chat_view.setText(c.getString(R.string.last_chat) + " "
-				+ last_chat);
-		buddy_last_seen_view.setText(c.getString(R.string.last_seen) + " "
-				+ last_seen_online + " ("
-				+ resource + ")");
+		String last_chat = ""; // "TODO last_chat";
+		if (buddy.getLast_chat_date() != null) {
+			last_chat = buddy.getLast_chat_date().toString();
+			buddy_last_chat_view.setText(c.getString(R.string.last_chat) + " "
+					+ last_chat);
+		}
 	}
 
 	/**

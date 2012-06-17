@@ -201,6 +201,7 @@ public class BuddyListFragment extends ListFragment {
 								if (buddy.getNickname() != null
 										&& !buddy.getNickname().isEmpty()) {
 									input.setText(buddy.getNickname());
+									input.setSelectAllOnFocus(true);
 								} else {
 									input.setText("");
 									input.setFocusable(true);

@@ -17,6 +17,12 @@
     <string name="vibrate">Switch vibrate</string>
     <string name="change_nickname">Change nickname</string>
 
+    <!-- buddy related stuff -->
+    <string name="last_chat_unavailable">Last chat unavailable</string>
+    <string name="last_seen_unavailable">Last seen unavailable</string>
+    <string name="last_chat">Previous chat </string>
+    <string name="last_seen">Last seen available </string>
+
     <!-- connection related stuff -->
     <string name="conn_label">Label</string>
     <string name="conn_port">Port</string>
@@ -36,30 +42,26 @@
     <string name="conn_pick_a_provider">Pick a provider</string>
     <string name="conn_non_available">No connections present</string>
     <string name="no_network">You have no network, at this moment.</string>
-    
+
     <!-- privacy related stuff -->
     <string name="destroy_database">Destroy database</string>
-    
+
     <!-- Chat related stuff -->
     <string name="submit">Send</string>
     <string name="date_literal">date</string>
     <string name="text_literal">text</string>
-    <string name="last_chat">Last chat </string>
-    <string name="last_seen">Last seen available </string>
-    
+
     <!-- Notification related stuff -->
     <string name="says"> says </string>
 
     <!-- default settings -->
     <string-array name="hint_prefixes">
-        <item >google</item>
-        <item >facebook</item>
-        <item >microsoft</item>
-        <!-- <item >yahoo</item>  -->
-        <item >meebo</item>
-        <item>other</item>        
+        <item>google</item>
+        <item>facebook</item>
+        <item>microsoft</item>
+        <!-- <item >yahoo</item> -->
+        <item>meebo</item>
+        <item>other</item>
     </string-array>
-    
-    
 
 </resources>
