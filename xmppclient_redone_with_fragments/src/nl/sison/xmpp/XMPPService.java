@@ -417,6 +417,7 @@ public class XMPPService extends Service {
 
 		buddy.setLast_chat_date(new Date());
 		message.setBuddyEntity(buddy);
+		daoSession.getBuddyEntityDao().insertOrReplace(buddy);
 
 		return daoSession.getMessageEntityDao().insert(message);
 	}
