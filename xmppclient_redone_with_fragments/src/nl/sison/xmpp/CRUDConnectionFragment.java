@@ -115,6 +115,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private TextView setTextViewHint(View parent, int view_id, int res_id) {
 		TextView tv = (TextView) parent.findViewById(view_id);
+		tv.setSelectAllOnFocus(true);
 		tv.setHint(res_id);
 		return tv;
 	}
