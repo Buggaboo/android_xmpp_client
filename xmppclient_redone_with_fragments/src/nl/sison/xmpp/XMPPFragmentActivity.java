@@ -91,12 +91,10 @@ public class XMPPFragmentActivity extends Activity implements FragmentLoader {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		// TODO - determine if issue is relevant:
-		// http://code.google.com/p/android/issues/detail?id=17137
 		loadChatIfCorrectIntent(intent);
-		// setIntent(intent); // TODO + setting the intent, due to leftovers
-		// that
-		// might hardcode the buddy id to 1 -> no it does nothing to help
+		/**
+		 * TODO fix crash: press home button, click new xmpp notification, crash
+		 */
 	}
 
 	private void loadChatIfCorrectIntent(Intent intent) {
