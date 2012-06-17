@@ -1,5 +1,6 @@
 package nl.sison.xmpp;
 
+import java.util.Collections;
 import java.util.List;
 
 import nl.sison.xmpp.dao.BuddyEntity;
@@ -64,6 +65,7 @@ public class ChatFragment extends Fragment {
 
 	private final static String TAG = "ChatFragment";
 	private IntentFilter actionFilter;
+	private boolean showAllMessages = false;
 
 	class MessageBroadcastReceiver extends BroadcastReceiver {
 
@@ -249,20 +251,36 @@ public class ChatFragment extends Fragment {
 		getActivity().sendBroadcast(request_remove_notifications);
 	}
 
-	private void setupListView() { // TODO broken! fix it!
+	private void setupListView() {
 		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity()
 				.getApplicationContext());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
 
-		qb.where(Properties.BuddyId.eq(buddy_id)); // match with foreign key
-													// (buddy)
+		qb.where(Properties.BuddyId.eq(buddy_id));
+
+		if (!showAllMessages) {
+			qb.orderDesc(Properties.Processed_date).limit(10);
+			Button button = new Button(getActivity());
+			button.setText(R.string.show_all_messages);
+			button.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					showAllMessages = true;
+					setupListView();
+				}
+			});
+			chat_list.addHeaderView(button);
+		}
+
 		// NOTE: this presents a challenge for group chat
 		// You probably need a groupchat activity for this thing
 		// and a different database
+		List<MessageEntity> list = qb.list();
+		Collections.reverse(list);
 
-		chat_history = qb.list();
+		chat_history = list;
 		DatabaseUtils.close();
 
 		adapter = new MessageAdapter(getActivity(), chat_history, own_jid);

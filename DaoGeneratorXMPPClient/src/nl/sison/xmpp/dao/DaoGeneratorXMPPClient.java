@@ -25,7 +25,7 @@ public class DaoGeneratorXMPPClient {
 	}
 
 	private static Schema getSchema() {
-		Schema schema = new Schema(28, "nl.sison.xmpp.dao");
+		Schema schema = new Schema(29, "nl.sison.xmpp.dao");
 
 		Entity message = addMessage(schema);
 		Entity buddy = addBuddy(schema);
@@ -49,7 +49,9 @@ public class DaoGeneratorXMPPClient {
 		message.addStringProperty("sender_jid").notNull(); // !
 		message.addStringProperty("receiver_jid").notNull(); // !
 		message.addStringProperty("content").notNull(); // !
+		message.addDateProperty("processed_date");
 		message.addDateProperty("received_date").notNull(); // !
+		message.addDateProperty("sent_date").notNull();
 		message.addBooleanProperty("delivered");
 		message.addStringProperty("thread");
 

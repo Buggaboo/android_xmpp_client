@@ -30,10 +30,12 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         public final static Property Sender_jid = new Property(1, String.class, "sender_jid", false, "SENDER_JID");
         public final static Property Receiver_jid = new Property(2, String.class, "receiver_jid", false, "RECEIVER_JID");
         public final static Property Content = new Property(3, String.class, "content", false, "CONTENT");
-        public final static Property Received_date = new Property(4, java.util.Date.class, "received_date", false, "RECEIVED_DATE");
-        public final static Property Delivered = new Property(5, Boolean.class, "delivered", false, "DELIVERED");
-        public final static Property Thread = new Property(6, String.class, "thread", false, "THREAD");
-        public final static Property BuddyId = new Property(7, long.class, "buddyId", false, "BUDDY_ID");
+        public final static Property Processed_date = new Property(4, java.util.Date.class, "processed_date", false, "PROCESSED_DATE");
+        public final static Property Received_date = new Property(5, java.util.Date.class, "received_date", false, "RECEIVED_DATE");
+        public final static Property Sent_date = new Property(6, java.util.Date.class, "sent_date", false, "SENT_DATE");
+        public final static Property Delivered = new Property(7, Boolean.class, "delivered", false, "DELIVERED");
+        public final static Property Thread = new Property(8, String.class, "thread", false, "THREAD");
+        public final static Property BuddyId = new Property(9, long.class, "buddyId", false, "BUDDY_ID");
     };
 
     private DaoSession daoSession;
@@ -56,10 +58,12 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
                 "'SENDER_JID' TEXT NOT NULL ," + // 1: sender_jid
                 "'RECEIVER_JID' TEXT NOT NULL ," + // 2: receiver_jid
                 "'CONTENT' TEXT NOT NULL ," + // 3: content
-                "'RECEIVED_DATE' INTEGER NOT NULL ," + // 4: received_date
-                "'DELIVERED' INTEGER," + // 5: delivered
-                "'THREAD' TEXT," + // 6: thread
-                "'BUDDY_ID' INTEGER NOT NULL );"); // 7: buddyId
+                "'PROCESSED_DATE' INTEGER," + // 4: processed_date
+                "'RECEIVED_DATE' INTEGER NOT NULL ," + // 5: received_date
+                "'SENT_DATE' INTEGER NOT NULL ," + // 6: sent_date
+                "'DELIVERED' INTEGER," + // 7: delivered
+                "'THREAD' TEXT," + // 8: thread
+                "'BUDDY_ID' INTEGER NOT NULL );"); // 9: buddyId
     }
 
     /** Drops the underlying database table. */
@@ -80,18 +84,24 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         stmt.bindString(2, entity.getSender_jid());
         stmt.bindString(3, entity.getReceiver_jid());
         stmt.bindString(4, entity.getContent());
-        stmt.bindLong(5, entity.getReceived_date().getTime());
+ 
+        java.util.Date processed_date = entity.getProcessed_date();
+        if (processed_date != null) {
+            stmt.bindLong(5, processed_date.getTime());
+        }
+        stmt.bindLong(6, entity.getReceived_date().getTime());
+        stmt.bindLong(7, entity.getSent_date().getTime());
  
         Boolean delivered = entity.getDelivered();
         if (delivered != null) {
-            stmt.bindLong(6, delivered ? 1l: 0l);
+            stmt.bindLong(8, delivered ? 1l: 0l);
         }
  
         String thread = entity.getThread();
         if (thread != null) {
-            stmt.bindString(7, thread);
+            stmt.bindString(9, thread);
         }
-        stmt.bindLong(8, entity.getBuddyId());
+        stmt.bindLong(10, entity.getBuddyId());
     }
 
     @Override
@@ -114,10 +124,12 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
             cursor.getString(offset + 1), // sender_jid
             cursor.getString(offset + 2), // receiver_jid
             cursor.getString(offset + 3), // content
-            new java.util.Date(cursor.getLong(offset + 4)), // received_date
-            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // delivered
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // thread
-            cursor.getLong(offset + 7) // buddyId
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // processed_date
+            new java.util.Date(cursor.getLong(offset + 5)), // received_date
+            new java.util.Date(cursor.getLong(offset + 6)), // sent_date
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0, // delivered
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // thread
+            cursor.getLong(offset + 9) // buddyId
         );
         return entity;
     }
@@ -129,10 +141,12 @@ public class MessageEntityDao extends AbstractDao<MessageEntity, Long> {
         entity.setSender_jid(cursor.getString(offset + 1));
         entity.setReceiver_jid(cursor.getString(offset + 2));
         entity.setContent(cursor.getString(offset + 3));
-        entity.setReceived_date(new java.util.Date(cursor.getLong(offset + 4)));
-        entity.setDelivered(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
-        entity.setThread(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setBuddyId(cursor.getLong(offset + 7));
+        entity.setProcessed_date(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setReceived_date(new java.util.Date(cursor.getLong(offset + 5)));
+        entity.setSent_date(new java.util.Date(cursor.getLong(offset + 6)));
+        entity.setDelivered(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
+        entity.setThread(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setBuddyId(cursor.getLong(offset + 9));
      }
     
     /** @inheritdoc */

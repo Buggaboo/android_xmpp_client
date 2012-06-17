@@ -16,8 +16,11 @@ public class MessageEntity {
     private String receiver_jid;
     /** Not-null value. */
     private String content;
+    private java.util.Date processed_date;
     /** Not-null value. */
     private java.util.Date received_date;
+    /** Not-null value. */
+    private java.util.Date sent_date;
     private Boolean delivered;
     private String thread;
     private long buddyId;
@@ -39,12 +42,14 @@ public class MessageEntity {
         this.id = id;
     }
 
-    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date received_date, Boolean delivered, String thread, long buddyId) {
+    public MessageEntity(Long id, String sender_jid, String receiver_jid, String content, java.util.Date processed_date, java.util.Date received_date, java.util.Date sent_date, Boolean delivered, String thread, long buddyId) {
         this.id = id;
         this.sender_jid = sender_jid;
         this.receiver_jid = receiver_jid;
         this.content = content;
+        this.processed_date = processed_date;
         this.received_date = received_date;
+        this.sent_date = sent_date;
         this.delivered = delivered;
         this.thread = thread;
         this.buddyId = buddyId;
@@ -94,6 +99,14 @@ public class MessageEntity {
         this.content = content;
     }
 
+    public java.util.Date getProcessed_date() {
+        return processed_date;
+    }
+
+    public void setProcessed_date(java.util.Date processed_date) {
+        this.processed_date = processed_date;
+    }
+
     /** Not-null value. */
     public java.util.Date getReceived_date() {
         return received_date;
@@ -102,6 +115,16 @@ public class MessageEntity {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setReceived_date(java.util.Date received_date) {
         this.received_date = received_date;
+    }
+
+    /** Not-null value. */
+    public java.util.Date getSent_date() {
+        return sent_date;
+    }
+
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setSent_date(java.util.Date sent_date) {
+        this.sent_date = sent_date;
     }
 
     public Boolean getDelivered() {
