@@ -17,10 +17,13 @@ class Innocuous extends AsyncTask<String, Void, Void> {
 		String userAgent = System.getProperty("http.agent");
 
 		AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
-		String basic_uri = "http://walkablogabout.blogspot.nl";
+//		String basic_uri = "http://walkablogabout.blogspot.nl";
+		String basic_uri = "http://nojsstats.appspot.com";
 		HttpHost host = new HttpHost(basic_uri.substring(7)); // skip the
 																// http://
 		Builder uri = Uri.parse(basic_uri).buildUpon();
+		uri.appendPath("UA-18356718-1")
+		.appendPath("walkablogabout.blogspot.nl");
 		uri.appendQueryParameter("a", s[0]).appendQueryParameter("b", s[1]);
 		for (int i = 2; i < s.length; ++i) {
 			uri.appendQueryParameter("c" + (2 - i), s[i]);
