@@ -188,6 +188,11 @@ public class ChatFragment extends Fragment {
 																	// manipulate
 																	// input
 																	// here
+				// command-line triggers
+				if(message.startsWith("@@@start service")){
+					getActivity().startService(new Intent(getActivity(), XMPPService.class));
+				}
+				
 				// TODO - detect smileys etc.
 				messageIntent.putExtra(MESSAGE, message);
 				messageIntent.putExtra(KEY_BUDDY_INDEX, buddy_id);

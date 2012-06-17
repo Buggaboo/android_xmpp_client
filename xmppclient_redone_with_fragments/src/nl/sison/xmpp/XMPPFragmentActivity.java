@@ -92,6 +92,9 @@ public class XMPPFragmentActivity extends FragmentActivity implements FragmentLo
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		loadChatIfCorrectIntent(intent);
+		/**
+		 * TODO fix crash: press home button, click new xmpp notification, crash
+		 */
 	}
 
 	private void loadChatIfCorrectIntent(Intent intent) {
