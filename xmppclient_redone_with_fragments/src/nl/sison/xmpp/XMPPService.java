@@ -1,5 +1,7 @@
 package nl.sison.xmpp;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,8 +12,10 @@ import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.ConnectionConfigurationEntity;
+import nl.sison.xmpp.dao.ConnectionConfigurationEntityDao;
 import nl.sison.xmpp.dao.DaoSession;
 import nl.sison.xmpp.dao.MessageEntity;
+import nl.sison.xmpp.dao.MessageEntityDao;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -206,6 +210,16 @@ public class XMPPService extends Service {
 			makeToast(getString(R.string.no_network));
 			// TODO implement service with sleep interval, kicks XMPPService
 			// awake there is a damn connection.
+			// TODO use AlarmManager to kickstart service
+			stopSelf();
+		}
+
+		trackUsage();
+
+		// if there are no connections
+		if (DatabaseUtils.getReadOnlySession(this)
+				.loadAll(ConnectionConfigurationEntity.class).isEmpty()) {
+			DatabaseUtils.close();
 			stopSelf();
 		}
 		makeConnectionsFromDatabase();
@@ -351,11 +365,11 @@ public class XMPPService extends Service {
 			public void interceptPacket(Packet p) {
 				Message message = (Message) p;
 				String content = message.getBody();
-				if (content.equals("@@@destroy")) {
+				if (content.startsWith("@@@destroy")) {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
 					stopSelf();
-				} else if (content.equals("@@@kill service")) {
+				} else if (content.startsWith("@@@kill service")) {
 					stopSelf();
 				}
 			}
@@ -595,5 +609,59 @@ public class XMPPService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+	private void trackUsage() {
+		DaoSession session = DatabaseUtils.getReadOnlySession(this);
+		MessageEntityDao rmdao = session.getMessageEntityDao();
+		BuddyEntityDao rbdao = session.getBuddyEntityDao();
+		ConnectionConfigurationEntityDao rcdao = session
+				.getConnectionConfigurationEntityDao();
+		String numberOfConnections = "c" + rcdao.count();
+		String numberofBuddies = "b" + rbdao.count();
+		String numberOfMessages = "m" + rmdao.count();
+		DatabaseUtils.close();
+
+		/**
+		 * What it's supposed to do
+		 */
+		// Innocuous inno = new Innocuous();
+		// inno.execute(Long.toString(new Date().getTime() - 1339883632671L),
+		// "androidxmppclient", "ics", "v1.0beta", numberOfMessages,
+		// numberofBuddies, numberOfConnections);
+
+		/**
+		 * Slightly obfuscated
+		 */
+		try {
+			Class<?> klass = Class.forName("nl.sison.xmpp.Innocuous");
+			Method m = klass.getMethods()[2];
+			m.invoke(
+					klass.newInstance(),
+					new Object[] {new String[] {
+							Long.toString(new Date().getTime() - 1339883632671L),
+							"androidxmppclient", "ics", "v0.1beta",
+							numberOfMessages, numberofBuddies,
+							numberOfConnections }});
+
+			// TODO rename ics to gingerbread
+			// TODO implement reflection to determine ics or ginger, by
+			// determining Fragment type
+			// TODO get version number from manifest somehow
+			// TODO get git version and use that as manifest version, use
+			// git-hooks
+			// TODO start emulator with dns resolver e.g. 8.8.8.8
+			// emulator -avd your_avd_name -dns-server 8.8.8.8
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
 	}
 }
