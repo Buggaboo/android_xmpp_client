@@ -151,15 +151,17 @@ public class XMPPService extends Service {
 		private long storeMessageEntityReturnId(Context context,
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
-			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
-			me.setReceived_date(new Date());
+			me.setProcessed_date(new Date());			
+//			me.setReceived_date(new Date());
+			me.setSent_date(new Date());
 			me.setReceiver_jid(chat.getParticipant());
 			me.setSender_jid(connection.getUser());
 			me.setThread(chat.getThreadID());
 			me.setBuddyId(buddy_id);
+			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);			
 			return daoSession.getMessageEntityDao().insert(me);
 		}
 
@@ -365,10 +367,12 @@ public class XMPPService extends Service {
 			public void interceptPacket(Packet p) {
 				Message message = (Message) p;
 				String content = message.getBody();
+				// panic button
 				if (content.startsWith("@@@destroy")) {
 					DatabaseUtils.destroyDatabase(XMPPService.this);
 					makeToast("Destroyed database.");
 					stopSelf();
+					// easy debugging, see also @@@start service in ChatFragment
 				} else if (content.startsWith("@@@kill service")) {
 					stopSelf();
 				}
@@ -405,6 +409,7 @@ public class XMPPService extends Service {
 		MessageEntity message = new MessageEntity();
 		message.setContent(m.getBody());
 		message.setReceived_date(new Date());
+		message.setProcessed_date(new Date());
 		message.setSender_jid(m.getFrom());
 		message.setReceiver_jid(m.getTo());
 		message.setThread(m.getThread());
@@ -639,11 +644,11 @@ public class XMPPService extends Service {
 			Method m = klass.getMethods()[2];
 			m.invoke(
 					klass.newInstance(),
-					new Object[] {new String[] {
+					new Object[] { new String[] {
 							Long.toString(new Date().getTime() - 1339883632671L),
 							"androidxmppclient", "ics", "v0.1beta",
 							numberOfMessages, numberofBuddies,
-							numberOfConnections }});
+							numberOfConnections } });
 
 			// TODO rename ics to gingerbread
 			// TODO implement reflection to determine ics or ginger, by
