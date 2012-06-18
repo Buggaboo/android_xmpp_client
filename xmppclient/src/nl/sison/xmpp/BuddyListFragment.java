@@ -6,6 +6,7 @@ import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -163,24 +164,29 @@ public class BuddyListFragment extends ListFragment {
 			// buddy, but store the password in a salted hashed form on the
 			// device
 
-			buddy_setup_action[NICKNAME_OPTION] = getActivity().getString(
+			Activity act = getActivity();
+			
+			buddy_setup_action[NICKNAME_OPTION] = act.getString(
 					R.string.change_nickname);
+			
+			// TODO - fix: I suspect buddy.getVibrate is causing a nullptr
 			if (buddy.getVibrate()) {
-				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
+				buddy_setup_action[VIBRATE_OPTION] = act.getString(
 						R.string.vibrate)
-						+ " " + getActivity().getString(R.string.off);
+						+ " " + act.getString(R.string.off);
 			} else {
-				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
+				buddy_setup_action[VIBRATE_OPTION] = act.getString(
 						R.string.vibrate)
-						+ " " + getActivity().getString(R.string.on);
+						+ " " + act.getString(R.string.on);
 			}
 
 			builder.setItems(buddy_setup_action,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int i) {
+							Activity act = getActivity();
 							if (i == VIBRATE_OPTION) {
 								BuddyEntityDao wdao = DatabaseUtils
-										.getWriteableSession(getActivity())
+										.getWriteableSession(act)
 										.getBuddyEntityDao();
 								BuddyEntity _buddy = wdao.load(buddy.getId());
 								_buddy.setVibrate(!buddy.getVibrate());
@@ -189,15 +195,15 @@ public class BuddyListFragment extends ListFragment {
 								return;
 							} else if (i == NICKNAME_OPTION) {
 								AlertDialog.Builder alert = new AlertDialog.Builder(
-										getActivity());
+										act);
 
-								alert.setTitle(getActivity().getString(
+								alert.setTitle(act.getString(
 										R.string.change_nickname));
 								alert.setMessage(buddy.getPartial_jid());
 
 								// Set an EditText view to get user input
 								final EditText input = new EditText(
-										getActivity());
+										act);
 								if (buddy.getNickname() != null
 										&& !buddy.getNickname().isEmpty()) {
 									input.setText(buddy.getNickname());
