@@ -103,9 +103,9 @@ public class ChatFragment extends Fragment {
 
 			if (showAllMessages) {
 				broadcastRequestRemoveNotifications();
-				showAllMessages = false;
+				showAllMessages = false; // close the door again
 				adapter.clear();
-				adapter.addAll(daoSession.loadAll(MessageEntity.class));
+				adapter.addAll(daoSession.queryBuilder(MessageEntity.class).where(Properties.BuddyId.eq(buddy_id)).list());
 			} else {
 				adapter.add(message);
 			}
