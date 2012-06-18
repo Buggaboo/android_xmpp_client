@@ -1,5 +1,6 @@
 TODO 08-06-2012
 
+- more polish: implement call to populate buddylist... make stupid waiting symbol go away
 @ implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
 	+ fix by adding empty_list_item (Fragment.setEmptyText) (I shouldn't have added it to onResume... fuck it... it breaks if I put it before onCreateView)
