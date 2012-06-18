@@ -6,6 +6,7 @@ import nl.sison.xmpp.dao.BuddyEntity;
 import nl.sison.xmpp.dao.BuddyEntityDao;
 import nl.sison.xmpp.dao.BuddyEntityDao.Properties;
 import nl.sison.xmpp.dao.DaoSession;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -146,110 +147,115 @@ public class BuddyListFragment extends ListFragment {
 		AdapterView.AdapterContextMenuInfo info;
 		try {
 			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-			long buddy_id = getListAdapter().getItemId(info.position);
-			DaoSession rdao = DatabaseUtils.getReadOnlySession(getActivity());
-			final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
-			DatabaseUtils.close();
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(buddy.getPartial_jid());
-			String[] buddy_setup_action = new String[2];
-
-			final int NICKNAME_OPTION = 0;
-			final int VIBRATE_OPTION = 1;
-			final int SET_MASTER_PASSWORD_OPTION = 2;
-			final int ENCRYPT_MESSAGES_BY_BUDDY = 3;
-			// TODO use the master password to encrypt the messages by a
-			// buddy, but store the password in a salted hashed form on the
-			// device
-
-			buddy_setup_action[NICKNAME_OPTION] = getActivity().getString(
-					R.string.change_nickname);
-			if (buddy.getVibrate()) {
-				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
-						R.string.vibrate)
-						+ " " + getActivity().getString(R.string.off);
-			} else {
-				buddy_setup_action[VIBRATE_OPTION] = getActivity().getString(
-						R.string.vibrate)
-						+ " " + getActivity().getString(R.string.on);
-			}
-
-			builder.setItems(buddy_setup_action,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int i) {
-							if (i == VIBRATE_OPTION) {
-								BuddyEntityDao wdao = DatabaseUtils
-										.getWriteableSession(getActivity())
-										.getBuddyEntityDao();
-								BuddyEntity _buddy = wdao.load(buddy.getId());
-								_buddy.setVibrate(!buddy.getVibrate());
-								wdao.insertOrReplace(_buddy);
-								DatabaseUtils.close();
-								return;
-							} else if (i == NICKNAME_OPTION) {
-								AlertDialog.Builder alert = new AlertDialog.Builder(
-										getActivity());
-
-								alert.setTitle(getActivity().getString(
-										R.string.change_nickname));
-								alert.setMessage(buddy.getPartial_jid());
-
-								// Set an EditText view to get user input
-								final EditText input = new EditText(
-										getActivity());
-								if (buddy.getNickname() != null
-										&& !buddy.getNickname().isEmpty()) {
-									input.setText(buddy.getNickname());
-									input.setSelectAllOnFocus(true);
-								} else {
-									input.setText("");
-									input.setFocusable(true);
-								}
-								alert.setView(input);
-
-								alert.setPositiveButton(android.R.string.ok,
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int button_id) {
-												BuddyEntityDao wdao = DatabaseUtils
-														.getWriteableSession(
-																getActivity())
-														.getBuddyEntityDao();
-												BuddyEntity _buddy = wdao
-														.load(buddy.getId());
-												_buddy.setNickname(input
-														.getText().toString());
-												wdao.insertOrReplace(_buddy);
-												DatabaseUtils.close();
-
-												// refresh the list (e.g.
-												// reflect the change in
-												// nickname)
-												refreshList(buddy
-														.getConnectionId());
-											}
-										});
-
-								alert.setNegativeButton(
-										android.R.string.cancel,
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int button_id) {
-												dialog.dismiss();
-											}
-										});
-								alert.show();
-							}
-						}
-					});
-			builder.create().show();
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 			return;
 		}
+
+		long buddy_id = getListAdapter().getItemId(info.position);
+		DaoSession rdao = DatabaseUtils.getReadOnlySession(getActivity());
+		final BuddyEntity buddy = rdao.load(BuddyEntity.class, buddy_id);
+		DatabaseUtils.close();
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(buddy.getPartial_jid());
+		String[] buddy_setup_action = new String[2];
+
+		final int NICKNAME_OPTION = 0;
+		final int VIBRATE_OPTION = 1;
+		final int SET_MASTER_PASSWORD_OPTION = 2;
+		final int ENCRYPT_MESSAGES_BY_BUDDY = 3;
+		// TODO use the master password to encrypt the messages by a
+		// buddy, but store the password in a salted hashed form on the
+		// device
+
+		Activity act = getActivity();
+
+		buddy_setup_action[NICKNAME_OPTION] = act
+				.getString(R.string.change_nickname);
+
+		if (buddy.getVibrate() != null && buddy.getVibrate()) {
+			buddy_setup_action[VIBRATE_OPTION] = act
+					.getString(R.string.vibrate)
+					+ " "
+					+ act.getString(R.string.off);
+		} else {
+			buddy_setup_action[VIBRATE_OPTION] = act
+					.getString(R.string.vibrate)
+					+ " "
+					+ act.getString(R.string.on);
+		}
+
+		builder.setItems(buddy_setup_action,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int i) {
+						Activity act = getActivity();
+						if (i == VIBRATE_OPTION) {
+							BuddyEntityDao wdao = DatabaseUtils
+									.getWriteableSession(act)
+									.getBuddyEntityDao();
+							BuddyEntity _buddy = wdao.load(buddy.getId());
+							_buddy.setVibrate(!(buddy.getVibrate() != null && buddy.getVibrate()));
+							wdao.insertOrReplace(_buddy);
+							DatabaseUtils.close();
+							return;
+						} else if (i == NICKNAME_OPTION) {
+							AlertDialog.Builder alert = new AlertDialog.Builder(
+									act);
+
+							alert.setTitle(act
+									.getString(R.string.change_nickname));
+							alert.setMessage(buddy.getPartial_jid());
+
+							// Set an EditText view to get user input
+							final EditText input = new EditText(act);
+							if (buddy.getNickname() != null
+									&& !buddy.getNickname().isEmpty()) {
+								input.setText(buddy.getNickname());
+								input.setSelectAllOnFocus(true);
+							} else {
+								input.setText("");
+								input.setFocusable(true);
+							}
+							alert.setView(input);
+
+							alert.setPositiveButton(android.R.string.ok,
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int button_id) {
+											BuddyEntityDao wdao = DatabaseUtils
+													.getWriteableSession(
+															getActivity())
+													.getBuddyEntityDao();
+											BuddyEntity _buddy = wdao
+													.load(buddy.getId());
+											_buddy.setNickname(input.getText()
+													.toString());
+											wdao.insertOrReplace(_buddy);
+											DatabaseUtils.close();
+
+											// refresh the list (e.g.
+											// reflect the change in
+											// nickname)
+											refreshList(buddy.getConnectionId());
+										}
+									});
+
+							alert.setNegativeButton(android.R.string.cancel,
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int button_id) {
+											dialog.dismiss();
+										}
+									});
+							alert.show();
+						}
+					}
+				});
+		builder.create().show();
+
 	}
 
 	@Override
