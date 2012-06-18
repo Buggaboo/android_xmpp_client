@@ -89,7 +89,7 @@ public class XMPPNotificationService extends Service {
 			intent.putExtra(THREAD, thread);
 			intent.putExtra(JID, own_jid);
 			intent.putExtra(KEY_BUDDY_INDEX, buddy_id);
-			
+
 			PendingIntent pendintIntent = PendingIntent.getActivity(context, 0,
 					intent, PendingIntent.FLAG_UPDATE_CURRENT);
 			// do not set flags in the PendingIntent, set it in the payload
