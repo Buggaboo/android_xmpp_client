@@ -92,9 +92,7 @@ public class ChatFragment extends Fragment {
 			}
 
 			DaoSession daoSession = DatabaseUtils.getReadOnlySession(context);
-			MessageEntity message = daoSession.load(MessageEntity.class,
-					message_id);
-
+			MessageEntity message = daoSession.load(MessageEntity.class, message_id);
 
 			// this prevents messages from other buddies to leak into this
 			// context
