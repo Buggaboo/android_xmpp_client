@@ -95,16 +95,22 @@ public class ChatFragment extends Fragment {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
+
 			// this prevents messages from other buddies to leak into this
 			// context
 			if (message == null || message.getBuddyId() != buddy_id) {
-				DatabaseUtils.close();
 				return;
 			}
 
+			if (showAllMessages) {
+				broadcastRequestRemoveNotifications();
+				showAllMessages = false;
+				adapter.clear();
+				adapter.addAll(daoSession.loadAll(MessageEntity.class));
+			} else {
+				adapter.add(message);
+			}
 			DatabaseUtils.close();
-			broadcastRequestRemoveNotifications();
-			adapter.add(message);
 		}
 	}
 
@@ -199,6 +205,7 @@ public class ChatFragment extends Fragment {
 				// TODO - detect smileys etc.
 				messageIntent.putExtra(MESSAGE, message);
 				messageIntent.putExtra(KEY_BUDDY_INDEX, buddy_id);
+
 				if (message.length() != 0) {
 					getActivity().sendBroadcast(messageIntent);
 				}
@@ -252,33 +259,37 @@ public class ChatFragment extends Fragment {
 	}
 
 	private void setupListView() {
-		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity()
-				.getApplicationContext());
+		DaoSession daoSession = DatabaseUtils.getReadOnlySession(getActivity());
 
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
 
 		qb.where(Properties.BuddyId.eq(buddy_id));
+		List<MessageEntity> list;
 
+		// There is a threading issue here.
+		// I'm starting to feel there is also a performance issue.
 		if (!showAllMessages) {
 			qb.orderDesc(Properties.Processed_date).limit(10);
-			Button button = new Button(getActivity());
+			final Button button = new Button(getActivity());
 			button.setText(R.string.show_all_messages);
 			button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					showAllMessages = true;
-					setupListView();
+					chat_list.removeHeaderView(button);
 				}
 			});
 			chat_list.addHeaderView(button);
+			list = qb.list();
+			Collections.reverse(list);
+		} else {
+			list = qb.list();
 		}
 
 		// NOTE: this presents a challenge for group chat
 		// You probably need a groupchat activity for this thing
 		// and a different database
-		List<MessageEntity> list = qb.list();
-		Collections.reverse(list);
 
 		chat_history = list;
 		DatabaseUtils.close();

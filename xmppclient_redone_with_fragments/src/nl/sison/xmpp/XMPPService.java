@@ -151,16 +151,17 @@ public class XMPPService extends Service {
 		private long storeMessageEntityReturnId(Context context,
 				String message, XMPPConnection connection, Chat chat,
 				long buddy_id) {
-			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
-			me.setReceived_date(new Date());
-			me.setProcessed_date(new Date());
+			me.setProcessed_date(new Date());			
+//			me.setReceived_date(new Date());
+			me.setSent_date(new Date());
 			me.setReceiver_jid(chat.getParticipant());
 			me.setSender_jid(connection.getUser());
 			me.setThread(chat.getThreadID());
 			me.setBuddyId(buddy_id);
+			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);			
 			return daoSession.getMessageEntityDao().insert(me);
 		}
 

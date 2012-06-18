@@ -16,10 +16,9 @@ public class MessageEntity {
     private String receiver_jid;
     /** Not-null value. */
     private String content;
+    /** Not-null value. */
     private java.util.Date processed_date;
-    /** Not-null value. */
     private java.util.Date received_date;
-    /** Not-null value. */
     private java.util.Date sent_date;
     private Boolean delivered;
     private String thread;
@@ -99,30 +98,28 @@ public class MessageEntity {
         this.content = content;
     }
 
+    /** Not-null value. */
     public java.util.Date getProcessed_date() {
         return processed_date;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setProcessed_date(java.util.Date processed_date) {
         this.processed_date = processed_date;
     }
 
-    /** Not-null value. */
     public java.util.Date getReceived_date() {
         return received_date;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setReceived_date(java.util.Date received_date) {
         this.received_date = received_date;
     }
 
-    /** Not-null value. */
     public java.util.Date getSent_date() {
         return sent_date;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setSent_date(java.util.Date sent_date) {
         this.sent_date = sent_date;
     }

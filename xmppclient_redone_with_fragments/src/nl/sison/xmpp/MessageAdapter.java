@@ -67,7 +67,7 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 
 	private void changeAppearance(TextView text_date, TextView text_message,
 			MessageEntity msg) {
-		text_date.setText(msg.getReceived_date().toString() + " "
+		text_date.setText(msg.getProcessed_date().toString() + " "
 				+ msg.getSender_jid());
 		text_message.setText(msg.getContent());
 
