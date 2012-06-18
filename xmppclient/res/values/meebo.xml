@@ -6,7 +6,7 @@
     <string name="meebo_hint_port">5222</string>
     <string name="meebo_hint_username">jane.doe</string>
     <string name="meebo_hint_resource">android</string>
-    <string name="meebo_default_encrypted">false</string>
+    <string name="meebo_default_encrypted">true</string>
     <string name="meebo_default_compressed">true</string>
     <string name="meebo_default_sasl_authenticated">false</string>
 </resources>

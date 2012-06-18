@@ -98,8 +98,11 @@ public class CRUDConnectionFragment extends Fragment {
 		setTextViewHint(parent, R.id.conn_username,
 				getResourceIdentifierByPrefix(hint_prefix, "hint_username"));
 
+		int id_hint_resource = getResourceIdentifierByPrefix(hint_prefix,
+				"hint_resource");
 		setTextViewHint(parent, R.id.conn_resource,
-				getResourceIdentifierByPrefix(hint_prefix, "hint_resource"));
+				getResourceIdentifierByPrefix(hint_prefix, "hint_resource"))
+				.setText(id_hint_resource);
 
 		// TODO fix & test toggle boolean
 		setToggleButtonDefault(parent, R.id.conn_compressed,
@@ -122,7 +125,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 	private void setToggleButtonDefault(View parent, int view_id, boolean state) {
 		ToggleButton tb = (ToggleButton) parent.findViewById(view_id);
-		tb.setActivated(state);
+		tb.setChecked(state);
 	}
 
 	private int getResourceIdentifierByPrefix(String prefix, String value) {
@@ -149,7 +152,7 @@ public class CRUDConnectionFragment extends Fragment {
 
 		setToggleButtonState(list_view, R.id.conn_encrypted, cc.getEncrypted());
 		setToggleButtonState(list_view, R.id.conn_compressed,
-				cc.getCompressed());
+				cc.getCompressed()); // disabled
 		setToggleButtonState(list_view, R.id.conn_sasl_authenticated,
 				cc.getSaslauthenticated());
 
