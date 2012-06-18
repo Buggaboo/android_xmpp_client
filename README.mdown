@@ -17,7 +17,8 @@ Features
 * Translatable to different languages, by leveraging the xml Resource;
 * Multiple provider support, i.e. connect with google, microsoft, meebo, whatever you want;
 * Notification triggered morse code vibrator;
-* Support for Fragments (8 june 2012), for larger screens.
+* Support for Fragments (8 june 2012), support for tablets WiP;
+* Support for api level 10 through 15, i.e. from gingerbread to ice cream sandwich (80%) of the android market.
 
 Share!
 ------
@@ -35,5 +36,3 @@ Licence
 -------
 
 GPLv3 http://www.gnu.org/copyleft/gpl.html
-
-
