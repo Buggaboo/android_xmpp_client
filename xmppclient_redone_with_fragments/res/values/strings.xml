@@ -50,6 +50,7 @@
     <string name="submit">Send</string>
     <string name="date_literal">date</string>
     <string name="text_literal">text</string>
+    <string name="show_all_messages">Show all messages</string>
 
     <!-- Notification related stuff -->
     <string name="says"> says </string>
