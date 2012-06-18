@@ -174,8 +174,6 @@ public class BuddyListFragment extends ListFragment {
 		buddy_setup_action[NICKNAME_OPTION] = act
 				.getString(R.string.change_nickname);
 
-		// TODO - fix: I suspect buddy.getVibrate is causing a nullptr
-		makeToast("buddy getVibrate" + buddy + buddy.getVibrate());
 		if (buddy.getVibrate() != null && buddy.getVibrate()) {
 			buddy_setup_action[VIBRATE_OPTION] = act
 					.getString(R.string.vibrate)
