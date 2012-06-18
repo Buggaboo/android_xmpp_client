@@ -95,7 +95,6 @@ public class ChatFragment extends Fragment {
 			MessageEntity message = daoSession.load(MessageEntity.class,
 					message_id);
 
-
 			// this prevents messages from other buddies to leak into this
 			// context
 			if (message == null || message.getBuddyId() != buddy_id) {
@@ -104,9 +103,9 @@ public class ChatFragment extends Fragment {
 
 			if (showAllMessages) {
 				broadcastRequestRemoveNotifications();
-				showAllMessages = false;
+				showAllMessages = false; // close the door again
 				adapter.clear();
-				adapter.addAll(daoSession.loadAll(MessageEntity.class));
+				adapter.addAll(daoSession.queryBuilder(MessageEntity.class).where(Properties.BuddyId.eq(buddy_id)).list());
 			} else {
 				adapter.add(message);
 			}
@@ -264,13 +263,22 @@ public class ChatFragment extends Fragment {
 		QueryBuilder<MessageEntity> qb = daoSession.getMessageEntityDao()
 				.queryBuilder();
 
+		// There is no point in showing the button when there are barely any
+		long num_msg_by_buddy = daoSession.getMessageEntityDao().queryBuilder()
+				.where(Properties.BuddyId.eq(buddy_id)).count();
+		int ARBITRARY_MESSAGE_LIMIT = 15;
+		if (num_msg_by_buddy < ARBITRARY_MESSAGE_LIMIT) {
+			showAllMessages = true;
+		}
+
 		qb.where(Properties.BuddyId.eq(buddy_id));
 		List<MessageEntity> list;
 
 		// There is a threading issue here.
 		// I'm starting to feel there is also a performance issue.
 		if (!showAllMessages) {
-			qb.orderDesc(Properties.Processed_date).limit(10);
+			qb.orderDesc(Properties.Processed_date).limit(
+					ARBITRARY_MESSAGE_LIMIT);
 			final Button button = new Button(getActivity());
 			button.setText(R.string.show_all_messages);
 			button.setOnClickListener(new View.OnClickListener() {

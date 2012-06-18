@@ -6,7 +6,7 @@
     <string name="other_hint_port">5222</string>
     <string name="other_hint_username">jane.doe</string>
     <string name="other_hint_resource">android</string>
-    <string name="other_default_encrypted">false</string>
+    <string name="other_default_encrypted">true</string>
     <string name="other_default_compressed">true</string>
     <string name="other_default_sasl_authenticated">false</string>
 </resources>

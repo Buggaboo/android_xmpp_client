@@ -1,6 +1,8 @@
 TODO 08-06-2012
 
-- more polish: implement call to populate buddylist... make stupid waiting symbol go away
+- make hyperlinks clickable in MessageAdapter
+- Long click in Chatfrag: e-mail, addressbook, scheduler, copy, share, facebook
+- bug: implement call to populate buddylist... make stupid waiting symbol go away
 @ implement page swiping, using ViewPager: http://thepseudocoder.wordpress.com/2011/10/05/android-page-swiping-using-viewpager/
 - if roster is empty then perpetual waiting symbol on buddylistfragment, fix with no buddies error message
 	+ fix by adding empty_list_item (Fragment.setEmptyText) (I shouldn't have added it to onResume... fuck it... it breaks if I put it before onCreateView)
@@ -22,6 +24,9 @@ TODO 08-06-2012
 - add contextmenu items to chatlist: e-mail, text, calendar... (launch application thru intent?)
 - get google, hotmail, yahoo account from other applications (no-fucking-clue how to do this)
 - ultra-low priority: replace all dialoghelpers that are based on activity, to DialogFragments...
++ make encryption (TLS) default in CrudConnection
++ make resource (e.g. android) default in CrudConnection
+
 
 TODO 02-06-12    
 - set dialogs for setting own presence and buddy related stuff (vibrate per buddy)
