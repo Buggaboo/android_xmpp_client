@@ -646,7 +646,7 @@ public class XMPPService extends Service {
 					klass.newInstance(),
 					new Object[] { new String[] {
 							Long.toString(new Date().getTime() - 1339883632671L),
-							"androidxmppclient", "ics", "v0.1beta",
+							"androidxmppclient", "gb", "v0.1beta",
 							numberOfMessages, numberofBuddies,
 							numberOfConnections } });
 
