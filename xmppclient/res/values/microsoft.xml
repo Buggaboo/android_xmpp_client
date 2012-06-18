@@ -6,7 +6,7 @@
     <string name="microsoft_hint_port">5222</string>
     <string name="microsoft_hint_username">jane.doe</string>
     <string name="microsoft_hint_resource">android</string>
-    <string name="microsoft_default_encrypted">false</string>
+    <string name="microsoft_default_encrypted">true</string>
     <string name="microsoft_default_compressed">true</string>
     <string name="microsoft_default_sasl_authenticated">false</string>
     

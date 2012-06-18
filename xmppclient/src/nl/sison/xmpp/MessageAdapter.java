@@ -2,9 +2,9 @@ package nl.sison.xmpp;
 
 import java.util.List;
 
-import org.jivesoftware.smack.util.StringUtils;
-
 import nl.sison.xmpp.dao.MessageEntity;
+
+import org.jivesoftware.smack.util.StringUtils;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -67,6 +67,12 @@ public class MessageAdapter extends ArrayAdapter<MessageEntity> {
 
 	private void changeAppearance(TextView text_date, TextView text_message,
 			MessageEntity msg) {
+
+		// TODO implement database call to get the nickname
+		// TODO test performance costs
+//		BuddyEntity buddy = msg.getBuddyEntity();
+//		String sender_identification = buddy.getNickname();
+
 		text_date.setText(msg.getProcessed_date().toString() + " "
 				+ msg.getSender_jid());
 		text_message.setText(msg.getContent());
