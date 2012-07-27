@@ -154,14 +154,14 @@ public class XMPPService extends Service {
 			MessageEntity me = new MessageEntity();
 			me.setContent(message);
 			me.setDelivered(true);
-			me.setProcessed_date(new Date());			
-//			me.setReceived_date(new Date());
+			me.setProcessed_date(new Date());
+			// me.setReceived_date(new Date());
 			me.setSent_date(new Date());
 			me.setReceiver_jid(chat.getParticipant());
 			me.setSender_jid(connection.getUser());
 			me.setThread(chat.getThreadID());
 			me.setBuddyId(buddy_id);
-			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);			
+			DaoSession daoSession = DatabaseUtils.getWriteableSession(context);
 			return daoSession.getMessageEntityDao().insert(me);
 		}
 
@@ -254,13 +254,7 @@ public class XMPPService extends Service {
 
 	private void connectAndPopulateBuddyList(
 			final ConnectionConfigurationEntity cc) {
-		XMPPConnection connection;
-		try {
-			connection = connectToServer(cc);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			connection = null;
-		}
+		XMPPConnection connection = connectToServer(cc);
 		if (connection != null) {
 			long cc_id = cc.getId();
 			connection_hashmap.put(cc_id, connection);
@@ -523,8 +517,7 @@ public class XMPPService extends Service {
 		});
 	}
 
-	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc)
-			throws NumberFormatException {
+	private XMPPConnection connectToServer(ConnectionConfigurationEntity cc) {
 		ConnectionConfiguration xmpp_conn_config = new ConnectionConfiguration(
 				cc.getServer(), Integer.valueOf(cc.getPort()), cc.getDomain());
 		xmpp_conn_config.setCompressionEnabled(cc.getCompressed());
